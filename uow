@@ -1,0 +1,90 @@
+#!/bin/bash
+
+function usage {
+    echo "UNC Open Web usage"
+    echo "uow [start|stop|restart] [mongo|jsonic|nginx|all]"
+}
+
+function start {
+    case "$1" in 
+    'jsonic')
+        if [ -e "servers/jsonic/jsonic.pid" ]; then
+            PID=`cat servers/jsonic/jsonic.pid`
+            echo "jsonic already running with pid=${PID}"
+            exit 2
+        else
+            python servers/jsonic/jsonic.py --pid=servers/jsonic/jsonic.pid
+            PID=`cat servers/jsonic/jsonic.pid`
+            echo "jsonic started with pid=${PID}"
+        fi
+    ;;
+    'mongo')
+        if [ -s "servers/mongo/mongod.lock" ]; then
+            PID=`cat servers/mongo/mongod.lock`
+            echo "mongo already running with pid=${PID}"
+            exit 2
+        else
+            mongod --fork --dbpath servers/mongo/ --logpath servers/mongo/logs/mongodb.log --logappend > /dev/null 2>&1
+            PID=`cat servers/mongo/mongod.lock`
+            echo "mongo started with pid=${PID}"
+        fi
+    ;;
+    'nginx')
+    ;;
+    'all')
+    ;;
+    *)
+    usage
+    exit 1
+    ;;
+    esac
+}
+
+function stop {
+    case "$1" in 
+    'jsonic')
+        if [ -e "servers/jsonic/jsonic.pid" ]; then
+            kill -s 15 `cat servers/jsonic/jsonic.pid`
+            rm servers/jsonic/jsonic.pid
+            echo "jsonic stopped"
+        else
+            echo "jsonic not running"
+            exit 2
+        fi
+    ;;
+    'mongo')
+        if [ -s "servers/mongo/mongod.lock" ]; then
+            kill -s 15 `cat servers/mongo/mongod.lock`
+            echo "mongo stopped"
+        else
+            echo "mongod not running"
+            exit 2
+        fi
+    ;;
+    'nginx')
+    ;;
+    'all')
+    ;;
+    *)
+    usage
+    exit 1
+    ;;
+    esac
+}
+
+case "$1" in 
+'start')
+    start "$2"
+;;
+'stop')
+    stop "$2"
+;;
+'restart')
+    stop "$2"
+    start "$2"
+;;
+*)
+    usage
+    exit 1
+;;
+esac
