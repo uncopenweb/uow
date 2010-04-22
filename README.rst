@@ -9,18 +9,33 @@ UNC Open Web Server
 Prerequisites
 =============
 
+Install these and all their prerequisites on your server.
+
 1. mongodb 1.3.3 or higher
 2. JSonic 0.1 or higher
 3. nginx 0.7.64 or higher
 
-Configuring
-===========
+Configure
+=========
 
 The only field you MUST change is the server_name in servers/nginx/nginx.conf. Everything else should work as-is or can be tweaked. 
+
+Run
+===
+
+./uow start all
+./uow stop all
+
+Execute the "uow" script with no params for additional uses.
+
+Test
+====
+
+Visit http://yourserver/catalog in your browser.
 
 Todo
 ====
 
+* wait on process stop
 * uow.js factories
-* test web app for services
 * dojotrace lib availability
