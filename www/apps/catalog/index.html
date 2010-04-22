@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>UNC Open Web Server - Catalog Page</title>
+    <style type="text/css">
+      @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4.1/dojo/resources/dojo.css";
+      @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4.1/dijit/themes/tundra/tundra.css";
+      @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4.1/dojox/highlight/resources/highlight.css";
+      @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4.1/dojox/highlight/resources/pygments/friendly.css";
+      @import "catalog.css";
+    </style>
+    <script type="text/javascript">
+        var djConfig = {
+            isDebug: false,
+            parseOnLoad: true,
+            baseUrl: './'
+            // @todo: will be handled by uow.js
+            /*modulePaths: {
+              'info.mindtrove' : '/libs/info/mindtrove',
+              'uow' : '/libs/uow'
+            }*/
+        };
+    </script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.4.1/dojo/dojo.xd.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.4.1/dijit/dijit.xd.js"></script>
+    <script type="text/javascript" src="/libs/uow.js"></script>
+    <script type="text/javascript" src="catalog.js"></script>
+  </head>
+  <body class="tundra loading">
+    <div dojoType="dijit.layout.BorderContainer" liveSplitters="true">
+      <div dojoType="dijit.layout.ContentPane" region="top" splitter="false">
+        <h1>UNC Open Web - Catalog Page</h1>
+      </div>
+      <div dojoType="dijit.layout.TabContainer" 
+           id="tabs"
+           region="center" 
+           splitter="true">
+        <div dojoType="dijit.layout.ContentPane" 
+             id="home"
+             title="Home" 
+             href="catalog_home.html"></div>
+        <div dojoType="dojox.layout.ContentPane" 
+             id="audio"
+             title="Audio" 
+             href="catalog_audio.html"></div>
+        <div dojoType="dojox.layout.ContentPane" 
+             id="db"
+             title="Database" 
+             href="catalog_db.html"></div>
+        <div dojoType="dojox.layout.ContentPane" 
+             id="trace"
+             title="Dojo Trace" 
+             href="catalog_trace.html"></div>
+      </div>
+      <div dojoType="dijit.layout.ContentPane" region="bottom" splitter="false">
+        Last updated: 4/21/2010
+      </div>
+    </div>
+  </body>
+</html>
