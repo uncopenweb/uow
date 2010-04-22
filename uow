@@ -1,37 +1,65 @@
 #!/bin/bash
 
+WAIT_DELAY=10
+
 function usage {
     echo "UNC Open Web usage"
     echo "uow [start|stop|restart] [mongo|jsonic|nginx|all]"
+    echo "uow status"
+}
+
+function waitWhileStarting {
+    COUNTER=0
+    while [[ ! -s "$1" ]] && [[ $COUNTER -lt $WAIT_DELAY ]]; do
+        sleep 0.5
+        let COUNTER=COUNTER+1
+    done
+    if [ $COUNTER -lt $WAIT_DELAY ]; then
+        PID=`cat $1`
+        echo "started: pid=${PID}"
+        return 0
+    else
+        echo " FAILED"
+        return 1
+    fi
 }
 
 function start {
     case "$1" in 
     'jsonic')
-        if [ -e "servers/jsonic/jsonic.pid" ]; then
+        if [ -s "servers/jsonic/jsonic.pid" ]; then
             PID=`cat servers/jsonic/jsonic.pid`
-            echo "jsonic already running with pid=${PID}"
-            exit 2
+            echo "jsonic already running: pid=${PID}"
         else
+            echo -n "jsonic "
             python servers/jsonic/jsonic.py --pid=servers/jsonic/jsonic.pid
-            PID=`cat servers/jsonic/jsonic.pid`
-            echo "jsonic started with pid=${PID}"
+            waitWhileStarting "servers/jsonic/jsonic.pid"
         fi
     ;;
     'mongo')
         if [ -s "servers/mongo/mongod.lock" ]; then
             PID=`cat servers/mongo/mongod.lock`
-            echo "mongo already running with pid=${PID}"
-            exit 2
+            echo "mongo already running: pid=${PID}"
         else
+            echo -n "mongo "
             mongod --fork --dbpath servers/mongo/ --logpath servers/mongo/logs/mongodb.log --logappend > /dev/null 2>&1
-            PID=`cat servers/mongo/mongod.lock`
-            echo "mongo started with pid=${PID}"
+            waitWhileStarting "servers/mongo/mongod.lock"
         fi
     ;;
     'nginx')
+        if [ -s "servers/nginx/nginx.pid" ]; then
+            PID=`cat servers/nginx/nginx.pid`
+            echo "nginx already running: pid=${PID}"
+        else
+            echo -n "nginx "
+            sudo nginx -p servers/nginx/ -c nginx.conf
+            waitWhileStarting "servers/nginx/nginx.pid"
+        fi
     ;;
     'all')
+        start 'jsonic'
+        start 'mongo'
+        start 'nginx'
     ;;
     *)
     usage
@@ -49,7 +77,6 @@ function stop {
             echo "jsonic stopped"
         else
             echo "jsonic not running"
-            exit 2
         fi
     ;;
     'mongo')
@@ -58,18 +85,47 @@ function stop {
             echo "mongo stopped"
         else
             echo "mongod not running"
-            exit 2
         fi
     ;;
     'nginx')
+        if [ -s "servers/nginx/nginx.pid" ]; then
+            sudo nginx -p servers/nginx/ -c nginx.conf -s quit
+            echo "nginx stopped"
+        else
+            echo "nginx not running"
+        fi
     ;;
     'all')
+        stop 'nginx'
+        stop 'mongo'
+        stop 'jsonic'
     ;;
     *)
     usage
     exit 1
     ;;
     esac
+}
+
+function status {
+    if [ -e "servers/jsonic/jsonic.pid" ]; then
+        PID=`cat servers/jsonic/jsonic.pid`
+        echo "jsonic: pid=${PID}"
+    else
+        echo "jsonic: stopped"
+    fi
+    if [ -s "servers/mongo/mongod.lock" ]; then
+        PID=`cat servers/mongo/mongod.lock`
+        echo "mongo: pid=${PID}"
+    else
+        echo "mongo: stopped"
+    fi
+    if [ -s "servers/nginx/nginx.pid" ]; then
+        PID=`cat servers/nginx/nginx.pid`
+        echo "nginx: pid=${PID}"
+    else
+        echo "nginx: stopped"
+    fi
 }
 
 case "$1" in 
@@ -82,6 +138,9 @@ case "$1" in
 'restart')
     stop "$2"
     start "$2"
+;;
+'status')
+    status
 ;;
 *)
     usage
