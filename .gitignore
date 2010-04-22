@@ -2,3 +2,6 @@
 servers/mongo
 servers/nginx/access.log
 servers/nginx/error.log
+servers/jsonic/files
+*.pid
+.DS_Store
