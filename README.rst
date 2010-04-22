@@ -12,3 +12,15 @@ Prerequisites
 1. mongodb 1.3.3 or higher
 2. JSonic 0.1 or higher
 3. nginx 0.7.64 or higher
+
+Configuring
+===========
+
+The only field you MUST change is the server_name in servers/nginx/nginx.conf. Everything else should work as-is or can be tweaked. 
+
+Todo
+====
+
+* uow.js factories
+* test web app for services
+* dojotrace lib availability
