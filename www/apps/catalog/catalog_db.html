@@ -1,4 +1,9 @@
-<div class="catDB">
+<div id="dbContainer" class="catDB">
+  <script type="text/javascript">
+    dojo.ready(function() {
+      uow.app.catalog.parseExamples('dbContainer');
+    });
+  </script>
   <h1>Database</h1>
   <p>Data persistence services are provided by a <a href="http://www.mongodb.org/">MongoDB</a> on the server and access using the <a href="http://dojotoolkit.org/reference-guide/dojo/data.html">dojo.data</a> interfaces on the client. 
 
@@ -10,5 +15,12 @@
   </ul>
 
   <h2>Examples</h2>
-  
+  <p>Get a sample of posts from the test database <button id="db_ex1">Run</button></p>
+  <div id="db_ex1code">
+    <pre><code dojoType="dojox.highlight.Code"
+>var a = uow.getDatabase({database: 'test', collection : 'posts'});
+a.fetch({
+  onItem: function(item) {console.log(item);}
+});</code></pre>
+  </div>
 </p>

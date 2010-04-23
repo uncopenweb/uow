@@ -1,3 +1,4 @@
+dojo.provide('uow.app.catalog');
 dojo.require('dojo.hash');
 dojo.require('dijit.layout.BorderContainer');
 dojo.require('dijit.layout.ContentPane');
@@ -19,3 +20,11 @@ dojo.ready(function() {
         tabs.selectChild(dijit.byId(h));
     }
 });
+
+uow.app.catalog.parseExamples = function(node) {
+    node = dojo.byId(node);
+    dojo.query('button', node).connect('onclick', function(event) {
+        var code = dojo.byId(event.target.id+'code');
+        dojo.create('script', {innerHTML : code.textContent}, dojo.body());
+    });
+};

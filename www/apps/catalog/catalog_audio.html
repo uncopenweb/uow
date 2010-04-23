@@ -1,5 +1,9 @@
-<div class="catAudio">
-  <script type="text/javascript" src="catalog_audio.js"></script>
+<div id="audioContainer" class="catAudio">
+    <script type="text/javascript">
+    dojo.ready(function() {
+      uow.app.catalog.parseExamples('audioContainer');
+    });
+  </script>
   <h1>Audio</h1>
   <p>Speech and sound services are provided by the <a href="http://github.com/parente/jsonic">JSonic</a> library.</p>
   <h2>Links</h2>
@@ -9,15 +13,15 @@
   </ul>
   <h2>Examples</h2>
   
-  <p>Say a greeting <button id="ex1">Run</button></p>
-  <div id="ex1code">
+  <p>Say a greeting <button id="audio_ex1">Run</button></p>
+  <div id="audio_ex1code">
     <pre><code dojoType="dojox.highlight.Code"
 >var a = uow.getAudio();
 a.say({text : "Welcome to the UNC Open Web Server!"});</code></pre>
   </div>
   
-  <p>Play a sound <button id="ex2">Run</button></p>
-  <div id="ex2code">
+  <p>Play a sound <button id="audio_ex2">Run</button></p>
+  <div id="audio_ex2code">
     <pre><code dojoType="dojox.highlight.Code"
 >var a = uow.getAudio();
 a.play({url : "baritone_blues"});</code></pre>
