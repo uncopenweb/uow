@@ -168,6 +168,7 @@ case "$1" in
 ;;
 'restart')
     stop "$2"
+    sleep 1
     start "$2"
 ;;
 'status')
