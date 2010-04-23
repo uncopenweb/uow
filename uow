@@ -1,10 +1,14 @@
 #!/bin/bash
 
 WAIT_DELAY=10
+JSONIC_PIDFN="servers/jsonic/jsonic.pid"
+MONGO_PIDFN="servers/mongo/mongod.lock"
+TORONGO_PIDFN="servers/torongo/torongo.pid"
+NGINX_PIDFN="servers/nginx/nginx.pid"
 
 function usage {
-    echo "UNC Open Web usage"
-    echo "uow [start|stop|restart] [mongo|jsonic|nginx|all]"
+    echo "UNC Open Web Server usage:"
+    echo "uow [start|stop|restart] [mongo|torongo|jsonic|nginx|all]"
     echo "uow status"
 }
 
@@ -27,38 +31,49 @@ function waitWhileStarting {
 function start {
     case "$1" in 
     'jsonic')
-        if [ -s "servers/jsonic/jsonic.pid" ]; then
-            PID=`cat servers/jsonic/jsonic.pid`
+        if [ -s "$JSONIC_PIDFN" ]; then
+            PID=`cat "$JSONIC_PIDFN"`
             echo "jsonic already running: pid=${PID}"
         else
             echo -n "jsonic "
-            python servers/jsonic/jsonic.py --pid=servers/jsonic/jsonic.pid
-            waitWhileStarting "servers/jsonic/jsonic.pid"
+            python servers/jsonic/jsonic.py -p 8888 --pid="$JSONIC_PIDFN"
+            waitWhileStarting "$JSONIC_PIDFN"
         fi
     ;;
     'mongo')
-        if [ -s "servers/mongo/mongod.lock" ]; then
-            PID=`cat servers/mongo/mongod.lock`
+        if [ -s "$MONGO_PIDFN" ]; then
+            PID=`cat "$MONGO_PIDFN"`
             echo "mongo already running: pid=${PID}"
         else
             echo -n "mongo "
             mongod --fork --dbpath servers/mongo/ --logpath servers/mongo/logs/mongodb.log --logappend > /dev/null 2>&1
-            waitWhileStarting "servers/mongo/mongod.lock"
+            waitWhileStarting "$MONGO_PIDFN"
         fi
     ;;
+    'torongo')
+        if [ -s "$TORONGO_PIDFN" ]; then
+            PID=`cat ${TORONGO_PIDFN}`
+            echo "torongo already running: pid=${PID}"
+        else
+            echo -n "torongo "
+            python servers/torongo/jsonreststore.py -p 8887 --pid="$TORONGO_PIDFN"
+            waitWhileStarting "$TORONGO_PIDFN"
+        fi
+    ;;    
     'nginx')
-        if [ -s "servers/nginx/nginx.pid" ]; then
-            PID=`cat servers/nginx/nginx.pid`
+        if [ -s "$NGINX_PIDFN" ]; then
+            PID=`cat "$NGINX_PIDFN"`
             echo "nginx already running: pid=${PID}"
         else
             echo -n "nginx "
             sudo nginx -p servers/nginx/ -c nginx.conf
-            waitWhileStarting "servers/nginx/nginx.pid"
+            waitWhileStarting "$NGINX_PIDFN"
         fi
     ;;
     'all')
         start 'jsonic'
         start 'mongo'
+        start 'torongo'
         start 'nginx'
     ;;
     *)
@@ -71,24 +86,33 @@ function start {
 function stop {
     case "$1" in 
     'jsonic')
-        if [ -e "servers/jsonic/jsonic.pid" ]; then
-            kill -s 15 `cat servers/jsonic/jsonic.pid`
-            rm servers/jsonic/jsonic.pid
+        if [ -e "$JSONIC_PIDFN" ]; then
+            kill -s 15 `cat "$JSONIC_PIDFN"`
+            rm "$JSONIC_PIDFN"
             echo "jsonic stopped"
         else
             echo "jsonic not running"
         fi
     ;;
     'mongo')
-        if [ -s "servers/mongo/mongod.lock" ]; then
-            kill -s 15 `cat servers/mongo/mongod.lock`
+        if [ -s "$MONGO_PIDFN" ]; then
+            kill -s 15 `cat "$MONGO_PIDFN"`
             echo "mongo stopped"
         else
             echo "mongod not running"
         fi
     ;;
+    'torongo')
+        if [ -e "$TORONGO_PIDFN" ]; then
+            kill -s 15 `cat "$TORONGO_PIDFN"`
+            rm "$TORONGO_PIDFN"
+            echo "torongo stopped"
+        else
+            echo "torongo not running"
+        fi
+    ;;
     'nginx')
-        if [ -s "servers/nginx/nginx.pid" ]; then
+        if [ -s "$NGINX_PIDFN" ]; then
             sudo nginx -p servers/nginx/ -c nginx.conf -s quit
             echo "nginx stopped"
         else
@@ -97,6 +121,7 @@ function stop {
     ;;
     'all')
         stop 'nginx'
+        stop 'torongo'
         stop 'mongo'
         stop 'jsonic'
     ;;
@@ -108,23 +133,29 @@ function stop {
 }
 
 function status {
-    if [ -e "servers/jsonic/jsonic.pid" ]; then
-        PID=`cat servers/jsonic/jsonic.pid`
+    if [ -e "$JSONIC_PIDFN" ]; then
+        PID=`cat "$JSONIC_PIDFN"`
         echo "jsonic: pid=${PID}"
     else
         echo "jsonic: stopped"
     fi
-    if [ -s "servers/mongo/mongod.lock" ]; then
-        PID=`cat servers/mongo/mongod.lock`
+    if [ -s "$MONGO_PIDFN" ]; then
+        PID=`cat "$MONGO_PIDFN"`
         echo "mongo: pid=${PID}"
     else
         echo "mongo: stopped"
     fi
-    if [ -s "servers/nginx/nginx.pid" ]; then
-        PID=`cat servers/nginx/nginx.pid`
+    if [ -s "$NGINX_PIDFN" ]; then
+        PID=`cat "$NGINX_PIDFN"`
         echo "nginx: pid=${PID}"
     else
         echo "nginx: stopped"
+    fi
+    if [ -e "$TORONGO_PIDFN" ]; then
+        PID=`cat $TORONGO_PIDFN`
+        echo "torongo: pid=${PID}"
+    else
+        echo "torongo: stopped"
     fi
 }
 
