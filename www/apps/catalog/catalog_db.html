@@ -15,12 +15,48 @@
   </ul>
 
   <h2>Examples</h2>
-  <p>Get a sample of posts from the test database <button id="db_ex1">Run</button></p>
+  <h3>Save a new person object in the <em>rolodex</em> collection of the <em>catalog</em> database</h3>
+  <label>
+    First name <input type="text" id="db_ex1first"/>
+  </label>
+  <label>
+    Last name <input type="text" id="db_ex1last" />
+  </label>
+  <button id="db_ex1">Run</button></label>
   <div id="db_ex1code">
     <pre><code dojoType="dojox.highlight.Code"
->var a = uow.getDatabase({database: 'test', collection : 'posts'});
+>var a = uow.getDatabase({database: 'catalog', collection : 'rolodex'});
+var fn = dojo.byId('db_ex1first');
+var ln = dojo.byId('db_ex1last');
+a.newItem({firstName : fn.value, lastName : ln.value});
+a.save();
+fn.value = ln.value = '';
+</code></pre>
+  </div>
+
+  <h3>Get 5 person objects from the <em>rolodex</em> collection in the <em>catalog</em> database <button id="db_ex2">Run</button></h3>
+  <label for="db_ex1log">Results</label>
+  <textarea class="results" id="db_ex1log"></textarea>
+  <div id="db_ex2code">
+    <pre><code dojoType="dojox.highlight.Code"
+>var a = uow.getDatabase({database: 'catalog', collection : 'rolodex'});
+var i = 1;
 a.fetch({
-  onItem: function(item) {console.log(item);}
+  count: 5,
+  onBegin: function() {
+    dojo.byId('db_ex1log').innerHTML = 'Fetching.\n';
+  },
+  onItem: function(item) {
+    var text = dojo.replace('{i}. {item.lastName}, {item.firstName}\n', 
+      {i: i++, item : item});
+    dojo.byId('db_ex1log').innerHTML += text;
+  },
+  onComplete: function(items) {
+    dojo.byId('db_ex1log').innerHTML += 'Done.\n';
+  },
+  onError: function(e) {
+    dojo.byId('db_ex1log').innerHTML += 'Kaboom. Bad things happened.\n';
+  }
 });</code></pre>
   </div>
-</p>
+</div>

@@ -11,10 +11,6 @@ h2 {
     margin-top: 1em;
 }
 
-.loading {
-    visibility: hidden;
-}
-
 p {
     max-width: 40em; margin-bottom: 0em;
 }
@@ -27,4 +23,13 @@ code {
 pre {
     margin-top: 0.5em;
     padding: 0.5em;
+}
+
+.loading {
+    visibility: hidden;
+}
+
+.results {
+    width: 100%;
+    height: 100px;
 }
