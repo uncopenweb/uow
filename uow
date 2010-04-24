@@ -1,4 +1,9 @@
 #!/bin/bash
+# Master script for starting, stopping, restarting UOW services.
+#
+# :requires: Mongo, nginx, 
+# :copyright: Gary Bishop, Peter Parente 2010
+# :license: BSD
 
 WAIT_DELAY=10
 JSONIC_PIDFN="servers/jsonic/jsonic.pid"

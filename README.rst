@@ -12,8 +12,9 @@ Prerequisites
 Install these and all their prerequisites on your server.
 
 1. mongodb 1.3.3 or higher
-2. JSonic 0.1 or higher
-3. nginx 0.7.64 or higher
+2. Torongo 0.1 or higher
+3. JSonic 0.1 or higher
+4. nginx 0.7.64 or higher
 
 Configure
 =========

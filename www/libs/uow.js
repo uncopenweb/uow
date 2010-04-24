@@ -1,3 +1,10 @@
+/*
+ * Factory functions for all UOW services. 
+ *
+ * :requires: Dojo 1.4.x, JSonic 0.1
+ * :copyright: Gary Bishop, Peter Parente 2010
+ * :license: BSD
+**/
 dojo.provide('uow');
 dojo.registerModulePath('info.mindtrove', '/libs/info/mindtrove');
 dojo.registerModulePath('uow', '/libs/uow');

@@ -1,3 +1,10 @@
+/**
+ * Startup script for the UOW catalog application.
+ *
+ * :requires: Dojo 1.4.x
+ * :copyright: Gary Bishop, Peter Parente 2010
+ * :license: BSD
+ */
 dojo.provide('uow.app.catalog');
 dojo.require('dojo.hash');
 dojo.require('dijit.layout.BorderContainer');
