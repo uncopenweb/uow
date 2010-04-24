@@ -1,23 +1,9 @@
-dojo.provide('uow.data.MongoStore');
-dojo.require('dojox.data.JsonRestStore');
+/*
+ * dojo.data store supporting MongoQueries.
+ *
+ * :requires: Dojo 1.4.x
+ * :copyright: Gary Bishop, Peter Parente 2010
+ * :license: BSD
+**/
 
-dojo.declare('uow.data.MongoStore', [dojox.data.JsonRestStore], {
-    _doQuery: function(args) {
-        console.log('doQuery', args);
-        function mongoQuery(obj) {
-            var qs = dojo.toJson(obj);
-            qs = escape(qs);
-            qs = qs.replace('/', '%2F');
-            qs = qs.replace('+', '%2B');
-            return '?mongoquery=' + qs;
-        }
-        args.queryStr = mongoQuery(args.query);
-        console.log('args', args);
-        delete args.query;
-        console.log('args', args);
-        var r = this.inherited(arguments);
-        console.log('r', r);
-        return r;
-    }
-});
-
+// @todo
