@@ -2,10 +2,16 @@
   <script type="text/javascript">
     dojo.ready(function() {
       uow.app.catalog.parseExamples('audioContainer');
-      var a = uow.getAudio();
-      a.getEngines().addCallback(function(result) {
-        uow.app.catalog.serviceStatus('Audio', result.success);
+      uow.getAudio().addCallback(function(js) {
+        js.getEngines().addCallback(function(result) {
+          // got jsonic engines from server
+          uow.app.catalog.serviceStatus('Audio', result.success);
+        }).addErrback(function() {
+          // failed to fetch engines
+          uow.app.catalog.serviceStatus('Audio', false);
+        });
       }).addErrback(function() {
+        // failed to get jsonic client instance
         uow.app.catalog.serviceStatus('Audio', false);
       });
     });

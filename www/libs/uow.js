@@ -18,12 +18,16 @@ uow.getAudio = function(args) {
         args.jsonicURI = '/jsonic/';
         uow._audio = new info.mindtrove.JSonic(args);
     }
-    return uow._audio;
+    var def = new dojo.Deferred();
+    def.callback(uow._audio);
+    return def;
 };
 
 uow.getDatabase = function(args) {
     args = args || {};
     args.target = '/data/'+args.database+'/'+args.collection+'/';
     args.idAttribute = '_id';
-    return new dojox.data.JsonRestStore(args);
+    var def = new dojo.Deferred();
+    def.callback(new dojox.data.JsonRestStore(args));
+    return def;
 };

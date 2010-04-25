@@ -3,16 +3,23 @@
     dojo.require('dojo.date.stamp');
     dojo.ready(function() {
       uow.app.catalog.parseExamples('dbContainer');
-      var db = uow.getDatabase({database: 'catalog', collection : 'status'});
-      var d = dojo.date.stamp.toISOString(new Date(), {zulu : true});
-      db.newItem({from : window.location.toString(), dt: d});
-      db.save({
-        onComplete: function() {
-          uow.app.catalog.serviceStatus('Database', true);
-        },
-        onError: function() {
-          uow.app.catalog.serviceStatus('Database', false);
-        }
+      uow.getDatabase({database: 'catalog', collection : 'status'})
+      .addCallback(function(db) {
+        var d = dojo.date.stamp.toISOString(new Date(), {zulu : true});
+        db.newItem({from : window.location.toString(), dt: d});
+        db.save({
+          onComplete: function() {
+            // saved to database
+            uow.app.catalog.serviceStatus('Database', true);
+          },
+          onError: function() {
+            // failed to save to database
+            uow.app.catalog.serviceStatus('Database', false);
+          }
+        });
+      }).addErrback(function() {
+        // failed to get client instance
+        uow.app.catalog.serviceStatus('Database', false);
       });
     });
   </script>
