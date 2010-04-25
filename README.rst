@@ -38,5 +38,6 @@ Todo
 ====
 
 * wait on process stop
-* uow.js factories
-* dojotrace lib availability
+* parse ports from nginx.conf
+* where to locate mongo port?
+* doc uow.js factories
