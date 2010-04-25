@@ -16,7 +16,6 @@ dojo.require("dojox.highlight.languages.javascript");
 dojo.require("dojox.highlight.languages.pygments.javascript");
 
 dojo.ready(function() {
-    console.log('ready');
     dojo.removeClass(dojo.body(), 'loading');
     var tabs = dijit.byId('tabs');
     var onSelectTab = function() {
