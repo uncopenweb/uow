@@ -28,14 +28,16 @@
   <h3>Say a greeting <button id="audio_ex1">Run</button></h3>
   <div id="audio_ex1code">
     <pre><code dojoType="dojox.highlight.Code"
->var a = uow.getAudio();
-a.say({text : "Welcome to the UNC Open Web Server!"});</code></pre>
+>uow.getAudio().addCallback(function(a) {
+  a.say({text : "Welcome to the UNC Open Web Server!"});
+});</code></pre>
   </div>
   
   <h3>Play a sound <button id="audio_ex2">Run</button></h3>
   <div id="audio_ex2code">
     <pre><code dojoType="dojox.highlight.Code"
->var a = uow.getAudio();
-a.play({url : "baritone_blues"});</code></pre>
+>uow.getAudio().addCallback(function(a) {
+  a.play({url : "baritone_blues"});  
+});</code></pre>
   </div>
 </div>

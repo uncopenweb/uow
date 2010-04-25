@@ -44,12 +44,14 @@
   <button id="db_ex1">Run</button></label>
   <div id="db_ex1code">
     <pre><code dojoType="dojox.highlight.Code"
->var a = uow.getDatabase({database: 'catalog', collection : 'rolodex'});
-var fn = dojo.byId('db_ex1first');
-var ln = dojo.byId('db_ex1last');
-a.newItem({firstName : fn.value, lastName : ln.value});
-a.save();
-fn.value = ln.value = '';
+>var def = uow.getDatabase({database: 'catalog', collection : 'rolodex'});
+def.addCallback(function(db) {
+  var fn = dojo.byId('db_ex1first');
+  var ln = dojo.byId('db_ex1last');
+  db.newItem({firstName : fn.value, lastName : ln.value});
+  db.save();
+  fn.value = ln.value = '';
+});
 </code></pre>
   </div>
 
@@ -58,24 +60,26 @@ fn.value = ln.value = '';
   <textarea class="results" id="db_ex1log"></textarea>
   <div id="db_ex2code">
     <pre><code dojoType="dojox.highlight.Code"
->var a = uow.getDatabase({database: 'catalog', collection : 'rolodex'});
-var i = 1;
-a.fetch({
-  count: 5,
-  onBegin: function() {
-    dojo.byId('db_ex1log').innerHTML = 'Fetching.\n';
-  },
-  onItem: function(item) {
-    var text = dojo.replace('{i}. {item.lastName}, {item.firstName}\n', 
-      {i: i++, item : item});
-    dojo.byId('db_ex1log').innerHTML += text;
-  },
-  onComplete: function(items) {
-    dojo.byId('db_ex1log').innerHTML += 'Done.\n';
-  },
-  onError: function(e) {
-    dojo.byId('db_ex1log').innerHTML += 'Kaboom. Bad things happened.\n';
-  }
+>var def = uow.getDatabase({database: 'catalog', collection : 'rolodex'});
+def.addCallback(function(db) {
+  var i = 1;
+  db.fetch({
+    count: 5,
+    onBegin: function() {
+      dojo.byId('db_ex1log').innerHTML = 'Fetching.\n';
+    },
+    onItem: function(item) {
+      var text = dojo.replace('{i}. {item.lastName}, {item.firstName}\n', 
+        {i: i++, item : item});
+      dojo.byId('db_ex1log').innerHTML += text;
+    },
+    onComplete: function(items) {
+      dojo.byId('db_ex1log').innerHTML += 'Done.\n';
+    },
+    onError: function(e) {
+      dojo.byId('db_ex1log').innerHTML += 'Kaboom. Bad things happened.\n';
+    }
+  });
 });</code></pre>
   </div>
 </div>
