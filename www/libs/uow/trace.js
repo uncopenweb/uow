@@ -1,11 +1,12 @@
 /**
  * A hack to insert simple line number tracing into javascript code included 
- * with dojo.require. Add a script tag like:
+ * with dojo.require. Add a script tag like the following after loading 
+ * dojo.js:
  *
- * <script type="text/javascript" src="trace.js"></script>
+ * <script type="text/javascript" src="/libs/uow/trace.js"></script>
  *
- * after loading dojo.js. Move the script tag even later to avoid adding 
- * logging to uninteresting files.
+ * Move the script tag even later to avoid adding logging to uninteresting 
+ * files.
  *
  * Add the following parameters to your URL to configure tracing:
  *
