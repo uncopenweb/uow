@@ -33,3 +33,11 @@ pre {
     width: 100%;
     height: 100px;
 }
+
+.available {
+    color: green;
+}
+
+.unavailable {
+    color: red;
+}

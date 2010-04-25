@@ -16,6 +16,7 @@ dojo.require("dojox.highlight.languages.javascript");
 dojo.require("dojox.highlight.languages.pygments.javascript");
 
 dojo.ready(function() {
+    console.log('ready');
     dojo.removeClass(dojo.body(), 'loading');
     var tabs = dijit.byId('tabs');
     var onSelectTab = function() {
@@ -27,6 +28,23 @@ dojo.ready(function() {
         tabs.selectChild(dijit.byId(h));
     }
 });
+
+uow.app.catalog.serviceStatus = function(name, available) {
+    var status, cssClass;
+    if(available) {
+        status = 'OK';
+        cssClass = 'available';
+    } else {
+        status = 'NA';
+        cssClass = 'unavailable'
+    }
+    var text = dojo.replace('{name} ({status})', 
+        {name : name, status : status});
+    dojo.create('li', {
+        innerHTML : text,
+        'class' : cssClass
+    }, 'home_status');
+};
 
 uow.app.catalog.parseExamples = function(node) {
     node = dojo.byId(node);

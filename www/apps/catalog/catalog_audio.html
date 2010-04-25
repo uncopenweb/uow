@@ -1,7 +1,13 @@
 <div id="audioContainer" class="catAudio">
-    <script type="text/javascript">
+  <script type="text/javascript">
     dojo.ready(function() {
       uow.app.catalog.parseExamples('audioContainer');
+      var a = uow.getAudio();
+      a.getEngines().addCallback(function(result) {
+        uow.app.catalog.serviceStatus('Audio', result.success);
+      }).addErrback(function() {
+        uow.app.catalog.serviceStatus('Audio', false);
+      });
     });
   </script>
   <h1>Audio</h1>

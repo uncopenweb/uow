@@ -1,6 +1,11 @@
 <div class="catTrace">
+  <script type="text/javascript">
+    dojo.ready(function() {      
+      uow.app.catalog.serviceStatus('Trace', uow.trace !== undefined);
+    });
+  </script>
   <h1>Dojo Trace</h1>
-  <p>Besides using Firebug or the Webkit developer tools to debug your programs, the UOW server provides a tracing utility that logs when your code enters blocks (e.g., functions, if statements, loops).</p>
+  <p>Besides using Firebug or the Webkit developer tools to debug your programs, the UOW server provides a tracing utility that logs when code blocks (e.g., functions, if statements, loops) run in local Dojo modules.</p>
   
   <h2>Links</h2>
   <ul>
