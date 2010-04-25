@@ -1,3 +1,32 @@
 <div class="catTrace">
   <h1>Dojo Trace</h1>
+  <p>Besides using Firebug or the Webkit developer tools to debug your programs, the UOW server provides a tracing utility that logs when your code enters blocks (e.g., functions, if statements, loops).</p>
+  
+  <h2>Links</h2>
+  <ul>
+    <li><a href="http://github.com/gbishop/dojotrace">Dojo Trace project page</a></li>
+    <li><a href="/libs/uow/trace.js">Dojo Trace documentation</a> (See the comment at the top of the file.)</a></li>
+  </ul>
+  
+  <h2>Examples</h2>
+  <h3>Add tracing to all local Dojo modules</h3>
+  <ol>
+    <li>Click this link to refresh the page: <a href="/catalog?trace=console#trace">/catalog?trace=console</a></li>
+    <li>Open the browser console</li>
+    <li>Try one of the examples in the <em>Audio</em> tab</li>
+  </ol>
+
+  <h3>Add tracing to modules with the word <em>JSonic</em> in their names</h3>
+  <ol>
+    <li>Click this link to refresh the page: <a href="/catalog?trace=console&filter=JSonic#trace">/catalog?trace=console&filter=JSonic</a></li>
+    <li>Open the browser console</li>
+    <li>Try one of the examples in the <em>Audio</em> tab</li>
+  </ol>
+
+  <h3>Add tracing to all modules except those with the word <em>JSonic</em> in their names</h3>
+  <ol>
+    <li>Click this link to refresh the page: <a href="/catalog?trace=console&filter=!JSonic#trace">/catalog?trace=console&filter=!JSonic</a></li>
+    <li>Open the browser console</li>
+    <li>Try one of the examples in the <em>Audio</em> tab</li>
+  </ol>
 </div>
