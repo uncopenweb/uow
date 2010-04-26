@@ -3,6 +3,7 @@ servers/nginx/access.log
 servers/nginx/error.log
 servers/jsonic
 servers/torongo
+servers/mongo/*
 src/
 www/libs/info/mindtrove/JSonic.js
 www/libs/uow/data/
