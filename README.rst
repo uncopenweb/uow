@@ -19,18 +19,14 @@ Configure
 
 1. Get the UOW services. The following commands gets the latest development code from the master branch of each.
 
-.. sourcecode:: bash
-
-   cd src/
-   git clone git://github.com/gbishop/dojotrace.git
-   git clone git://github.com/gbishop/torongo.git
-   git clone git://github.com/parente/jsonic.git
+   * cd src/
+   * git clone git://github.com/gbishop/dojotrace.git
+   * git clone git://github.com/gbishop/torongo.git
+   * git clone git://github.com/parente/jsonic.git
 
 2. Create the necessary symlinks using the uow script
 
-.. sourcecode:: bash
-
-   ./uow init
+   * ./uow init
 
 3. Install the dependencies for each service. (See the README for each project.)
 4. Change the server_name in servers/nginx/nginx.conf.
@@ -38,10 +34,8 @@ Configure
 Run
 ===
 
-.. sourcecode:: bash
-
-   ./uow start all
-   ./uow stop all
+   * ./uow start all
+   * ./uow stop all
 
 Execute the "uow" script with no params for additional uses.
 
@@ -55,7 +49,5 @@ Update
 
 To update the various services to the latest on the cloned branch:
 
-.. sourcecode:: bash
-
-   cd src/<service name>
-   git pull origin master
+   * cd src/<service name>
+   * git pull origin master
