@@ -195,9 +195,11 @@ case "$1" in
     cd - > /dev/null
     echo "Linked trace.js"
     cd servers/
-    ln -f -s ../src/jsonic/server jsonic
+    rm jsonic 2> /dev/null
+    ln -s ../src/jsonic/server ./jsonic
     echo "Linked JSonic server"
-    ln -f -s ../src/torongo/server torongo
+    rm torongo 2> /dev/null
+    ln -s ../src/torongo/server ./torongo
     echo "Linked Torongo server"
     echo "Done"
 ;;
