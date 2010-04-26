@@ -15,6 +15,7 @@ function usage {
     echo "UNC Open Web Server usage:"
     echo "uow [start|stop|restart] [mongo|torongo|jsonic|nginx|all]"
     echo "uow status"
+    echo "uow init"
 }
 
 function waitWhileStarting {
@@ -178,6 +179,27 @@ case "$1" in
 ;;
 'status')
     status
+;;
+'init')
+    echo "Creating symlinks ..."
+    cd www/libs/info/mindtrove/
+    ln -f -s ../../../../src/jsonic/JSonic.js JSonic.js
+    cd - > /dev/null
+    echo "Linked JSonic.js"
+    cd www/libs/uow/data/
+    ln -f -s ../../../../src/torongo/MongoStore.js MongoStore.js
+    cd - > /dev/null
+    echo "Linked MongoStore.js"
+    cd www/libs/uow/
+    ln -f -s ../../../src/dojotrace/trace.js trace.js
+    cd - > /dev/null
+    echo "Linked trace.js"
+    cd servers/
+    ln -f -s ../src/jsonic/server jsonic
+    echo "Linked JSonic server"
+    ln -f -s ../src/torongo/server torongo
+    echo "Linked Torongo server"
+    echo "Done"
 ;;
 *)
     usage
