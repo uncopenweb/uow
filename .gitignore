@@ -1,6 +1,11 @@
 *.py[co]
 servers/nginx/access.log
 servers/nginx/error.log
-servers/jsonic/files
+servers/jsonic
+servers/torongo
+src/
+www/libs/info/mindtrove/JSonic.js
+www/libs/uow/data/
+www/libs/uow/trace.js
 *.pid
 .DS_Store
