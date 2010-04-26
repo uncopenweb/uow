@@ -49,5 +49,5 @@ Update
 
 To update the various services to the latest on the cloned branch:
 
-   * cd src/<service name>
-   * git pull origin master
+* cd src/<service name>
+* git pull origin master
