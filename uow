@@ -9,9 +9,9 @@ SERVERS_PATH='servers'
 def init(name):
     cp = configparser.ConfigParser()
     # read config file
-    cp.readfp(open(os.path.join(INI_PATH, name+'.conf')))
+    cp.readfp(open(os.path.join(SERVERS_PATH, name+'.conf')))
     # check if dir exists
-    if os.isdir(os.path.join(SERVERS_PATH, name)):
+    if os.path.isdir(os.path.join(SERVERS_PATH, name)):
         # @todo: confirm dir reset
         assert(False)
         pass
@@ -33,15 +33,16 @@ def update(name):
 
 def run_from_args():
     usage = "usage: %prog [init|update] [name]"
-    parser = OptionParser(usage=usage)
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(usage=usage)
     (options, args) = parser.parse_args()
-    if args[0] == 'init':
-        pass
+    if len(args) < 2:
+        parser.print_usage()
+    elif args[0] == 'init':
+        init(args[1])
     elif args[0] == 'update':
-        pass
+        update(args[1])
     else:
-        parser.usage()
+        parser.print_usage()
 
 if __name__ == '__main__':
     run_from_args()
