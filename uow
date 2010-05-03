@@ -1,210 +1,47 @@
-#!/bin/bash
-# Master script for starting, stopping, restarting UOW services.
-#
-# :requires: Mongo, nginx, 
-# :copyright: Gary Bishop, Peter Parente 2010
-# :license: BSD
+#!/usr/bin/env python
+import string
+import optparse
+import os.path
+import ConfigParser as configparser
 
-WAIT_DELAY=10
-JSONIC_PIDFN="servers/jsonic/jsonic.pid"
-MONGO_PIDFN="servers/mongo/mongod.lock"
-TORONGO_PIDFN="servers/torongo/torongo.pid"
-NGINX_PIDFN="servers/nginx/nginx.pid"
+SERVERS_PATH='servers'
 
-function usage {
-    echo "UNC Open Web Server usage:"
-    echo "uow [start|stop|restart] [mongo|torongo|jsonic|nginx|all]"
-    echo "uow status"
-    echo "uow init"
-}
+def init(name):
+    cp = configparser.ConfigParser()
+    # read config file
+    cp.readfp(open(os.path.join(INI_PATH, name+'.conf')))
+    # check if dir exists
+    if os.isdir(os.path.join(SERVERS_PATH, name)):
+        # @todo: confirm dir reset
+        assert(False)
+        pass
+    # create standard folders
+    # get components
+    # create symlinks
+    # generate nginx config sections
+    # prompt to reload supervisord?
+    pass
 
-function waitWhileStarting {
-    COUNTER=0
-    while [[ ! -s "$1" ]] && [[ $COUNTER -lt $WAIT_DELAY ]]; do
-        sleep 0.5
-        let COUNTER=COUNTER+1
-    done
-    if [ $COUNTER -lt $WAIT_DELAY ]; then
-        PID=`cat $1`
-        echo "started: pid=${PID}"
-        return 0
-    else
-        echo " FAILED"
-        return 1
-    fi
-}
+def update(name):
+    # read config file
+    # get non-existing components
+    # create symlinks
+    # generate nginx config sections
+    # ask to update existing components
+    # prompt to reload supervisord?
+    pass
 
-function start {
-    case "$1" in 
-    'jsonic')
-        if [ -s "$JSONIC_PIDFN" ]; then
-            PID=`cat "$JSONIC_PIDFN"`
-            echo "jsonic already running: pid=${PID}"
-        else
-            echo -n "jsonic "
-            python servers/jsonic/jsonic.py -p 8888 --pid="$JSONIC_PIDFN"
-            waitWhileStarting "$JSONIC_PIDFN"
-        fi
-    ;;
-    'mongo')
-        if [ -s "$MONGO_PIDFN" ]; then
-            PID=`cat "$MONGO_PIDFN"`
-            echo "mongo already running: pid=${PID}"
-        else
-            echo -n "mongo "
-            mongod --fork --dbpath servers/mongo/ --logpath servers/mongo/logs/mongodb.log --logappend > /dev/null 2>&1
-            waitWhileStarting "$MONGO_PIDFN"
-        fi
-    ;;
-    'torongo')
-        if [ -s "$TORONGO_PIDFN" ]; then
-            PID=`cat ${TORONGO_PIDFN}`
-            echo "torongo already running: pid=${PID}"
-        else
-            echo -n "torongo "
-            python servers/torongo/jsonreststore.py -p 8887 --pid="$TORONGO_PIDFN"
-            waitWhileStarting "$TORONGO_PIDFN"
-        fi
-    ;;    
-    'nginx')
-        if [ -s "$NGINX_PIDFN" ]; then
-            PID=`cat "$NGINX_PIDFN"`
-            echo "nginx already running: pid=${PID}"
-        else
-            echo -n "nginx "
-            sudo nginx -p servers/nginx/ -c nginx.conf
-            waitWhileStarting "$NGINX_PIDFN"
-        fi
-    ;;
-    'all')
-        start 'jsonic'
-        start 'mongo'
-        start 'torongo'
-        start 'nginx'
-    ;;
-    *)
-    usage
-    exit 1
-    ;;
-    esac
-}
+def run_from_args():
+    usage = "usage: %prog [init|update] [name]"
+    parser = OptionParser(usage=usage)
+    parser = optparse.OptionParser()
+    (options, args) = parser.parse_args()
+    if args[0] == 'init':
+        pass
+    elif args[0] == 'update':
+        pass
+    else:
+        parser.usage()
 
-function stop {
-    case "$1" in 
-    'jsonic')
-        if [ -e "$JSONIC_PIDFN" ]; then
-            kill -s 15 `cat "$JSONIC_PIDFN"`
-            rm "$JSONIC_PIDFN"
-            echo "jsonic stopped"
-        else
-            echo "jsonic not running"
-        fi
-    ;;
-    'mongo')
-        if [ -s "$MONGO_PIDFN" ]; then
-            kill -s 15 `cat "$MONGO_PIDFN"`
-            echo "mongo stopped"
-        else
-            echo "mongod not running"
-        fi
-    ;;
-    'torongo')
-        if [ -e "$TORONGO_PIDFN" ]; then
-            kill -s 15 `cat "$TORONGO_PIDFN"`
-            rm "$TORONGO_PIDFN"
-            echo "torongo stopped"
-        else
-            echo "torongo not running"
-        fi
-    ;;
-    'nginx')
-        if [ -s "$NGINX_PIDFN" ]; then
-            sudo nginx -p servers/nginx/ -c nginx.conf -s quit
-            echo "nginx stopped"
-        else
-            echo "nginx not running"
-        fi
-    ;;
-    'all')
-        stop 'nginx'
-        stop 'torongo'
-        stop 'mongo'
-        stop 'jsonic'
-    ;;
-    *)
-    usage
-    exit 1
-    ;;
-    esac
-}
-
-function status {
-    if [ -e "$JSONIC_PIDFN" ]; then
-        PID=`cat "$JSONIC_PIDFN"`
-        echo "jsonic: pid=${PID}"
-    else
-        echo "jsonic: stopped"
-    fi
-    if [ -s "$MONGO_PIDFN" ]; then
-        PID=`cat "$MONGO_PIDFN"`
-        echo "mongo: pid=${PID}"
-    else
-        echo "mongo: stopped"
-    fi
-    if [ -s "$NGINX_PIDFN" ]; then
-        PID=`cat "$NGINX_PIDFN"`
-        echo "nginx: pid=${PID}"
-    else
-        echo "nginx: stopped"
-    fi
-    if [ -e "$TORONGO_PIDFN" ]; then
-        PID=`cat $TORONGO_PIDFN`
-        echo "torongo: pid=${PID}"
-    else
-        echo "torongo: stopped"
-    fi
-}
-
-case "$1" in 
-'start')
-    start "$2"
-;;
-'stop')
-    stop "$2"
-;;
-'restart')
-    stop "$2"
-    sleep 1
-    start "$2"
-;;
-'status')
-    status
-;;
-'init')
-    echo "Creating symlinks ..."
-    cd www/libs/info/mindtrove/
-    ln -f -s ../../../../src/jsonic/JSonic.js JSonic.js
-    cd - > /dev/null
-    echo "Linked JSonic.js"
-    cd www/libs/uow/data/
-    ln -f -s ../../../../src/torongo/MongoStore.js MongoStore.js
-    cd - > /dev/null
-    echo "Linked MongoStore.js"
-    cd www/libs/uow/
-    ln -f -s ../../../src/dojotrace/trace.js trace.js
-    cd - > /dev/null
-    echo "Linked trace.js"
-    cd servers/
-    rm jsonic 2> /dev/null
-    ln -s ../src/jsonic/server ./jsonic
-    echo "Linked JSonic server"
-    rm torongo 2> /dev/null
-    ln -s ../src/torongo/server ./torongo
-    echo "Linked Torongo server"
-    echo "Done"
-;;
-*)
-    usage
-    exit 1
-;;
-esac
+if __name__ == '__main__':
+    run_from_args()
