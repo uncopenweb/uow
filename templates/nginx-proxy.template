@@ -4,5 +4,5 @@ location ${proxy_path} {
     proxy_redirect off;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Scheme $scheme;
-    proxy_pass http://${proxy_upstream};
+    proxy_pass ${proxy_upstream};
 }
