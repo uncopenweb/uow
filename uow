@@ -1,22 +1,48 @@
 #!/usr/bin/env python
 import string
 import optparse
-import os.path
+import os.path as osp
+import os
+import shutil
 import ConfigParser as configparser
 
 SERVERS_PATH='servers'
 
+def _prompt(msg, default):
+    while 1:
+        i = raw_input('%s [%s] ' % (msg, default)) or default
+        i = i.lower()
+        if i in ['y', 'yes']:
+            return True
+        elif i in ['n', 'no']:
+            return False
+
 def init(name):
+    dname = osp.join(SERVERS_PATH, name)
+    cname = osp.join(SERVERS_PATH, name+'.conf')
     cp = configparser.ConfigParser()
     # read config file
-    cp.readfp(open(os.path.join(SERVERS_PATH, name+'.conf')))
+    cp.readfp(open(cname))
     # check if dir exists
-    if os.path.isdir(os.path.join(SERVERS_PATH, name)):
-        # @todo: confirm dir reset
-        assert(False)
-        pass
+    if osp.isdir(dname):
+        # confirm dir reset
+        reset = _prompt('Are your sure you want to delete %s?' % dname, 'n')
+        if reset:
+            print 'Deleting server directories ...',
+            shutil.rmtree(dname)
+            print 'done'
+        else:
+            print 'Aborted'
+            return
     # create standard folders
+    print 'Creating server directories ...',
+    os.makedirs(osp.join(dname, 'www', 'libs'), 0755)
+    os.makedirs(osp.join(dname, 'services', 'logs'), 0755)
+    os.makedirs(osp.join(dname, 'components'), 0755)
+    print 'done'
     # get components
+    for section in cp.sections():
+        print section
     # create symlinks
     # generate nginx config sections
     # prompt to reload supervisord?
