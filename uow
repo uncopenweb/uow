@@ -7,6 +7,119 @@ import shutil
 import ConfigParser as configparser
 
 SERVERS_PATH='servers'
+NGINX_UPSTREAM_TMPL = '''\
+upstream ${name} {
+    ${servers}
+}'''
+NGINX_SERVER_TMPL = '''\
+${upstreams}
+
+server {
+    listen ${server_port};
+    server_name ${server_name};
+    
+    # web libraries
+    location /libs {
+        alias ../servers/${group_name}/www/libs;
+    }
+    # services
+    ${services}
+}'''
+NGINX_PROXY_TMPL = '''\
+location ${proxy_path} {
+    proxy_pass_header Server;
+    proxy_set_header Host $host;
+    proxy_redirect off;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Scheme $scheme;
+    proxy_pass ${proxy_upstream};
+}'''
+
+class NginxTemplate(object):
+    def __init__(self, group_name):
+        self.template = string.Template(NGINX_SERVER_TMPL)
+        self.group_name = group_name
+        self.upstreams = []
+        self.services = []
+        self.server_name = None
+        self.server_port = None
+    
+    def render(self):
+        args = dict(self.__dict__)
+        args['upstreams'] = '\n'.join(self.upstreams)
+        args['services'] = '\n'.join(self.services)
+        return self.template.substitute(args)
+
+    def assert_complete(self):
+        assert(self.server_port is not None and self.server_name is not None)
+    
+    def add_alias(self):
+        pass
+    
+    def add_proxy(self):
+        pass
+        
+    def add_upstream(self):
+        pass
+        
+    def set_server_port(self, port):
+        self.server_port = port
+        
+    def set_server_name(self, name):
+        self.server_name = name
+
+class NginxHandler(object):
+    def __init__(self, group_name, nginx_tmpl):
+        self.group_name = group_name
+        self.nginx_tmpl = nginx_tmpl
+
+    def dispatch(self, name, value, cp):
+        getattr(self, name)(value, cp)
+        
+    def server_port(self, value, cp):
+        self.nginx_tmpl.set_server_port(int(value))
+    
+    def server_name(self, value, cp):
+        self.nginx_tmpl.set_server_name(value)
+
+class ComponentHandler(object):
+    def __init__(self, group_name, nginx_tmpl):
+        self.group_name = group_name
+        self.nginx_tmpl = nginx_tmpl
+        
+    def dispatch(self, name, value, cp):
+        getattr(self, name)(value, cp)
+    
+    def update(self):
+        pass
+
+    def init(self, value, cp):
+        os.system(value)
+    
+    def symlinks(self, value, cp):
+        pairs = value.split(',')
+        for source, target in zip(pairs[::2], pairs[1::2]):
+            source, target = source.strip(), target.strip()
+            dtarget = osp.dirname(target)
+            # make source relative to target
+            rel = osp.join(*(['..'] * len(dtarget.split('/'))))
+            source = osp.join(rel, source)
+            # build intervening paths
+            try:
+                os.makedirs(dtarget)
+            except OSError:
+                pass
+            os.symlink(source, target)
+            print 'Symlinked %s -> %s' % (target, source)
+    
+    def upstream(name, value, cp):
+        pass
+
+    def proxies(name, value, cp):
+        pass
+
+    def aliases(name, value, cp):
+        pass
 
 def _prompt(msg, default):
     while 1:
@@ -17,9 +130,9 @@ def _prompt(msg, default):
         elif i in ['n', 'no']:
             return False
 
-def init(name):
-    dname = osp.join(SERVERS_PATH, name)
-    cname = osp.join(SERVERS_PATH, name+'.conf')
+def init(group_name):
+    dname = osp.join(SERVERS_PATH, group_name)
+    cname = osp.join(SERVERS_PATH, group_name+'.conf')
     cp = configparser.ConfigParser()
     # read config file
     cp.readfp(open(cname))
@@ -34,19 +147,47 @@ def init(name):
         else:
             print 'Aborted'
             return
+    # switch into dname to somewhat sandbox commands
+    os.makedirs(dname)
+    os.chdir(dname)
     # create standard folders
     print 'Creating server directories ...',
-    os.makedirs(osp.join(dname, 'www', 'libs'), 0755)
-    os.makedirs(osp.join(dname, 'services', 'logs'), 0755)
-    os.makedirs(osp.join(dname, 'components'), 0755)
+    os.makedirs(osp.join('www', 'libs'), 0755)
+    os.makedirs(osp.join('services', 'logs'), 0755)
+    os.makedirs(osp.join('components'), 0755)
+    print 'done'
+    # start an nginx template
+    tmpl = NginxTemplate(group_name)
+    # get nginx info
+    nginx = NginxHandler(group_name, tmpl)
+    print 'Handling "nginx" section ...'
+    for name, value in cp.items('nginx'):
+        try:
+            # dispatch to handle keys
+            nginx.dispatch(name, value, cp)
+        except AttributeError:
+            print 'Unknown key "%s" in section "nginx"' % (name)
     print 'done'
     # get components
-    for section in cp.sections():
-        print section
-    # create symlinks
-    # generate nginx config sections
+    components = ComponentHandler(group_name, tmpl)
+    for section in filter(lambda x: x.startswith('component'), cp.sections()):
+        print 'Handling "%s" section ...' % section
+        # handle init first if it exists
+        if cp.has_option(section, 'init'):
+            components.dispatch('init', cp.get(section, 'init'), cp)
+        for name, value in cp.items(section):
+            if name == 'init': continue
+            try:
+                # dispatch to handle keys
+                components.dispatch(name, value, cp)
+            except AttributeError:
+                print 'Unknown key "%s" in section "%s"' % (name, section)
+        print 'done'
+    # make sure we have all required nginx info
+    tmpl.assert_complete()    
+    # write nginx config
+    print tmpl.render()
     # prompt to reload supervisord?
-    pass
 
 def update(name):
     # read config file
