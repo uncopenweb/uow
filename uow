@@ -17,50 +17,63 @@ ${upstreams}
 server {
     listen ${server_port};
     server_name ${server_name};
-    
-    # web libraries
     location /libs {
         alias ../servers/${group_name}/www/libs;
     }
-    # services
-    ${services}
+${aliases}
+${proxies}
 }'''
+NGINX_ALIAS_TMPL = '''\
+    location ${url} {
+        alias ../servers/${group_name}/${path};
+    }
+'''
 NGINX_PROXY_TMPL = '''\
-location ${proxy_path} {
-    proxy_pass_header Server;
-    proxy_set_header Host $host;
-    proxy_redirect off;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Scheme $scheme;
-    proxy_pass ${proxy_upstream};
-}'''
+    location ${url} {
+        proxy_pass_header Server;
+        proxy_set_header Host $host;
+        proxy_redirect off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_pass ${upstream};
+    }'''
 
 class NginxTemplate(object):
     def __init__(self, group_name):
         self.template = string.Template(NGINX_SERVER_TMPL)
         self.group_name = group_name
         self.upstreams = []
-        self.services = []
+        self.proxies = []
+        self.aliases = []
         self.server_name = None
         self.server_port = None
     
     def render(self):
         args = dict(self.__dict__)
         args['upstreams'] = '\n'.join(self.upstreams)
-        args['services'] = '\n'.join(self.services)
+        args['aliases'] = '\n'.join(self.aliases)
+        args['proxies'] = '\n'.join(self.proxies)
         return self.template.substitute(args)
 
     def assert_complete(self):
         assert(self.server_port is not None and self.server_name is not None)
     
-    def add_alias(self):
-        pass
+    def add_alias(self, url, path):
+        group_name = self.group_name
+        tmpl = string.Template(NGINX_ALIAS_TMPL)
+        text = tmpl.safe_substitute(locals())
+        self.aliases.append(text)
     
-    def add_proxy(self):
-        pass
+    def add_proxy(self, url, upstream):
+        tmpl = string.Template(NGINX_PROXY_TMPL)
+        text = tmpl.safe_substitute(locals())
+        self.proxies.append(text)
         
-    def add_upstream(self):
-        pass
+    def add_upstream(self, name, servers):
+        servers = '\n'.join(['server %s;' % server for server in servers])
+        tmpl = string.Template(NGINX_UPSTREAM_TMPL)
+        text = tmpl.substitute(locals())
+        self.upstreams.append(text)
         
     def set_server_port(self, port):
         self.server_port = port
@@ -112,14 +125,22 @@ class ComponentHandler(object):
             os.symlink(source, target)
             print 'Symlinked %s -> %s' % (target, source)
     
-    def upstream(name, value, cp):
-        pass
+    def upstream(self, value, cp):
+        section = 'program:%s' % value
+        start = cp.getint(section, 'first_port')
+        count = cp.getint(section, 'numprocs')
+        servers = ['127.0.0.1:%d' % port for port in range(start, start+count)]
+        self.nginx_tmpl.add_upstream(value, servers)
 
-    def proxies(name, value, cp):
-        pass
-
-    def aliases(name, value, cp):
-        pass
+    def proxies(self, value, cp):
+        pairs = value.split(',')
+        for url, path in zip(pairs[::2], pairs[1::2]):
+            self.nginx_tmpl.add_proxy(url, path)
+            
+    def aliases(self, value, cp):
+        pairs = value.split(',')
+        for url, path in zip(pairs[::2], pairs[1::2]):
+            self.nginx_tmpl.add_alias(url, path)
 
 def _prompt(msg, default):
     while 1:
@@ -131,6 +152,7 @@ def _prompt(msg, default):
             return False
 
 def init(group_name):
+    cwd = os.getcwd()
     dname = osp.join(SERVERS_PATH, group_name)
     cname = osp.join(SERVERS_PATH, group_name+'.conf')
     cp = configparser.ConfigParser()
@@ -160,7 +182,7 @@ def init(group_name):
     tmpl = NginxTemplate(group_name)
     # get nginx info
     nginx = NginxHandler(group_name, tmpl)
-    print 'Handling "nginx" section ...'
+    print 'Handling "nginx" section ...',
     for name, value in cp.items('nginx'):
         try:
             # dispatch to handle keys
@@ -176,7 +198,7 @@ def init(group_name):
         if cp.has_option(section, 'init'):
             components.dispatch('init', cp.get(section, 'init'), cp)
         for name, value in cp.items(section):
-            if name == 'init': continue
+            if name in ['init', 'update']: continue
             try:
                 # dispatch to handle keys
                 components.dispatch(name, value, cp)
@@ -186,7 +208,11 @@ def init(group_name):
     # make sure we have all required nginx info
     tmpl.assert_complete()    
     # write nginx config
-    print tmpl.render()
+    conf = tmpl.render()
+    os.chdir(cwd)
+    fh = file(osp.join('nginx', 'servers', group_name+'.conf'), 'w')
+    fh.write(conf)
+    fh.close()
     # prompt to reload supervisord?
 
 def update(name):
