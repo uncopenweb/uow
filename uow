@@ -196,11 +196,11 @@ def init(group_name):
     # check if dir exists
     if osp.isdir(dname):
         # confirm dir reset
-        reset = _prompt('Are your sure you want to delete %s?' % dname, 'n')
+        reset = _prompt('Are your sure you want to delete %s?' % group_name, 'n')
         if reset:
-            print 'Deleting server directories ...',
+            print 'Deleting server directories ...'
             shutil.rmtree(dname)
-            print 'Done deleting server directories'
+            print 'Done deleting'
         else:
             print 'Aborted'
             return
@@ -277,7 +277,7 @@ def init(group_name):
 
     print 'Success. Start supervisord or use supervisorctl to reload the config.'
 
-def update(name):
+def update(group_name):
     # read config file
     # get non-existing components
     # create symlinks
@@ -286,8 +286,31 @@ def update(name):
     # prompt to reload supervisord?
     pass
 
+def remove(group_name):
+    # require root to set owner / group
+    if os.getuid():
+        raise ValueError('You must su or sudo to root to remove.')
+    # get path info
+    cwd = os.getcwd()
+    dname = osp.join(SERVERS_PATH, group_name)
+    # check if dir exists
+    if osp.isdir(dname):
+        # confirm dir reset
+        reset = _prompt('Are your sure you want to delete %s?' % group_name, 'n')
+        if reset:
+            print 'Deleting server directories ...'
+            shutil.rmtree(dname)
+            print 'Deleting server nginx config ...'
+            os.unlink(osp.join('nginx', 'servers', group_name+'.nginx.conf'))
+            print 'Done deleting'
+        else:
+            print 'Aborted'
+            return
+    else:
+        print 'Nothing to remove'
+
 def run_from_args():
-    usage = "usage: %prog [init|update] [name]"
+    usage = "usage: %prog [init|update|remove] [name]"
     parser = optparse.OptionParser(usage=usage)
     (options, args) = parser.parse_args()
     if len(args) < 2:
@@ -296,6 +319,8 @@ def run_from_args():
         init(args[1])
     elif args[0] == 'update':
         update(args[1])
+    elif args[0] == 'remove':
+        remove(args[1])
     else:
         parser.print_usage()
 
