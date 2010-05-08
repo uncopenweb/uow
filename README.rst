@@ -4,7 +4,7 @@ UNC Open Web Server
 
 :Author: Gary Bishop
 :Author: Peter Parente
-:Description: Single machine deployment of the UNC Open Web server components including static disk layout, nginx URL mapping, and management scripts
+:Description: Configures UNC Open Web Server components as upstream services or static libraries proxied and aliased by nginx. Uses supervisord to manage running processes.
 
 Prerequisites
 =============
@@ -13,41 +13,49 @@ Install these and all their prerequisites on your server.
 
 1. mongodb 1.3.3 or higher
 2. nginx 0.7.64 or higher
+3. supervisord 3.0 or higher
 
-Configure
-=========
+Initialize
+==========
 
-1. Get the UOW services. The following commands gets the latest development code from the master branch of each.
+1. Start with servers/dev.conf.
+2. Rename the file to match the name of the server you are creating (e.g., 
+   dev, hark, thr, etc.)
+3. Modify the contents of the file to fetch the server components, update them 
+   run them, etc. See the comments inline for help. You must at least change
+   the server_name value in the [nginx] section to match your hostname.
+4. After configuring, use the uow script to initialize the server resources
+   on disk:
+   
+   * uow init <name>
 
-   * cd src/
-   * git clone git://github.com/gbishop/dojotrace.git
-   * git clone git://github.com/gbishop/torongo.git
-   * git clone git://github.com/parente/jsonic.git
+5. Start supervisord as root.
 
-2. Create the necessary symlinks using the uow script
-
-   * ./uow init
-
-3. Install the dependencies for each service. (See the README for each project.)
-4. Change the server_name in servers/nginx/nginx.conf.
-
-Run
-===
-
-* ./uow start all
-* ./uow stop all
-
-Execute the "uow" script with no params for additional uses.
-
-Test
-====
-
-Visit http://yourserver/catalog in your browser.
+   * sudo supervisord
 
 Update
 ======
 
-To update the various services to the latest on the cloned branch:
+1. Use the uow script update your server after making changes to the 
+   configuration file:
+   
+   * uow update <name>
 
-* cd src/<service name>
-* git pull origin master
+2. Reload your running server processes using supervisorctl:
+
+   * supervisorctl restart <name>
+
+Test
+====
+
+1. If you deploy the 'catalog' application in your server environment, visit
+   http://yourserver/catalog in your browser to test the common web components.
+
+Manage
+======
+
+1. Use the supervisorctl shell environment:
+
+   * supervisorctl
+   
+2. Enter 'help' or '?' to get help.
