@@ -8,7 +8,8 @@ import ConfigParser as configparser
 
 SERVERS_PATH='servers'
 NGINX_SERVER_TMPL = '''\
-# DO NOT EDIT. Use the uow script to update this file.
+# Generated nginx virtual host configuration. 
+# DO NOT EDIT MANUALLY. Use the uow script to update this file.
 ${upstreams}
 
 server {
@@ -142,11 +143,32 @@ class ComponentHandler(object):
         pairs = value.split(',')
         for url, path in zip(pairs[::2], pairs[1::2]):
             self.nginx_tmpl.add_proxy(url, path)
+            print 'Proxied %s -> %s' % (path, url)
             
     def aliases(self, section, value, cp):
         pairs = value.split(',')
         for url, path in zip(pairs[::2], pairs[1::2]):
             self.nginx_tmpl.add_alias(url, path)
+            print 'Aliased %s -> %s' % (path, url)
+
+class ProgramHandler(object):
+    def __init__(self, group_name, nginx_tmpl):
+        self.group_name = group_name
+        self.nginx_tmpl = nginx_tmpl
+        
+    def dispatch(self, section, name, value, cp):
+        getattr(self, name)(section, value, cp)
+    
+    def user(self, section, value, cp):
+        os.seteuid(0)
+        try:
+            path = cp.get(section, 'directory')
+            path = '/'.join(path.split('/')[2:])
+            os.system('chown -h %s %s' % (value, path))
+            os.system('chown -R -L %s %s' % (value, path))
+        finally:
+            os.seteuid(int(os.environ.get('SUDO_UID', 0)))
+        print 'Set ownership %s -> %s' % (value, path)
 
 def _prompt(msg, default):
     while 1:
@@ -158,14 +180,19 @@ def _prompt(msg, default):
             return False
 
 def init(group_name):
-    # @todo: require root
-    # @todo: switch to pre-sudo user
+    # require root to set owner / group
+    if os.getuid():
+        raise ValueError('You must su or sudo to root to init.')
+    # get pre-sudo user
+    owner = int(os.environ.get('SUDO_UID', 0))
+    # get path info
     cwd = os.getcwd()
     dname = osp.join(SERVERS_PATH, group_name)
     cname = osp.join(SERVERS_PATH, group_name+'.conf')
-    cp = configparser.ConfigParser()
     # read config file
+    cp = configparser.ConfigParser()
     cp.readfp(open(cname))
+    
     # check if dir exists
     if osp.isdir(dname):
         # confirm dir reset
@@ -177,17 +204,23 @@ def init(group_name):
         else:
             print 'Aborted'
             return
+
+    # switch to pre-sudo user
+    os.seteuid(owner)
     # switch into dname to somewhat sandbox commands
     os.makedirs(dname)
     os.chdir(dname)
+    
     # create standard folders
     print 'Creating server directories ...'
-    os.makedirs(osp.join('www', 'libs'), 0755)
-    os.makedirs(osp.join('services', 'logs'), 0750)
-    os.makedirs(osp.join('components'), 0750)
+    # rwx, rx, rx
+    os.makedirs(osp.join('www', 'libs'), 0765)
+    os.makedirs(osp.join('services', 'logs'), 0765)
+    os.makedirs(osp.join('components'), 0765)
     print 'Done creating server directories\n'
     # start an nginx template
     tmpl = NginxTemplate(group_name)
+
     # get nginx info
     nginx = NginxHandler(group_name, tmpl)
     print 'Handling "nginx" section ...',
@@ -196,8 +229,10 @@ def init(group_name):
             # dispatch to handle keys
             nginx.dispatch('nginx', name, value, cp)
         except AttributeError:
-            print 'Unknown key "%s" in section "nginx"' % (name)
+            pass
+            #print 'Unknown key "%s" in section "nginx"' % (name)
     print 'Done handling "nginx"\n'
+
     # get components
     components = ComponentHandler(group_name, tmpl)
     for section in filter(lambda x: x.startswith('component'), cp.sections()):
@@ -213,13 +248,30 @@ def init(group_name):
             except AttributeError:
                 print 'Unknown key "%s" in section "%s"' % (name, section)
         print 'Done handling "%s"\n' % section
-    # @todo: get programs and set their owners properly using seteuid + chown
+
+    # chown everything to the original user
+    # @todo: wouldn't need this if we used subprocess instead of os.system probably
+    print 'Setting ownership to user %s' % owner
+    os.chdir(cwd)
+    os.system('chown -R -L %s %s' % (owner, dname))
+    os.system('chown -R -h %s %s' % (owner, dname))
+    os.chdir(dname)
+    print 'Done setting user\n'
+
+    # get programs
+    programs = ProgramHandler(group_name, tmpl)
+    for section in filter(lambda x: x.startswith('program'), cp.sections()):
+        print 'Handling "%s" section ...' % section
+        if cp.has_option(section, 'user'):
+            programs.dispatch(section, 'user', cp.get(section, 'user'), cp)
+        print 'Done handling "%s"\n' % section
+
     # make sure we have all required nginx info
     tmpl.assert_complete()    
     # write nginx config
     conf = tmpl.render()
     os.chdir(cwd)
-    fh = file(osp.join('nginx', 'servers', group_name+'.conf'), 'w')
+    fh = file(osp.join('nginx', 'servers', group_name+'.nginx.conf'), 'w')
     fh.write(conf)
     fh.close()
 
