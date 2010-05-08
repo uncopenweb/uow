@@ -7,11 +7,8 @@ import shutil
 import ConfigParser as configparser
 
 SERVERS_PATH='servers'
-NGINX_UPSTREAM_TMPL = '''\
-upstream ${name} {
-    ${servers}
-}'''
 NGINX_SERVER_TMPL = '''\
+# DO NOT EDIT. Use the uow script to update this file.
 ${upstreams}
 
 server {
@@ -22,6 +19,10 @@ server {
     }
 ${aliases}
 ${proxies}
+}'''
+NGINX_UPSTREAM_TMPL = '''\
+upstream ${name} {
+    ${servers}
 }'''
 NGINX_ALIAS_TMPL = '''\
     location ${url} {
@@ -86,13 +87,13 @@ class NginxHandler(object):
         self.group_name = group_name
         self.nginx_tmpl = nginx_tmpl
 
-    def dispatch(self, name, value, cp):
-        getattr(self, name)(value, cp)
+    def dispatch(self, section, name, value, cp):
+        getattr(self, name)(section, value, cp)
         
-    def server_port(self, value, cp):
+    def server_port(self, section, value, cp):
         self.nginx_tmpl.set_server_port(int(value))
     
-    def server_name(self, value, cp):
+    def server_name(self, section, value, cp):
         self.nginx_tmpl.set_server_name(value)
 
 class ComponentHandler(object):
@@ -100,16 +101,20 @@ class ComponentHandler(object):
         self.group_name = group_name
         self.nginx_tmpl = nginx_tmpl
         
-    def dispatch(self, name, value, cp):
-        getattr(self, name)(value, cp)
+    def dispatch(self, section, name, value, cp):
+        getattr(self, name)(section, value, cp)
     
     def update(self):
         pass
 
-    def init(self, value, cp):
+    def init(self, section, value, cp):
         os.system(value)
+        
+    def program(self, section, value, cp):
+        # exist to avoid unsupported key warning
+        pass
     
-    def symlinks(self, value, cp):
+    def symlinks(self, section, value, cp):
         pairs = value.split(',')
         for source, target in zip(pairs[::2], pairs[1::2]):
             source, target = source.strip(), target.strip()
@@ -125,19 +130,20 @@ class ComponentHandler(object):
             os.symlink(source, target)
             print 'Symlinked %s -> %s' % (target, source)
     
-    def upstream(self, value, cp):
-        section = 'program:%s' % value
-        start = cp.getint(section, 'first_port')
-        count = cp.getint(section, 'numprocs')
+    def proxies(self, section, value, cp):
+        program = cp.get(section, 'program')
+        psection = 'program:%s' % program
+        # create upstreams for proxies
+        start = cp.getint(psection, 'first_port')
+        count = cp.getint(psection, 'numprocs')
         servers = ['127.0.0.1:%d' % port for port in range(start, start+count)]
-        self.nginx_tmpl.add_upstream(value, servers)
-
-    def proxies(self, value, cp):
+        self.nginx_tmpl.add_upstream(program, servers)
+        # add proxies
         pairs = value.split(',')
         for url, path in zip(pairs[::2], pairs[1::2]):
             self.nginx_tmpl.add_proxy(url, path)
             
-    def aliases(self, value, cp):
+    def aliases(self, section, value, cp):
         pairs = value.split(',')
         for url, path in zip(pairs[::2], pairs[1::2]):
             self.nginx_tmpl.add_alias(url, path)
@@ -152,6 +158,8 @@ def _prompt(msg, default):
             return False
 
 def init(group_name):
+    # @todo: require root
+    # @todo: switch to pre-sudo user
     cwd = os.getcwd()
     dname = osp.join(SERVERS_PATH, group_name)
     cname = osp.join(SERVERS_PATH, group_name+'.conf')
@@ -165,7 +173,7 @@ def init(group_name):
         if reset:
             print 'Deleting server directories ...',
             shutil.rmtree(dname)
-            print 'done'
+            print 'Done deleting server directories'
         else:
             print 'Aborted'
             return
@@ -173,11 +181,11 @@ def init(group_name):
     os.makedirs(dname)
     os.chdir(dname)
     # create standard folders
-    print 'Creating server directories ...',
+    print 'Creating server directories ...'
     os.makedirs(osp.join('www', 'libs'), 0755)
-    os.makedirs(osp.join('services', 'logs'), 0755)
-    os.makedirs(osp.join('components'), 0755)
-    print 'done'
+    os.makedirs(osp.join('services', 'logs'), 0750)
+    os.makedirs(osp.join('components'), 0750)
+    print 'Done creating server directories\n'
     # start an nginx template
     tmpl = NginxTemplate(group_name)
     # get nginx info
@@ -186,25 +194,26 @@ def init(group_name):
     for name, value in cp.items('nginx'):
         try:
             # dispatch to handle keys
-            nginx.dispatch(name, value, cp)
+            nginx.dispatch('nginx', name, value, cp)
         except AttributeError:
             print 'Unknown key "%s" in section "nginx"' % (name)
-    print 'done'
+    print 'Done handling "nginx"\n'
     # get components
     components = ComponentHandler(group_name, tmpl)
     for section in filter(lambda x: x.startswith('component'), cp.sections()):
         print 'Handling "%s" section ...' % section
         # handle init first if it exists
         if cp.has_option(section, 'init'):
-            components.dispatch('init', cp.get(section, 'init'), cp)
+            components.dispatch(section, 'init', cp.get(section, 'init'), cp)
         for name, value in cp.items(section):
             if name in ['init', 'update']: continue
             try:
                 # dispatch to handle keys
-                components.dispatch(name, value, cp)
+                components.dispatch(section, name, value, cp)
             except AttributeError:
                 print 'Unknown key "%s" in section "%s"' % (name, section)
-        print 'done'
+        print 'Done handling "%s"\n' % section
+    # @todo: get programs and set their owners properly using seteuid + chown
     # make sure we have all required nginx info
     tmpl.assert_complete()    
     # write nginx config
@@ -213,7 +222,8 @@ def init(group_name):
     fh = file(osp.join('nginx', 'servers', group_name+'.conf'), 'w')
     fh.write(conf)
     fh.close()
-    # prompt to reload supervisord?
+
+    print 'Success. Start supervisord or use supervisorctl to reload the config.'
 
 def update(name):
     # read config file
