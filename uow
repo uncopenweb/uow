@@ -301,6 +301,11 @@ def remove(group_name):
             shutil.rmtree(dname)
             print 'Deleting server nginx config ...'
             os.unlink(osp.join('nginx', 'servers', group_name+'.nginx.conf'))
+            print 'Deleting active symlink ...'
+            try:
+                os.unlink(osp.join('servers', 'active', group_name+'.conf'))
+            except OSError:
+                pass
             print 'Done deleting'
         else:
             print 'Aborted'
