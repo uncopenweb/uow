@@ -43,7 +43,7 @@ programs=mongo_prod,jsonic_prod,torongo_prod
 
 [nginx]
 server_port=80
-server_name=helios
+server_name=prod.somedomain.com
 
 [component:mongo_prod]
 init=mkdir services/mongo
