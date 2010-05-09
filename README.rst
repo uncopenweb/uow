@@ -15,47 +15,36 @@ Install these and all their prerequisites on your server.
 2. nginx 0.7.64 or higher
 3. supervisord 3.0 or higher
 
-Initialize
-==========
+Getting started
+===============
 
-1. Start with servers/dev.conf.
-2. Rename the file to match the name of the server you are creating (e.g., 
-   dev, hark, thr, etc.)
-3. Modify the contents of the file to fetch the server components, update them 
-   run them, etc. See the comments inline for help. You must at least change
-   the server_name value in the [nginx] section to match your hostname.
-4. After configuring, use the uow script to initialize the server resources
-   on disk:
-   
-   * uow init <name>
+Here's a quick tutorial that walks you through setting up two independent servers accessible via two different domains both on port 80. The resulting servers will both have independent instances of Mongo, Torongo, and JSonic running on the server as well as static web accessible folders for JavaScript libraries and a sample catalog application.
 
-5. Start supervisord as root.
+1. Rename servers/dev.conf.sample to servers/dev.conf.
+2. Open servers/dev.conf in an editor.
+3. Set the "server_name" value in the [nginx] section to the hostname youwant to use for this server instance.
+4. Rename servers/prof.conf.sample to servers/prod.conf.
+5. Open servers/prod.conf in an editor.
+6. Set the "server_name" for the hostname to use for this second server instance.
+7. Run "sudo uow init dev" to generate the on-disk resources for the "dev" server.
+8. Run "sudo uow init prod" to generate the on-disk resources for the "prod" server.
+9. Run "sudo supervisord" to start all configured programs for the servers.
+10. Visit http://<first host>/catalog and http://<second host>/catalog in your web browser.
+11. View the service status and confirm the examples work.
 
-   * sudo supervisord
+Run "supervisorctl" to manage the running services. Type "?" or "help" to get help in the interactive console. Alternatively, visit http://localhost:9001 to use the web admin UI.
 
-Update
-======
+Updating
+========
 
-1. Use the uow script update your server after making changes to the 
-   configuration file:
-   
-   * uow update <name>
+@todo: not yet supported
 
-2. Reload your running server processes using supervisorctl:
+Tweaking your config
+====================
 
-   * supervisorctl restart <name>
+Some things you can do:
 
-Test
-====
+1. Create a copy of "dev.conf" or "prod.conf" and name it something new to configure a new server instance. Adjust the section names, path names, server name and and port ranges to avoid conflicting with other running servers.
+2. Adjust the "numprocs" and "first_port" in a [program:*] section to create more upstream service instances. Run "uow update <servername>" to generate the new nginx config file. Use "supervisorctl reread" to reconfigure the daemon process and "supervisorctl start <name>" to start the new instances.
 
-1. If you deploy the 'catalog' application in your server environment, visit
-   http://yourserver/catalog in your browser to test the common web components.
-
-Manage
-======
-
-1. Use the supervisorctl shell environment:
-
-   * supervisorctl
-   
-2. Enter 'help' or '?' to get help.
+@todo: more hints
