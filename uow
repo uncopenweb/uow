@@ -274,8 +274,8 @@ def init(group_name):
     fh = file(osp.join('nginx', 'servers', group_name+'.nginx.conf'), 'w')
     fh.write(conf)
     fh.close()
-
-    print 'Success. Start supervisord or use supervisorctl to reload the config.'
+    # enable the config
+    enable(group_name)
 
 def update(group_name):
     # read config file
@@ -291,7 +291,6 @@ def remove(group_name):
     if os.getuid():
         raise ValueError('You must su or sudo to root to remove.')
     # get path info
-    cwd = os.getcwd()
     dname = osp.join(SERVERS_PATH, group_name)
     # check if dir exists
     if osp.isdir(dname):
@@ -308,9 +307,23 @@ def remove(group_name):
             return
     else:
         print 'Nothing to remove'
+    print 'Success'
+
+
+def enable(group_name):
+    print 'Enabling "%s" config ...' % group_name
+    target = osp.join(SERVERS_PATH, 'active', group_name+'.conf')
+    os.symlink(osp.join('..', group_name+'.conf'), target)
+    print 'Success'
+
+def disable(group_name):
+    print 'Disabling "%s" config ...' % group_name
+    target = osp.join(SERVERS_PATH, 'active', group_name+'.conf')
+    os.unlink(target)
+    print 'Success'
 
 def run_from_args():
-    usage = "usage: %prog [init|update|remove] [name]"
+    usage = "usage: %prog [init|update|enable|disable|remove] [name]"
     parser = optparse.OptionParser(usage=usage)
     (options, args) = parser.parse_args()
     if len(args) < 2:
@@ -321,6 +334,10 @@ def run_from_args():
         update(args[1])
     elif args[0] == 'remove':
         remove(args[1])
+    elif args[0] == 'enable':
+        enable(args[1])
+    elif args[0] == 'disable':
+        disable(args[1])
     else:
         parser.print_usage()
 
