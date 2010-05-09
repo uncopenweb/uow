@@ -26,6 +26,11 @@ dojo.ready(function() {
     if(h) {
         tabs.selectChild(dijit.byId(h));
     }
+    // get server name
+    dojo.xhrGet({url : 'info'}).addCallback(function(response) {
+        var tmp = '{0} Server Catalog';
+        dojo.byId('subtitle').innerHTML = dojo.replace(tmp, [response]);
+    });
 });
 
 uow.app.catalog.serviceStatus = function(name, available) {
