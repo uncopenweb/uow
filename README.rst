@@ -45,6 +45,6 @@ Tweaking your config
 Some things you can do:
 
 1. Create a copy of "dev.conf" or "prod.conf" and name it something new to configure a new server instance. Adjust the section names, path names, server name and and port ranges to avoid conflicting with other running servers.
-2. Adjust the "numprocs" and "first_port" in a [program:*] section to create more upstream service instances. Run "uow update <servername>" to generate the new nginx config file. Use "supervisorctl reread" to reconfigure the daemon process and "supervisorctl start <name>" to start the new instances.
+2. Adjust the "numprocs" and "first_port" in a [program:*] section to create more upstream service instances. Run "uow update <servername>" to generate the new nginx config file. Use "supervisorctl reread" to reconfigure the daemon process and "supervisorctl add <name>" to start the new instances.
 
 @todo: more hints
