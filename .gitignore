@@ -10,3 +10,11 @@ www/libs/uow/data/
 www/libs/uow/trace.js
 *.pid
 .DS_Store
+nginx/access.log
+nginx/error.log
+nginx/servers
+servers/*.conf
+servers/dev
+servers/prod
+supervisord/*.log
+supervisord/*.pid
