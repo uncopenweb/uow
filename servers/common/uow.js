@@ -9,7 +9,7 @@ dojo.provide('uow');
 dojo.registerModulePath('info.mindtrove', '/libs/info/mindtrove');
 dojo.registerModulePath('uow', '/libs/uow');
 dojo.require('info.mindtrove.JSonic');
-dojo.require('dojox.data.JsonRestStore');
+dojo.require('uow.data.MongoStore');
 
 uow._audio = null;
 uow.getAudio = function(args) {
@@ -28,6 +28,6 @@ uow.getDatabase = function(args) {
     args.target = '/data/'+args.database+'/'+args.collection+'/';
     args.idAttribute = '_id';
     var def = new dojo.Deferred();
-    def.callback(new dojox.data.JsonRestStore(args));
+    def.callback(new uow.data.MongoStore(args));
     return def;
 };
