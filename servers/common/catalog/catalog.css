@@ -1,6 +1,11 @@
 html, body, .dijitBorderContainer {
     width: 100%; 
     height: 100%;
+    font-size: 0.95em;
+}
+
+.dijitContentPane {
+    padding: 1em !important;
 }
 
 h1 {
@@ -9,6 +14,14 @@ h1 {
 
 h2 {
     margin-top: 1em;
+}
+
+a {
+    color: #336699;
+}
+
+#nav h2 {
+    margin-bottom: 0em;
 }
 
 p {
@@ -23,6 +36,15 @@ code {
 pre {
     margin-top: 0.5em;
     padding: 0.5em;
+}
+
+ul, li {
+    padding-left: 0em;
+    margin: 0em;
+}
+
+ul {
+    list-style-type: none;
 }
 
 .loading {

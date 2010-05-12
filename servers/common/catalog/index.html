@@ -28,7 +28,18 @@
       <div dojoType="dijit.layout.ContentPane" region="top" splitter="false">
         <h1>UNC Open Web <span id="subtitle"></span></h1>
       </div>
-      <div dojoType="dijit.layout.TabContainer" 
+      <div dojoType="dijit.layout.ContentPane" region="left" splitter="false" id="nav">
+        <ul>
+          <li>Home</li>
+          <h2>Help</h2>
+          <li>Getting started</li>
+          <h2>Services</h2>
+          <li>Audio</li>
+          <li>Database</li>
+          <li>Dojo Trace</li>
+        </ul>
+      </div>
+      <div dojoType="dijit.layout.StackContainer" 
            id="tabs"
            region="center" 
            splitter="true">
@@ -37,6 +48,11 @@
              title="Home"
              preload="true"
              href="catalog_home.html"></div>
+        <div dojoType="dojox.layout.ContentPane" 
+             id="start"
+             preload="true"
+             title="Getting started" 
+             href="catalog_start.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
              id="audio"
              preload="true"

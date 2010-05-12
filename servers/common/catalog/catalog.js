@@ -9,7 +9,7 @@ dojo.provide('uow.app.catalog');
 dojo.require('dojo.hash');
 dojo.require('dijit.layout.BorderContainer');
 dojo.require('dijit.layout.ContentPane');
-dojo.require('dijit.layout.TabContainer');
+dojo.require('dijit.layout.StackContainer');
 dojo.require('dojox.layout.ContentPane');
 dojo.require("dojox.highlight");
 dojo.require("dojox.highlight.languages.javascript");
@@ -18,10 +18,6 @@ dojo.require("dojox.highlight.languages.pygments.javascript");
 dojo.ready(function() {
     dojo.removeClass(dojo.body(), 'loading');
     var tabs = dijit.byId('tabs');
-    var onSelectTab = function() {
-        dojo.hash(tabs.selectedChildWidget.id);
-    };
-    dojo.connect(tabs, 'selectChild', onSelectTab);
     var h = dojo.hash();
     if(h) {
         tabs.selectChild(dijit.byId(h));
@@ -30,6 +26,20 @@ dojo.ready(function() {
     dojo.xhrGet({url : 'info'}).addCallback(function(response) {
         var tmp = '{0} Server Catalog';
         dojo.byId('subtitle').innerHTML = dojo.replace(tmp, [response]);
+    });
+    // connect nav links
+    var panes = tabs.getChildren();
+    var nav = dojo.byId('nav');
+    dojo.query('li', nav).forEach(function(item, i) {
+        var text = item.innerHTML;
+        var node = dojo.create('a', {
+            href : '#'+panes[i].id,
+            innerHTML : text
+        }, item);
+        dojo.connect(node, 'onclick', function(evt) {
+            tabs.selectChild(panes[i]);
+        });
+        dojo.destroy(item.firstChild);
     });
 });
 
