@@ -13,8 +13,9 @@ www/libs/uow/trace.js
 nginx/access.log
 nginx/error.log
 nginx/servers
-servers/*.conf
 servers/dev
 servers/prod
+servers/spaceship
+servers/active/*.conf
 supervisord/*.log
 supervisord/*.pid
