@@ -22,6 +22,11 @@ dojo.ready(function() {
     if(h) {
         tabs.selectChild(dijit.byId(h));
     }
+    dojo.subscribe("/dojo/hashchange", function(id) {
+        id = id || 'home';
+        var pane = dijit.byId(id)
+        tabs.selectChild(pane);
+    });
     // get server name
     dojo.xhrGet({url : 'info'}).addCallback(function(response) {
         var tmp = '{0} Server Catalog';
@@ -36,9 +41,9 @@ dojo.ready(function() {
             href : '#'+panes[i].id,
             innerHTML : text
         }, item);
-        dojo.connect(node, 'onclick', function(evt) {
+        /*dojo.connect(node, 'onclick', function(evt) {
             tabs.selectChild(panes[i]);
-        });
+        });*/
         dojo.destroy(item.firstChild);
     });
 });

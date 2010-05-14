@@ -8,12 +8,32 @@ html, body, .dijitBorderContainer {
     padding: 1em !important;
 }
 
-h1 {
-    margin-top: 0px;
+h1, h2 {
+    margin: 0em;
+    margin-bottom: 0.5em;
+    font-weight: normal;
 }
 
 h2 {
+    font-size: 1.3em;
+}
+
+h3 {
+    font-size: 1.1em;
+}
+
+h2, h3, h4 {
     margin-top: 1em;
+}
+
+#tabs h2 {
+    border-bottom: 1px solid #555;
+    font-size: 1.3em;
+    width: 50em;
+}
+
+#title {
+    margin-bottom: 0em;
 }
 
 a {
@@ -22,10 +42,14 @@ a {
 
 #nav h2 {
     margin-bottom: 0em;
+    margin-top: 1em;
+
 }
 
 p {
-    max-width: 40em; margin-bottom: 0em;
+    max-width: 50em;
+    margin: 0em;
+    margin-bottom: 1em;
 }
 
 code {
@@ -34,16 +58,24 @@ code {
 }
 
 pre {
+    max-width: 50em;
     margin-top: 0.5em;
     padding: 0.5em;
+    margin-bottom: 2em;
 }
 
-ul, li {
+#nav ul, li {
     padding-left: 0em;
     margin: 0em;
 }
 
-ul {
+ul, ol {
+    max-width: 50em;
+    margin-top: 0em;
+    margin-bottom: 1em;
+}
+
+#nav ul {
     list-style-type: none;
 }
 
@@ -62,4 +94,17 @@ ul {
 
 .unavailable {
     color: red;
+}
+
+#start label {
+    text-align: left;
+    width: 15em;
+    padding-right: 1em;
+    display: block;
+    float: left;
+    margin-bottom: 10px;
+}
+
+#start input, select {
+    width: 15em;
 }
