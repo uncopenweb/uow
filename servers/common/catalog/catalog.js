@@ -41,9 +41,6 @@ dojo.ready(function() {
             href : '#'+panes[i].id,
             innerHTML : text
         }, item);
-        /*dojo.connect(node, 'onclick', function(evt) {
-            tabs.selectChild(panes[i]);
-        });*/
         dojo.destroy(item.firstChild);
     });
 });

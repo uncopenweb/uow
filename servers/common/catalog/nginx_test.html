@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Local nginx status</title>
+    <style type="text/css">
+      @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4.1/dojo/resources/dojo.css";
+      @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4.1/dijit/themes/tundra/tundra.css";
+      @import "/catalog/catalog.css";
+      body {
+        margin: 20px;
+        overflow: hidden;
+      }
+    </style>
+    <script type="text/javascript">
+        var djConfig = {
+            isDebug: false,
+            parseOnLoad: true,
+            baseUrl: './'
+        };
+    </script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.4.1/dojo/dojo.xd.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.4.1/dijit/dijit.xd.js"></script>
+    <script type="text/javascript" src="/libs/uow/trace.js"></script>
+    <script type="text/javascript" src="/libs/uow.js"></script>
+    <script type="text/javascript">
+      function serviceStatus(name, available) {
+        var status, cssClass;
+        if(available) {
+            status = 'OK';
+            cssClass = 'available';
+        } else {
+            status = 'NA';
+            cssClass = 'unavailable'
+        }
+        var text = dojo.replace('{name} ({status})', 
+            {name : name, status : status});
+        dojo.create('li', {
+            innerHTML : text,
+            'class' : cssClass
+        }, 'status');
+      }
+      
+      dojo.ready(function() {
+        // audio status
+        uow.getAudio().addCallback(function(js) {
+          js.getEngines().addCallback(function(result) {
+            // got jsonic engines from server
+            serviceStatus('Audio', result.success);
+          }).addErrback(function() {
+            // failed to fetch engines
+            serviceStatus('Audio', false);
+          });
+        }).addErrback(function() {
+          // failed to get jsonic client instance
+          serviceStatus('Audio', false);
+        });
+        // torongo status
+        uow.getDatabase({database: 'catalog', collection : 'status'})
+        .addCallback(function(db) {
+          var d = dojo.date.stamp.toISOString(new Date(), {zulu : true});
+          db.newItem({from : window.location.toString(), dt: d});
+          db.save({
+            onComplete: function() {
+              // saved to database
+              serviceStatus('Database', true);
+            },
+            onError: function() {
+              // failed to save to database
+              serviceStatus('Database', false);
+            }
+          });
+        }).addErrback(function() {
+          // failed to get client instance
+          serviceStatus('Database', false);
+        });
+        // dojo trace status
+        serviceStatus('Trace', uow.trace !== undefined);
+      });
+    </script>
+  </head>
+  <body class="tundra">
+    <h1>Local nginx status</h1>
+    <ul id="status"></ul>
+    <p>If all of the services above list as green and <em>OK</em>, your local nginx configuration is correct. If any one is red and <em>NA</em>, something is wrong. Ask for help on the UOW mailing list.</p>
+  </body>
+</html>
