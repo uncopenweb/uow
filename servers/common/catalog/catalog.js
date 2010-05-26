@@ -28,7 +28,7 @@ dojo.ready(function() {
         tabs.selectChild(pane);
     });
     // get server name
-    dojo.xhrGet({url : 'info'}).addCallback(function(response) {
+    dojo.xhrGet({url : '/libs/servername'}).addCallback(function(response) {
         var tmp = '{0} Server Catalog';
         dojo.byId('subtitle').innerHTML = dojo.replace(tmp, [response]);
     });
