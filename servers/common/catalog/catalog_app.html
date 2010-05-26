@@ -9,17 +9,55 @@
     <li>Visit <a href="http://localhost/local/myapp">http://localhost/local/myapp</a> in your browser to view the running sample.</li>
   </ol>
   
-  <h2>Structuring the app</h2>
+  <h2>Structuring an app</h2>
+  <p>The template you downloaded suggests a clean way of structuring your application both on-disk and in code.</p>
   
   <h3>index.html</h3>
+  <p>The index file loads basic requirements like the Dojo Core JavaScript, Dijit theme stylesheet, and UOW JavaScript. This file also includes references to <em>application.css</em> and <em>application.js</em> which should contain your application specific styles and startup code respectively. Finally, the HTML in the body tag defines the initial layout and Dijits in the application.</p>
+  
+  <h4>Things to change</h4>
+  <ul>
+    <li>The &lt;title&gt; text for your app</li>
+    <li>The Dijit theme stylesheet to use</li>
+    <li>The namespace for your app widgets in <em>modulePaths</em></li>
+    <li>The initial layout of the application in the &lt;body&gt;</li>
+  </ul>
+  
+  <h4>References</h4>
+  <ul>
+    <li><a href="http://dojocampus.org/content/2008/03/08/the-dojo-parser/">The Dojo Parser</a></li>
+    <li><a href="http://docs.dojocampus.org/dijit-themes">Dijit Themes</a></li>
+    <li><a href="http://docs.dojocampus.org/dojo/registerModulePath">Dojo module paths</a></li>
+  </ul>
   
   <h3>application.js</h3>
+  <p>The application JS file imports the Dojo modules for the widgets used in the <em>index.html</em> markup and instantiated in the startup code for the application. The file then declares a main controller class that hooks up event handlers, loads additional content, etc. when the application loads. Finally, the file defines a function that creates an instance of the main class when the page finishes loading.</p>
+  
+  <h4>Things to change</h4>
+  <ul>
+    <li>The module name in <em>dojo.provides</em> to match the namespace you chose in <em>index.html</em></li>
+    <li>The modules imported using <em>dojo.require</em> to </li>
+    <li>The module name in <em>dojo.declare</em> to match the module name in the <em>dojo.provides</em></li>
+    <li>The code in the class to fit your application needs</li>
+  </ul>
   
   <h3>css/</h3>
+  <p>The <em>css</em> folder contains any cascading stylesheets specific to your application.</p>
   
   <h3>css/application.css</h3>
+  <p>The application CSS file styles the application layout. Widget styles can also appear in here or can be imported from their own separate CSS files. All class names in your styles should start with some unique prefix to avoid conflicts (e.g., <em>myappSomeStyle</em>).</p>
+  
+  <h4>Things to change</h4>
+  <ul>
+    <li>The style rules to match your application needs</li>
+  </ul>
   
   <h3>widgets/</h3>
+  <p>This folder contains resources for any custom widgets you write for your applications. The widgets can be reused in multiple places across your application, and possibly across applications.</p>
+  
+  <p>In the root of this folder are JS files containing widget modules and classes. These JS files reference templates and language files in the following subfolders.</p>
+  
+  <p>
   
   <h3>widgets/templates</h3>
   

@@ -22,6 +22,11 @@ h3 {
     font-size: 1.1em;
 }
 
+h4 {
+    font-size: 1.1em;
+    font-weight: normal;
+}
+
 h2, h3, h4 {
     margin-top: 1em;
 }
