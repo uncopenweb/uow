@@ -10,7 +10,7 @@
   </ol>
   
   <h2>Structuring an app</h2>
-  <p>The template you downloaded suggests a clean way of structuring your application both on-disk and in code.</p>
+  <p>The template you downloaded suggests a clean way of structuring your application both on-disk and in code. You should use it as the basis for any new applications you create.</p>
   
   <h3>index.html</h3>
   <p>The index file loads basic requirements like the Dojo Core JavaScript, Dijit theme stylesheet, and UOW JavaScript. This file also includes references to <em>application.css</em> and <em>application.js</em> which should contain your application specific styles and startup code respectively. Finally, the HTML in the body tag defines the initial layout and Dijits in the application.</p>
@@ -26,8 +26,8 @@
   <h4>References</h4>
   <ul>
     <li><a href="http://dojocampus.org/content/2008/03/08/the-dojo-parser/">The Dojo Parser</a></li>
-    <li><a href="http://docs.dojocampus.org/dijit-themes">Dijit Themes</a></li>
-    <li><a href="http://docs.dojocampus.org/dojo/registerModulePath">Dojo module paths</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/dijit-themes.html">Dijit Themes</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/dojo/registerModulePath.html">Dojo module paths</a></li>
   </ul>
   
   <h3>application.js</h3>
@@ -41,6 +41,12 @@
     <li>The code in the class to fit your application needs</li>
   </ul>
   
+  <h4>References</h4>
+  <ul>
+    <li><a href="http://dojotoolkit.org/reference-guide/dojo/provide.html">dojo.provides</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/dojo/require.html">dojo.require</a></li>
+  </ul>
+  
   <h3>css/</h3>
   <p>The <em>css</em> folder contains any cascading stylesheets specific to your application.</p>
   
@@ -51,18 +57,49 @@
   <ul>
     <li>The style rules to match your application needs</li>
   </ul>
+
+  <h4>References</h4>
+  <ul>
+    <li><a href="http://dojotoolkit.org/reference-guide/dijit-themes.html#using-multiple-themes">Multiple themes and overriding themes</a></li>
+  </ul>
   
   <h3>widgets/</h3>
-  <p>This folder contains resources for any custom widgets you write for your applications. The widgets can be reused in multiple places across your application, and possibly across applications.</p>
+  <p>This folder contains resources for any custom widgets you write for your applications. The widgets can be reused in multiple places across your application and possibly across applications. All of your widgets should derive from the base class <em>dijit._Widget</em> and most derive from <em>dijit._Templated</em>. Some may also derive from <em>dijit._Contained</em> and <em>dijit._Container</em>.</p>
   
-  <p>In the root of this folder are JS files containing widget modules and classes. These JS files reference templates and language files in the following subfolders.</p>
+  <p>In the root of this folder are JS files defining widget modules using <em>dojo.provides</em> and declaring the widget classes using <em>dojo.declare</em>. These JS files reference templates and language files in the following subfolders.</p>
   
-  <p>
+  <h4>References</h4>
+  <ul>
+    <li><a href="http://dojotoolkit.org/reference-guide/quickstart/writingWidgets/example.html">Building a widget from scratch</a></li>
+    <li><a href="http://mindtrove.info/articles/creating-an-accessible-internationalized-dojo-rating-widget/">Writing an accessible, internationalized Dojo widget</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/dijit/_Widget.html">dijit._Widget</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/dijit/_Templated.html">dijit._Templated</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/quickstart/widgetHierarchies.html">dijit._Container and dijit._Contains</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/dojo/declare.html">dojo.declare</a></li>
+  </ul>
   
   <h3>widgets/templates</h3>
+  <p>The templates folder contains an HTML file for each <em>dijit._Templated</em> widget you define in the folder above. The name of each file matches the name of the widget (e.g., <em>templates/MyWidget.html</em> goes with <em>MyWidget.js</em>). Each template file contains HTML markup inserted into your web application when its corresponding widget class is instantiated. The markup supports string interpolation plus additional attributes like <em>dojoAttachPoint</em> and <em>dojoAttachEvent</em> that make manipulating the widget DOM nodes easy from within the widget JS class.</p>
   
+  <h4>References</h4>
+  <ul>
+    <li><a href="http://dojotoolkit.org/reference-guide/dijit/_Templated.html#the-template">Template markup</a></li>
+  </ul>
+
   <h3>widgets/nls</h3>
+  <p>The nls folder contains a JS bundle file for each widget you create that shows text to the user. The name of each file matches the name of the widget (e.g., <em>nls/MyWidget.js</em> goes with <em>MyWidget.js</em>). Each nls bundle contains a JavaScript object having keys of your choosing (e.g., <em>widget_title</em>, <em>widget_username_help</em>, etc.) mapped to English strings shown to the user (e.g., <em>My Awesome Widget</em>, <em>Enter your username here</em>, etc.)</p>
+  
+  <p>As a developer, you are responsible for using the keys you define in your widget code and templates. Translators are responsible for creating language subfolders and bundles containing translations of your strings (e.g., <em>nls/zh-cn/MyWidget.js</em>). Dojo is responsible for loading the right bundle based on the user's local language.</p>
+
+  <h4>References</h4>
+  <ul>
+    <li><a href="http://mindtrove.info/articles/creating-an-accessible-internationalized-dojo-rating-widget/">Writing an accessible, internationalized Dojo widget</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/quickstart/internationalization/index.html">Internationalization guide</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/quickstart/internationalization/globalization-guidelines/locale-and-resource-bundle-guidelines.html?highlight=requirelocal">i18n resource bundles</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/dojo/i18n.html">dojo.i18n</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/dojo/requireLocalization.html">dojo.requireLocalization</a></li>
+  </ul>
   
   <h3>Other folders</h3>
-
+  <p>Your application and widgets should define other folders as needed to organize collections of images, sounds, and other resources.</p>
 </div>
