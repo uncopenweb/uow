@@ -6,6 +6,7 @@ html, body, .dijitBorderContainer {
 
 .dijitContentPane {
     padding: 1em !important;
+    background-color: white;
 }
 
 h1, h2 {
