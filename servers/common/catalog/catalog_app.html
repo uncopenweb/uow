@@ -13,7 +13,7 @@
   <p>The template you downloaded suggests a clean way of structuring your application both on-disk and in code. You should use it as the basis for any new applications you create.</p>
   
   <h3>index.html</h3>
-  <p>The index file loads basic requirements like the Dojo Core JavaScript, Dijit theme stylesheet, and UOW JavaScript. This file also includes references to <em>application.css</em> and <em>application.js</em> which should contain your application specific styles and startup code respectively. Finally, the HTML in the body tag defines the initial layout and Dijits in the application.</p>
+  <p>The index file loads basic requirements like the Dojo Core JavaScript, Dijit theme stylesheet, and UOW JavaScript. This file also includes references to <em>application.css</em> and <em>application.js</em> which should contain your application specific styles and startup code respectively. Finally, the HTML in the body tag defines the initial layout and widgets in the application.</p>
   
   <h4>Things to change</h4>
   <ul>
@@ -35,15 +35,15 @@
   
   <h4>Things to change</h4>
   <ul>
-    <li>The module name in <em>dojo.provides</em> to match the namespace you chose in <em>index.html</em></li>
+    <li>The module name in <em>dojo.provide</em> to match the namespace you chose in <em>index.html</em></li>
     <li>The modules imported using <em>dojo.require</em> to </li>
-    <li>The module name in <em>dojo.declare</em> to match the module name in the <em>dojo.provides</em></li>
+    <li>The module name in <em>dojo.declare</em> to match the module name in the <em>dojo.provide</em></li>
     <li>The code in the class to fit your application needs</li>
   </ul>
   
   <h4>References</h4>
   <ul>
-    <li><a href="http://dojotoolkit.org/reference-guide/dojo/provide.html">dojo.provides</a></li>
+    <li><a href="http://dojotoolkit.org/reference-guide/dojo/provide.html">dojo.provide</a></li>
     <li><a href="http://dojotoolkit.org/reference-guide/dojo/require.html">dojo.require</a></li>
   </ul>
   
@@ -66,7 +66,7 @@
   <h3>widgets/</h3>
   <p>This folder contains resources for any custom widgets you write for your applications. The widgets can be reused in multiple places across your application and possibly across applications. All of your widgets should derive from the base class <em>dijit._Widget</em> and most derive from <em>dijit._Templated</em>. Some may also derive from <em>dijit._Contained</em> and <em>dijit._Container</em>.</p>
   
-  <p>In the root of this folder are JS files defining widget modules using <em>dojo.provides</em> and declaring the widget classes using <em>dojo.declare</em>. These JS files reference templates and language files in the following subfolders.</p>
+  <p>In the root of this folder are JS files defining widget modules using <em>dojo.provide</em> and declaring the widget classes using <em>dojo.declare</em>. These JS files reference templates and language files in the following subfolders.</p>
   
   <h4>References</h4>
   <ul>
