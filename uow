@@ -233,7 +233,7 @@ def init(config_name, do_enable=True):
 
     # get nginx info
     nginx = NginxHandler(config_name, tmpl)
-    print 'Handling "nginx" section ...',
+    print 'Handling "nginx" section ...'
     for name, value in cp.items('nginx'):
         try:
             # dispatch to handle keys
@@ -247,11 +247,10 @@ def init(config_name, do_enable=True):
     components = ComponentHandler(config_name, tmpl)
     for section in filter(lambda x: x.startswith('component'), cp.sections()):
         print 'Handling "%s" section ...' % section
-        # handle init first if it exists
         if cp.has_option(section, 'init'):
             components.dispatch(section, 'init', cp.get(section, 'init'), cp)
         for name, value in cp.items(section):
-            if name in ['init', 'update']: continue
+            if name in ['init', 'backup']: continue
             try:
                 # dispatch to handle keys
                 components.dispatch(section, name, value, cp)
@@ -301,12 +300,12 @@ def update(config_name):
 
     # backup existing
     dt = datetime.datetime.now()
-    src = osp.join('servers', config_name)
-    target = osp.join('backups', 
+    bsrc = osp.join('servers', config_name)
+    btarget = osp.join('backups', 
         config_name + '.' + dt.strftime('%Y-%m-%d.%H:%M%:%S'))
-    print 'Backing up %s to %s' % (src, target)
-    #shutil.move(src, target)
-    os.system('mv "%s" "%s"' % (src, target))
+    print 'Backing up %s to %s' % (bsrc, btarget)
+    # use os.system to retain owner/group; shutil.move loses it
+    os.system('mv "%s" "%s"' % (bsrc, btarget))
     # disable existing
     try:
         disable(config_name)
@@ -317,15 +316,26 @@ def update(config_name):
     # restore important sections
     cp = configparser.ConfigParser()
     cp.readfp(open(osp.join('servers', config_name + '.conf')))
+    print 'Restoring backup ...'
     for section in filter(lambda x: x.startswith('component'), cp.sections()):
         try:
-            dirname = cp.get(section, 'backup')
+            rtarget = cp.get(section, 'backup')
         except configparser.NoOptionError:
             continue
-        print 'Restoring %s ...' % dirname
-        # @todo
-
-    print 'Success'
+        bsegs = btarget.split('/')
+        rsegs = rtarget.split('/')
+        rsrc = os.path.join(*(bsegs[:2] + rsegs[2:]))
+        # remove dir created during init
+        try:
+            shutil.rmtree(rtarget)
+        except OSError:
+            pass
+        # use system to preserve owner
+        os.system('mv "%s" "%s"' % (rsrc, rtarget))
+        print 'Restored %s to %s' % (rsrc, rtarget)
+    print 'Done restoring backup'
+    # enable configuration again
+    enable(config_name)
 
 def remove(config_name):
     # require root to set owner / group
