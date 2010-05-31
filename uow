@@ -336,7 +336,7 @@ def update(config_name):
         except OSError:
             pass
         # use system to preserve owner
-        os.system('mv "%s" "%s"' % (rsrc, rtarget))
+        os.system('cp -r "%s" "%s"' % (rsrc, rtarget))
         print 'Restored %s to %s' % (rsrc, rtarget)
     print 'Done restoring backup'
     # enable configuration again
