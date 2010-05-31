@@ -286,6 +286,17 @@ def init(config_name, do_enable=True):
     # enable the config
     if do_enable:
         enable(config_name)
+        
+def _backup(config_name):
+    # backup existing
+    dt = datetime.datetime.now()
+    bsrc = osp.join('servers', config_name)
+    btarget = osp.join('backups', 
+        config_name + '.' + dt.strftime('%Y-%m-%d.%H:%M%:%S'))
+    print 'Backing up %s to %s' % (bsrc, btarget)
+    # use os.system to retain owner/group; shutil.move loses it
+    os.system('mv "%s" "%s"' % (bsrc, btarget))
+    return btarget
 
 def update(config_name):
     # require root to set owner / group
@@ -299,13 +310,7 @@ def update(config_name):
         return
 
     # backup existing
-    dt = datetime.datetime.now()
-    bsrc = osp.join('servers', config_name)
-    btarget = osp.join('backups', 
-        config_name + '.' + dt.strftime('%Y-%m-%d.%H:%M%:%S'))
-    print 'Backing up %s to %s' % (bsrc, btarget)
-    # use os.system to retain owner/group; shutil.move loses it
-    os.system('mv "%s" "%s"' % (bsrc, btarget))
+    btarget = _backup(config_name)
     # disable existing
     try:
         disable(config_name)
@@ -341,20 +346,13 @@ def remove(config_name):
     # require root to set owner / group
     if os.getuid():
         raise ValueError('You must su or sudo to root to remove.')
-    # get path info
-    dname = osp.join('servers', config_name)
-    # check if dir exists
-    if not osp.isdir(dname):
-        print 'Nothing to remove'
-        return
     # confirm dir reset
     reset = _prompt('Are your sure you want to delete %s?' % config_name, 'n')
     if not reset:
         print 'Aborted'
         return
-    print 'Deleting server directories ...'
-    shutil.rmtree(dname)
-    print 'Deleting server nginx config ...'
+    # create a backup
+    _backup(config_name)
     try:
         os.unlink(osp.join('nginx', 'servers', config_name+'.nginx.conf'))
     except OSError:
@@ -412,10 +410,54 @@ def disable(config_name):
 
     print 'Success'
 
+def restart(config_name):
+    print 'Restarting "%s" config ...' % config_name
+    target = osp.join('servers', 'active', config_name+'.conf')
+
+    # read the config file
+    cp = configparser.ConfigParser()
+    cp.readfp(open(target))
+
+    # read all the groups
+    sections = (g for g in cp.sections() if g.startswith('group'))
+    groups = (g.split(':')[1] for g in sections)
+    
+    # restart the groups from supervisor
+    os.system('supervisorctl reread')
+    for group in groups:
+        print 'Restarting %s ...' % group
+        os.system('supervisorctl restart %s:*' % group)
+
+    print 'Success'
+
+def cleanup():
+    # require root to set owner / group
+    if os.getuid():
+        raise ValueError('You must su or sudo to root to cleanup.')
+    # confirm dir reset
+    reset = _prompt('Are your sure you want to cleanup all backups?', 'n')
+    if not reset:
+        print 'Aborted'
+        return
+    print 'Deleting backup directories ...'
+    for name in os.listdir('backups'):
+        dname = osp.join('backups', name)
+        if os.path.isdir(dname):
+            shutil.rmtree(dname)
+    print 'Success'
+
 def run_from_args():
-    usage = "usage: %prog [init|update|enable|disable|remove] [name]"
+    usage = "usage: %prog [init|update|enable|disable|restart|remove|cleanup] [name]"
     parser = optparse.OptionParser(usage=usage)
     (options, args) = parser.parse_args()
+    # one arg params
+    if len(args) < 1:
+        parser.print_usage()
+    if args[0] == 'cleanup':
+        cleanup()
+        return
+    
+    # two arg params
     if len(args) < 2:
         parser.print_usage()
     elif args[0] == 'init':
@@ -428,6 +470,8 @@ def run_from_args():
         enable(args[1])
     elif args[0] == 'disable':
         disable(args[1])
+    elif args[0] == 'restart':
+        restart(args[1])
     else:
         parser.print_usage()
 
