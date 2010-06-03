@@ -4,9 +4,9 @@ import optparse
 import os.path as osp
 import os
 import shutil
+import datetime
 import ConfigParser as configparser
 
-SERVERS_PATH='servers'
 NGINX_SERVER_TMPL = '''\
 # Generated nginx virtual host configuration. 
 # DO NOT EDIT MANUALLY. Use the uow script to update this file.
@@ -16,7 +16,7 @@ server {
     listen ${server_port};
     server_name ${server_name};
     location /libs {
-        alias ../servers/${group_name}/www/libs;
+        alias ../servers/${config_name}/www/libs;
     }
 ${aliases}
 ${proxies}
@@ -27,7 +27,7 @@ upstream ${name} {
 }'''
 NGINX_ALIAS_TMPL = '''\
     location ${url} {
-        alias ../servers/${group_name}/${path};
+        alias ../servers/${config_name}/${path};
     }
 '''
 NGINX_PROXY_TMPL = '''\
@@ -41,9 +41,9 @@ NGINX_PROXY_TMPL = '''\
     }'''
 
 class NginxTemplate(object):
-    def __init__(self, group_name):
+    def __init__(self, config_name):
         self.template = string.Template(NGINX_SERVER_TMPL)
-        self.group_name = group_name
+        self.config_name = config_name
         self.upstreams = []
         self.proxies = []
         self.aliases = []
@@ -61,7 +61,7 @@ class NginxTemplate(object):
         assert(self.server_port is not None and self.server_name is not None)
     
     def add_alias(self, url, path):
-        group_name = self.group_name
+        config_name = self.config_name
         tmpl = string.Template(NGINX_ALIAS_TMPL)
         text = tmpl.safe_substitute(locals())
         self.aliases.append(text)
@@ -84,8 +84,8 @@ class NginxTemplate(object):
         self.server_name = name
 
 class NginxHandler(object):
-    def __init__(self, group_name, nginx_tmpl):
-        self.group_name = group_name
+    def __init__(self, config_name, nginx_tmpl):
+        self.config_name = config_name
         self.nginx_tmpl = nginx_tmpl
 
     def dispatch(self, section, name, value, cp):
@@ -98,8 +98,8 @@ class NginxHandler(object):
         self.nginx_tmpl.set_server_name(value)
 
 class ComponentHandler(object):
-    def __init__(self, group_name, nginx_tmpl):
-        self.group_name = group_name
+    def __init__(self, config_name, nginx_tmpl):
+        self.config_name = config_name
         self.nginx_tmpl = nginx_tmpl
         
     def dispatch(self, section, name, value, cp):
@@ -152,8 +152,8 @@ class ComponentHandler(object):
             print 'Aliased %s -> %s' % (path, url)
 
 class ProgramHandler(object):
-    def __init__(self, group_name, nginx_tmpl):
-        self.group_name = group_name
+    def __init__(self, config_name, nginx_tmpl):
+        self.config_name = config_name
         self.nginx_tmpl = nginx_tmpl
         
     def dispatch(self, section, name, value, cp):
@@ -179,7 +179,7 @@ def _prompt(msg, default):
         elif i in ['n', 'no']:
             return False
 
-def init(group_name):
+def init(config_name, do_enable=True):
     # require root to set owner / group
     if os.getuid():
         raise ValueError('You must su or sudo to root to init.')
@@ -187,8 +187,8 @@ def init(group_name):
     owner = int(os.environ.get('SUDO_UID', 0))
     # get path info
     cwd = os.getcwd()
-    dname = osp.join(SERVERS_PATH, group_name)
-    cname = osp.join(SERVERS_PATH, group_name+'.conf')
+    dname = osp.join('servers', config_name)
+    cname = osp.join('servers', config_name+'.conf')
     # read config file
     cp = configparser.ConfigParser()
     cp.readfp(open(cname))
@@ -196,18 +196,18 @@ def init(group_name):
     # check if dir exists
     if osp.isdir(dname):
         # confirm dir reset
-        reset = _prompt('Are your sure you want to delete %s?' % group_name, 'n')
+        reset = _prompt('Are your sure you want to delete %s?' % config_name, 'n')
         if reset:
             print 'Deleting server directories ...'
             shutil.rmtree(dname)
             print 'Deleting server nginx config ...'
             try:
-                os.unlink(osp.join('nginx', 'servers', group_name+'.nginx.conf'))
+                os.unlink(osp.join('nginx', 'servers', config_name+'.nginx.conf'))
             except OSError:
                 pass
             print 'Deleting active symlink ...'
             try:
-                os.unlink(osp.join('servers', 'active', group_name+'.conf'))
+                os.unlink(osp.join('servers', 'active', config_name+'.conf'))
             except OSError:
                 pass
             print 'Done deleting'
@@ -229,11 +229,11 @@ def init(group_name):
     os.makedirs(osp.join('components'), 0765)
     print 'Done creating server directories\n'
     # start an nginx template
-    tmpl = NginxTemplate(group_name)
+    tmpl = NginxTemplate(config_name)
 
     # get nginx info
-    nginx = NginxHandler(group_name, tmpl)
-    print 'Handling "nginx" section ...',
+    nginx = NginxHandler(config_name, tmpl)
+    print 'Handling "nginx" section ...'
     for name, value in cp.items('nginx'):
         try:
             # dispatch to handle keys
@@ -244,14 +244,13 @@ def init(group_name):
     print 'Done handling "nginx"\n'
 
     # get components
-    components = ComponentHandler(group_name, tmpl)
+    components = ComponentHandler(config_name, tmpl)
     for section in filter(lambda x: x.startswith('component'), cp.sections()):
         print 'Handling "%s" section ...' % section
-        # handle init first if it exists
         if cp.has_option(section, 'init'):
             components.dispatch(section, 'init', cp.get(section, 'init'), cp)
         for name, value in cp.items(section):
-            if name in ['init', 'update']: continue
+            if name in ['init', 'backup']: continue
             try:
                 # dispatch to handle keys
                 components.dispatch(section, name, value, cp)
@@ -269,7 +268,7 @@ def init(group_name):
     print 'Done setting user\n'
 
     # get programs
-    programs = ProgramHandler(group_name, tmpl)
+    programs = ProgramHandler(config_name, tmpl)
     for section in filter(lambda x: x.startswith('program'), cp.sections()):
         print 'Handling "%s" section ...' % section
         if cp.has_option(section, 'user'):
@@ -281,69 +280,184 @@ def init(group_name):
     # write nginx config
     conf = tmpl.render()
     os.chdir(cwd)
-    fh = file(osp.join('nginx', 'servers', group_name+'.nginx.conf'), 'w')
+    fh = file(osp.join('nginx', 'servers', config_name+'.nginx.conf'), 'w')
     fh.write(conf)
     fh.close()
     # enable the config
-    enable(group_name)
+    if do_enable:
+        enable(config_name)
+        
+def _backup(config_name):
+    # backup existing
+    dt = datetime.datetime.now()
+    bsrc = osp.join('servers', config_name)
+    btarget = osp.join('backups', 
+        config_name + '.' + dt.strftime('%Y-%m-%d.%H:%M%:%S'))
+    print 'Backing up %s to %s' % (bsrc, btarget)
+    # use os.system to retain owner/group; shutil.move loses it
+    os.system('mv "%s" "%s"' % (bsrc, btarget))
+    return btarget
 
-def update(group_name):
-    # read config file
-    # get non-existing components
-    # create symlinks
-    # generate nginx config sections
-    # ask to update existing components
-    # prompt to reload supervisord?
-    pass
+def update(config_name):
+    # require root to set owner / group
+    if os.getuid():
+        raise ValueError('You must su or sudo to root to update.')
 
-def remove(group_name):
+    # confirm dir reset
+    reset = _prompt('Are your sure you want to update %s?' % config_name, 'n')
+    if not reset:
+        print 'Aborted'
+        return
+
+    # backup existing
+    btarget = _backup(config_name)
+    # disable existing
+    try:
+        disable(config_name)
+    except IOError:
+        pass
+    # init existing
+    init(config_name, False)
+    # restore important sections
+    cp = configparser.ConfigParser()
+    cp.readfp(open(osp.join('servers', config_name + '.conf')))
+    print 'Restoring backup ...'
+    for section in filter(lambda x: x.startswith('component'), cp.sections()):
+        try:
+            rtarget = cp.get(section, 'backup')
+        except configparser.NoOptionError:
+            continue
+        bsegs = btarget.split('/')
+        rsegs = rtarget.split('/')
+        rsrc = os.path.join(*(bsegs[:2] + rsegs[2:]))
+        # remove dir created during init
+        try:
+            shutil.rmtree(rtarget)
+        except OSError:
+            pass
+        # use system to preserve owner
+        os.system('cp -r "%s" "%s"' % (rsrc, rtarget))
+        print 'Restored %s to %s' % (rsrc, rtarget)
+    print 'Done restoring backup'
+    # enable configuration again
+    enable(config_name)
+
+def remove(config_name):
     # require root to set owner / group
     if os.getuid():
         raise ValueError('You must su or sudo to root to remove.')
-    # get path info
-    dname = osp.join(SERVERS_PATH, group_name)
-    # check if dir exists
-    if osp.isdir(dname):
-        # confirm dir reset
-        reset = _prompt('Are your sure you want to delete %s?' % group_name, 'n')
-        if reset:
-            print 'Deleting server directories ...'
+    # confirm dir reset
+    reset = _prompt('Are your sure you want to delete %s?' % config_name, 'n')
+    if not reset:
+        print 'Aborted'
+        return
+    # create a backup
+    _backup(config_name)
+    try:
+        os.unlink(osp.join('nginx', 'servers', config_name+'.nginx.conf'))
+    except OSError:
+        pass
+    # disable the config
+    disable(config_name)
+
+def enable(config_name):
+    print 'Enabling "%s" config ...' % config_name
+    target = osp.join('servers', 'active', config_name+'.conf')
+    os.symlink(osp.join('..', config_name+'.conf'), target)
+
+    # read the config file
+    cp = configparser.ConfigParser()
+    cp.readfp(open(target))
+
+    # read all the groups
+    sections = (g for g in cp.sections() if g.startswith('group'))
+    groups = (g.split(':')[1] for g in sections)
+    
+    # add and start the groups in supervisor
+    os.system('supervisorctl reread')
+    for group in groups:
+        print 'Adding and starting %s ...' % group
+        os.system('supervisorctl add %s' % group)
+        os.system('supervisorctl start %s:*' % group)
+    
+    print 'Success'
+
+def disable(config_name):
+    print 'Disabling "%s" config ...' % config_name
+    target = osp.join('servers', 'active', config_name+'.conf')
+
+    # read the config file
+    cp = configparser.ConfigParser()
+    cp.readfp(open(target))
+
+    # read all the groups
+    sections = (g for g in cp.sections() if g.startswith('group'))
+    groups = (g.split(':')[1] for g in sections)
+
+    # remove the symlink
+    print 'Deleting active symlink ...'
+    try:
+        os.unlink(target)
+    except OSError:
+        pass
+
+    # stop and remove the groups from supervisor
+    os.system('supervisorctl reread')
+    for group in groups:
+        print 'Stopping and removing %s ...' % group
+        os.system('supervisorctl stop %s:*' % group)
+        os.system('supervisorctl remove %s' % group)
+
+    print 'Success'
+
+def restart(config_name):
+    print 'Restarting "%s" config ...' % config_name
+    target = osp.join('servers', 'active', config_name+'.conf')
+
+    # read the config file
+    cp = configparser.ConfigParser()
+    cp.readfp(open(target))
+
+    # read all the groups
+    sections = (g for g in cp.sections() if g.startswith('group'))
+    groups = (g.split(':')[1] for g in sections)
+    
+    # restart the groups from supervisor
+    os.system('supervisorctl reread')
+    for group in groups:
+        print 'Restarting %s ...' % group
+        os.system('supervisorctl restart %s:*' % group)
+
+    print 'Success'
+
+def cleanup():
+    # require root to set owner / group
+    if os.getuid():
+        raise ValueError('You must su or sudo to root to cleanup.')
+    # confirm dir reset
+    reset = _prompt('Are your sure you want to cleanup all backups?', 'n')
+    if not reset:
+        print 'Aborted'
+        return
+    print 'Deleting backup directories ...'
+    for name in os.listdir('backups'):
+        dname = osp.join('backups', name)
+        if os.path.isdir(dname):
             shutil.rmtree(dname)
-            print 'Deleting server nginx config ...'
-            try:
-                os.unlink(osp.join('nginx', 'servers', group_name+'.nginx.conf'))
-            except OSError:
-                pass
-            print 'Deleting active symlink ...'
-            try:
-                os.unlink(osp.join('servers', 'active', group_name+'.conf'))
-            except OSError:
-                pass
-            print 'Done deleting'
-        else:
-            print 'Aborted'
-            return
-    else:
-        print 'Nothing to remove'
-    print 'Success'
-
-
-def enable(group_name):
-    print 'Enabling "%s" config ...' % group_name
-    target = osp.join(SERVERS_PATH, 'active', group_name+'.conf')
-    os.symlink(osp.join('..', group_name+'.conf'), target)
-    print 'Success'
-
-def disable(group_name):
-    print 'Disabling "%s" config ...' % group_name
-    target = osp.join(SERVERS_PATH, 'active', group_name+'.conf')
-    os.unlink(target)
     print 'Success'
 
 def run_from_args():
-    usage = "usage: %prog [init|update|enable|disable|remove] [name]"
+    usage = "usage: %prog [init|update|enable|disable|restart|remove|cleanup] [name]"
     parser = optparse.OptionParser(usage=usage)
     (options, args) = parser.parse_args()
+    # one arg params
+    if len(args) < 1:
+        parser.print_usage()
+    if args[0] == 'cleanup':
+        cleanup()
+        return
+    
+    # two arg params
     if len(args) < 2:
         parser.print_usage()
     elif args[0] == 'init':
@@ -356,6 +470,8 @@ def run_from_args():
         enable(args[1])
     elif args[0] == 'disable':
         disable(args[1])
+    elif args[0] == 'restart':
+        restart(args[1])
     else:
         parser.print_usage()
 
