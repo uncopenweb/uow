@@ -32,6 +32,20 @@
     <li><a href="http://docs.dojocampus.org/dojox/data/JsonRestStore">dojox.data.JsonRestStore documentation</a></li>
     <li><a href="http://www.mongodb.org/display/DOCS/Home">MongoDB documentation</a></li>
   </ul>
+  
+  <h2>API</h2>
+  <p><code>uow.getDatabase(args) &rarr; dojo.Deferred</code></p>
+  <p>This method initializes the database interface for use in your application. You can call this function any number of times to get references to different databases and collections.</p>
+  <p>The <tt>args</tt> parameter must have the following attributes configuring your access to the database:</p>
+  
+  <dl>
+    <dt>database (string)</dt>
+    <dd>Name of the database to access.</dd>
+    <dt>collection (string)</dt>
+    <dd>Name of the collection in the database to access.</dd>
+  </dl>
+  
+  <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive a <a href="http://parente.github.com/jsonic/js.html#the-jsonic-interface"><tt>info.mindtrove.JSonic</tt> instance</a> for your use.</p>
 
   <h2>Examples</h2>
   <h3>Save a new person object in the <em>rolodex</em> collection of the <em>catalog</em> database</h3>
