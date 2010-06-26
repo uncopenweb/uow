@@ -27,7 +27,7 @@ uow.getAudio = function(args) {
 
 uow.getDatabase = function(args) {
     def = { idAttribute: '_id',
-            mode: 'r' };
+            mode: 'crud' };
     args = args || {};
     args = dojo.mixin(def, args);
     var xhr = {
