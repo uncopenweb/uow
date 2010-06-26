@@ -30,7 +30,6 @@ uow.getDatabase = function(args) {
             mode: 'r' };
     args = args || {};
     args = dojo.mixin(def, args);
-    args.target = '/data/'+args.database+'/'+args.collection+'/';
     var xhr = {
         url: '/data/_auth',
         handleAs: 'json',
