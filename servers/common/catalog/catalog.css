@@ -53,9 +53,14 @@ a {
 
 }
 
-p {
+p, dl {
     max-width: 50em;
     margin: 0em;
+    margin-bottom: 1em;
+}
+
+dd {
+    font-style: italic;
     margin-bottom: 1em;
 }
 
