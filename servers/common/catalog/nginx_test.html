@@ -56,7 +56,7 @@
           serviceStatus('Audio', false);
         });
         // torongo status
-        uow.getDatabase({database: 'catalog', collection : 'status'})
+        uow.getDatabase({database: 'catalog', collection : 'status', mode : 'rc' })
         .addCallback(function(db) {
           var d = dojo.date.stamp.toISOString(new Date(), {zulu : true});
           db.newItem({from : window.location.toString(), dt: d});

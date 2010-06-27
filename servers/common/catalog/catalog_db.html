@@ -3,7 +3,7 @@
     dojo.require('dojo.date.stamp');
     dojo.ready(function() {
       uow.app.catalog.parseExamples('dbContainer');
-      uow.getDatabase({database: 'catalog', collection : 'status'})
+      uow.getDatabase({database: 'catalog', collection : 'status', mode: 'cr' })
       .addCallback(function(db) {
         var d = dojo.date.stamp.toISOString(new Date(), {zulu : true});
         db.newItem({from : window.location.toString(), dt: d});
@@ -58,7 +58,7 @@
   <button id="db_ex1">Run</button></label>
   <div id="db_ex1code">
     <pre><code dojoType="dojox.highlight.Code"
->var def = uow.getDatabase({database: 'catalog', collection : 'rolodex'});
+>var def = uow.getDatabase({database: 'catalog', collection : 'rolodex', mode : 'c' });
 def.addCallback(function(db) {
   var fn = dojo.byId('db_ex1first');
   var ln = dojo.byId('db_ex1last');
@@ -74,7 +74,7 @@ def.addCallback(function(db) {
   <textarea class="results" id="db_ex1log"></textarea>
   <div id="db_ex2code">
     <pre><code dojoType="dojox.highlight.Code"
->var def = uow.getDatabase({database: 'catalog', collection : 'rolodex'});
+>var def = uow.getDatabase({database: 'catalog', collection : 'rolodex', mode : 'r' });
 def.addCallback(function(db) {
   var i = 1;
   db.fetch({
