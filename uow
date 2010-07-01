@@ -336,7 +336,7 @@ def update(config_name):
         except OSError:
             pass
         # use system to preserve owner
-        os.system('cp -r "%s" "%s"' % (rsrc, rtarget))
+        os.system('cp -pr "%s" "%s"' % (rsrc, rtarget))
         print 'Restored %s to %s' % (rsrc, rtarget)
     print 'Done restoring backup'
     # enable configuration again
@@ -450,9 +450,12 @@ def run_from_args():
     usage = "usage: %prog [init|update|enable|disable|restart|remove|cleanup] [name]"
     parser = optparse.OptionParser(usage=usage)
     (options, args) = parser.parse_args()
-    # one arg params
+    # never takes zero args
     if len(args) < 1:
         parser.print_usage()
+        return
+
+    # one arg params
     if args[0] == 'cleanup':
         cleanup()
         return
