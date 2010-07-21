@@ -43,19 +43,16 @@ uow.getDatabase = function(args) {
 
     var def = new dojo.Deferred();
     dojo.xhrPost(xhr).addCallback(function(response) {
-        console.log('got response', response);
         args.target = response.url;
         args.accessKey = response.key;
         def.callback(new uow.data.MongoStore(args));
     }).addErrback(function(err) {
-        console.log('error', err);
         def.errback(err);
     });
     return def;
 };
 
 uow._handleOpenIDResponse = function(id) {
-    console.log('login not initialized');
 };
 
 uow.getUser = function() {
@@ -74,9 +71,7 @@ uow.getUser = function() {
 uow.triggerLogin = function() {
     var loginDeferred = new dojo.Deferred();
     uow._handleOpenIDResponse = function(flag) {
-        console.log('here');
         loginDeferred.callback({ flag: flag, user: uow.getUser() });
-        console.log('there');
     }
     // uow._openIDWindowOpened = false;
     // setTimeout(function() {
@@ -85,11 +80,8 @@ uow.triggerLogin = function() {
     //     }
     // }, 1000);
     // uow._handleOpenIDStart = function() {
-    //     console.log('got start');
     //     uow._openIDWindowOpened = true;
     // }
-    console.log('opening');
     popup = window.open('/data/_auth', 'Login_Popup', 'width=790,height=580');
-    console.log('back from opening');
     return loginDeferred;
 };
