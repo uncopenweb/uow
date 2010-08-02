@@ -338,7 +338,7 @@ def _backup(config_name):
     dt = datetime.datetime.now()
     bsrc = osp.join('servers', config_name)
     btarget = osp.join('backups', 
-        config_name + '.' + dt.strftime('%Y-%m-%d.%H:%M%:%S'))
+        config_name + '.' + dt.strftime('%Y-%m-%d.%H:%M:%S'))
     print 'Backing up %s to %s' % (bsrc, btarget)
     # use os.system to retain owner/group; shutil.move loses it
     os.system('mv "%s" "%s"' % (bsrc, btarget))
@@ -363,7 +363,11 @@ def update(config_name):
     except IOError:
         pass
     # init existing
-    init(config_name, False)
+    try:
+        init(config_name, False)
+    finally:
+        # init drops to pre-sudo user, set it back
+        os.seteuid(0)
     # restore important sections
     cp = configparser.ConfigParser()
     cp.readfp(open(osp.join('servers', config_name + '.conf')))
@@ -382,7 +386,7 @@ def update(config_name):
         except OSError:
             pass
         # use system to preserve owner
-        os.system('cp -pr "%s" "%s"' % (rsrc, rtarget))
+        os.system('cp -a "%s" "%s"' % (rsrc, rtarget))
         print 'Restored %s to %s' % (rsrc, rtarget)
     print 'Done restoring backup'
     # enable configuration again
@@ -404,7 +408,11 @@ def remove(config_name):
     except OSError:
         pass
     # disable the config
-    disable(config_name)
+    try:
+        disable(config_name)
+    except IOError:
+        # ignore if wasn't active
+        pass
 
 def enable(config_name):
     print 'Enabling "%s" config ...' % config_name
