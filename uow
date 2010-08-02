@@ -317,7 +317,11 @@ def update(config_name):
     except IOError:
         pass
     # init existing
-    init(config_name, False)
+    try:
+        init(config_name, False)
+    finally:
+        # init drops to pre-sudo user, set it back
+        os.seteuid(0)
     # restore important sections
     cp = configparser.ConfigParser()
     cp.readfp(open(osp.join('servers', config_name + '.conf')))
