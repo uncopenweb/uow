@@ -3,7 +3,9 @@ import string
 import optparse
 import os.path as osp
 import os
+import sys
 import shutil
+import subprocess
 import datetime
 import ConfigParser as configparser
 
@@ -18,7 +20,12 @@ server {
     location /libs {
         alias ../servers/${config_name}/www/libs;
     }
+    location /local {
+        alias /home/gb/public_html;
+        autoindex on;
+    }
 ${aliases}
+${upload}
 ${proxies}
 }'''
 NGINX_UPSTREAM_TMPL = '''\
@@ -39,6 +46,33 @@ NGINX_PROXY_TMPL = '''\
         proxy_set_header X-Scheme $scheme;
         proxy_pass ${upstream};
     }'''
+    
+NGINX_UPLOAD_TMPL = '''\
+    location ${url} {
+        # Pass altered request body to this location
+        upload_pass ${upstream};
+
+        # Store files to this directory
+        # The directory is hashed, subdirectories 0 1 2 3 4 5 6 7 8 9 should exist
+        upload_store /var/tmp/uow 1;
+        
+        # Allow uploaded files to be read only by user
+        # upload_store_access user:r;
+
+        # Set specified fields in request body
+        upload_set_form_field $upload_field_name.name "$upload_file_name";
+        upload_set_form_field $upload_field_name.content_type "$upload_content_type";
+        upload_set_form_field $upload_field_name.path "$upload_tmp_path";
+
+        # Inform backend about hash and size of a file
+        #upload_aggregate_form_field "$upload_field_name.md5" "$upload_file_md5";
+        #upload_aggregate_form_field "$upload_field_name.size" "$upload_file_size";
+
+        upload_pass_form_field "^submit$|^description$";
+
+        upload_cleanup 400 404 499 500-505;
+    }'''
+
 
 class NginxTemplate(object):
     def __init__(self, config_name):
@@ -46,6 +80,7 @@ class NginxTemplate(object):
         self.config_name = config_name
         self.upstreams = []
         self.proxies = []
+        self.upload = []
         self.aliases = []
         self.server_name = None
         self.server_port = None
@@ -55,6 +90,7 @@ class NginxTemplate(object):
         args['upstreams'] = '\n'.join(self.upstreams)
         args['aliases'] = '\n'.join(self.aliases)
         args['proxies'] = '\n'.join(self.proxies)
+        args['upload'] = '\n'.join(self.upload)
         return self.template.substitute(args)
 
     def assert_complete(self):
@@ -70,6 +106,11 @@ class NginxTemplate(object):
         tmpl = string.Template(NGINX_PROXY_TMPL)
         text = tmpl.safe_substitute(locals())
         self.proxies.append(text)
+        
+    def add_upload(self, url, upstream):
+        tmpl = string.Template(NGINX_UPLOAD_TMPL)
+        text = tmpl.safe_substitute(locals())
+        self.upload.append(text)
         
     def add_upstream(self, name, servers):
         servers = '\n'.join(['server %s;' % server for server in servers])
@@ -110,7 +151,7 @@ class ComponentHandler(object):
 
     def init(self, section, value, cp):
         os.system(value)
-        
+
     def program(self, section, value, cp):
         # exist to avoid unsupported key warning
         pass
@@ -145,6 +186,13 @@ class ComponentHandler(object):
             self.nginx_tmpl.add_proxy(url, path)
             print 'Proxied %s -> %s' % (path, url)
             
+    def upload(self, section, value, cp):
+        # add uploads
+        pairs = value.split(',')
+        for url, path in zip(pairs[::2], pairs[1::2]):
+            self.nginx_tmpl.add_upload(url, path)
+            print 'Upload %s -> %s' % (path, url)
+            
     def aliases(self, section, value, cp):
         pairs = value.split(',')
         for url, path in zip(pairs[::2], pairs[1::2]):
@@ -164,8 +212,11 @@ class ProgramHandler(object):
         try:
             path = cp.get(section, 'directory')
             path = '/'.join(path.split('/')[2:])
-            os.system('chown -h %s %s' % (value, path))
-            os.system('chown -R -L %s %s' % (value, path))
+            subprocess.check_call(['chown', '-h', value, path])
+            subprocess.check_call(['chown', '-R', '-L', value, path])
+        except subprocess.CalledProcessError, e:
+            print 'ERROR: could not set ownership properly'
+            raise e
         finally:
             os.seteuid(int(os.environ.get('SUDO_UID', 0)))
         print 'Set ownership %s -> %s' % (value, path)
@@ -259,11 +310,16 @@ def init(config_name, do_enable=True):
         print 'Done handling "%s"\n' % section
 
     # chown everything to the original user
-    # @todo: wouldn't need this if we used subprocess instead of os.system probably
     print 'Setting ownership to user %s' % owner
     os.chdir(cwd)
-    os.system('chown -R -L %s %s' % (owner, dname))
-    os.system('chown -R -h %s %s' % (owner, dname))
+    os.seteuid(0)
+    try:
+        subprocess.check_call(['chown', '-R', '-L', str(owner), dname])
+        subprocess.check_call(['chown', '-R', '-h', str(owner), dname])
+    except subprocess.CalledProcessError, e:
+        print 'ERROR: could not set ownership properly'
+        raise e
+    os.seteuid(owner)
     os.chdir(dname)
     print 'Done setting user\n'
 
@@ -292,16 +348,26 @@ def _backup(config_name):
     dt = datetime.datetime.now()
     bsrc = osp.join('servers', config_name)
     btarget = osp.join('backups', 
-        config_name + '.' + dt.strftime('%Y-%m-%d.%H:%M%:%S'))
+        config_name + '.' + dt.strftime('%Y-%m-%d.%H:%M:%S'))
     print 'Backing up %s to %s' % (bsrc, btarget)
-    # use os.system to retain owner/group; shutil.move loses it
-    os.system('mv "%s" "%s"' % (bsrc, btarget))
+    # use mv to retain owner/group; shutil.move loses it
+    try:
+        subprocess.check_call(['mv', bsrc, btarget])
+    except subprocess.CalledProcessError, e:
+        print 'ERROR: could not make backup copy'
+        raise e
     return btarget
 
 def update(config_name):
     # require root to set owner / group
     if os.getuid():
         raise ValueError('You must su or sudo to root to update.')
+
+    # check if dir exists
+    dname = osp.join('servers', config_name)
+    if not osp.isdir(dname):
+        print 'ERROR: no such server: %s' % config_name
+        return
 
     # confirm dir reset
     reset = _prompt('Are your sure you want to update %s?' % config_name, 'n')
@@ -313,11 +379,15 @@ def update(config_name):
     btarget = _backup(config_name)
     # disable existing
     try:
-        disable(config_name)
+        disable(config_name, False)
     except IOError:
         pass
     # init existing
-    init(config_name, False)
+    try:
+        init(config_name, False)
+    finally:
+        # init drops to pre-sudo user, set it back
+        os.seteuid(0)
     # restore important sections
     cp = configparser.ConfigParser()
     cp.readfp(open(osp.join('servers', config_name + '.conf')))
@@ -336,7 +406,11 @@ def update(config_name):
         except OSError:
             pass
         # use system to preserve owner
-        os.system('cp -pr "%s" "%s"' % (rsrc, rtarget))
+        try:
+            subprocess.check_call(['cp', '-a', rsrc, rtarget])
+        except subprocess.CalledProcessError, e:
+            print 'ERROR: could not restore from backup'
+            raise e
         print 'Restored %s to %s' % (rsrc, rtarget)
     print 'Done restoring backup'
     # enable configuration again
@@ -346,6 +420,12 @@ def remove(config_name):
     # require root to set owner / group
     if os.getuid():
         raise ValueError('You must su or sudo to root to remove.')
+    # check if dir exists
+    dname = osp.join('servers', config_name)
+    if not osp.isdir(dname):
+        print 'ERROR: no such server: %s' % config_name
+        return
+
     # confirm dir reset
     reset = _prompt('Are your sure you want to delete %s?' % config_name, 'n')
     if not reset:
@@ -358,12 +438,25 @@ def remove(config_name):
     except OSError:
         pass
     # disable the config
-    disable(config_name)
+    try:
+        disable(config_name, False)
+    except IOError:
+        # ignore if wasn't active
+        pass
 
 def enable(config_name):
+    # check if dir exists
+    dname = osp.join('servers', config_name)
+    if not osp.isdir(dname):
+        print 'ERROR: no such server: %s' % config_name
+        return
+    
     print 'Enabling "%s" config ...' % config_name
     target = osp.join('servers', 'active', config_name+'.conf')
-    os.symlink(osp.join('..', config_name+'.conf'), target)
+    try:
+        os.symlink(osp.join('..', config_name+'.conf'), target)
+    except OSError:
+        print 'WARNING: symlink already exists: %s' % config_name+'.conf'
 
     # read the config file
     cp = configparser.ConfigParser()
@@ -374,17 +467,27 @@ def enable(config_name):
     groups = (g.split(':')[1] for g in sections)
     
     # add and start the groups in supervisor
-    os.system('supervisorctl reread')
+    try:
+        subprocess.check_call(['supervisorctl', 'reread'])
+    except subprocess.CalledProcessError, e:
+        print 'ERROR: could not reread supervisord config'
+        return
     for group in groups:
         print 'Adding and starting %s ...' % group
-        os.system('supervisorctl add %s' % group)
-        os.system('supervisorctl start %s:*' % group)
-    
-    print 'Success'
+        try:
+            subprocess.check_call(['supervisorctl', 'add', group])
+            subprocess.check_call(['supervisorctl', 'start', '%s:*' % group])
+        except subprocess.CalledProcessError, e:
+            print 'ERROR: could not add / start supervisord group: %s' % group
 
-def disable(config_name):
-    print 'Disabling "%s" config ...' % config_name
+def disable(config_name, check_exists=True):
+    # check if symlink exists
     target = osp.join('servers', 'active', config_name+'.conf')
+    if check_exists and not osp.islink(target):
+        print 'ERROR: server not active: %s' % config_name
+        return
+    
+    print 'Disabling "%s" config ...' % config_name
 
     # read the config file
     cp = configparser.ConfigParser()
@@ -402,13 +505,18 @@ def disable(config_name):
         pass
 
     # stop and remove the groups from supervisor
-    os.system('supervisorctl reread')
+    try:
+        subprocess.check_call(['supervisorctl', 'reread'])
+    except subprocess.CalledProcessError, e:
+        print 'ERROR: could reread supervisord config'
+        return
     for group in groups:
         print 'Stopping and removing %s ...' % group
-        os.system('supervisorctl stop %s:*' % group)
-        os.system('supervisorctl remove %s' % group)
-
-    print 'Success'
+        try:
+            subprocess.check_call(['supervisorctl', 'stop', '%s:*' % group])
+            subprocess.check_call(['supervisorctl', 'remove', group])
+        except subprocess.CalledProcessError, e:
+            print 'ERROR: could not stop / remove supervisord group: %s' % group
 
 def restart(config_name):
     print 'Restarting "%s" config ...' % config_name
@@ -423,12 +531,17 @@ def restart(config_name):
     groups = (g.split(':')[1] for g in sections)
     
     # restart the groups from supervisor
-    os.system('supervisorctl reread')
+    try:
+        subprocess.check_call(['supervisorctl', 'reread'])
+    except subprocess.CalledProcessError, e:
+        print 'ERROR: could not reread supervisord config'
+        return
     for group in groups:
         print 'Restarting %s ...' % group
-        os.system('supervisorctl restart %s:*' % group)
-
-    print 'Success'
+        try:
+            subprocess.check_call(['supervisorctl', 'restart', '%s:*' % group])
+        except subprocess.CalledProcessError, e:
+            print 'ERROR: could not restart supervisord group: %s' % group
 
 def cleanup():
     # require root to set owner / group
@@ -444,7 +557,6 @@ def cleanup():
         dname = osp.join('backups', name)
         if os.path.isdir(dname):
             shutil.rmtree(dname)
-    print 'Success'
 
 def run_from_args():
     usage = "usage: %prog [init|update|enable|disable|restart|remove|cleanup] [name]"

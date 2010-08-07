@@ -43,6 +43,17 @@
     <dd>Name of the database to access.</dd>
     <dt>collection (string)</dt>
     <dd>Name of the collection in the database to access.</dd>
+    <dt>mode (string)</dt>
+    <dd>Permissions requested for accessing the database. Right now, any permissions requested are granted. If mode is left undefined, all permissions are requested and granted. The mode string can contain one or more of the following characters representing permissions:
+      <ul>
+        <li>c : Create records</li>
+        <li>r : Read records</li>
+        <li>u : Update existing records</li>
+        <li>d : Delete records</li>
+        <li>D : Drop collection permission</li>
+        <li>L : List collections permission</li>
+      </ul>
+    </ds>
   </dl>
   
   <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive a <a href="http://parente.github.com/jsonic/js.html#the-jsonic-interface"><tt>info.mindtrove.JSonic</tt> instance</a> for your use.</p>
@@ -58,7 +69,11 @@
   <button id="db_ex1">Run</button></label>
   <div id="db_ex1code">
     <pre><code dojoType="dojox.highlight.Code"
->var def = uow.getDatabase({database: 'catalog', collection : 'rolodex', mode : 'c' });
+>var def = uow.getDatabase({
+  database: 'catalog', 
+  collection : 'rolodex', 
+  mode : 'c'
+});
 def.addCallback(function(db) {
   var fn = dojo.byId('db_ex1first');
   var ln = dojo.byId('db_ex1last');
@@ -74,7 +89,11 @@ def.addCallback(function(db) {
   <textarea class="results" id="db_ex1log"></textarea>
   <div id="db_ex2code">
     <pre><code dojoType="dojox.highlight.Code"
->var def = uow.getDatabase({database: 'catalog', collection : 'rolodex', mode : 'r' });
+>var def = uow.getDatabase({
+  database: 'catalog', 
+  collection : 'rolodex', 
+  mode : 'r'
+});
 def.addCallback(function(db) {
   var i = 1;
   db.fetch({
