@@ -150,17 +150,8 @@ class ComponentHandler(object):
         pass
 
     def init(self, section, value, cp):
-        # get pre-sudo user
-        owner = int(os.environ.get('SUDO_UID', 0))
-        p = os.fork()
-        if p:
-            os.waitpid(p, 0)
-        else:
-            os.seteuid(0) # back to root?
-            os.setuid(owner) # then to me
-            os.system(value) # then run the command as me
-            sys.exit(0) # then exit
-        
+        os.system(value)
+
     def program(self, section, value, cp):
         # exist to avoid unsupported key warning
         pass
