@@ -52,26 +52,21 @@ uow.getDatabase = function(args) {
     return def;
 };
 
-uow._handleOpenIDResponse = function(id) {
+// ask the server to return the current user
+uow.getUser = function(args) {
+    return dojo.xhrGet( {
+        url: '/data/_auth/user',
+        handleAs: 'json'
+    } );
 };
 
-uow.getUser = function() {
-    var cookie = dojo.cookie('user');
-    if (!cookie) {
-        return { email: null };
-    }
-    var parts = cookie.split('|');
-    var bytearray = dojox.encoding.base64.decode(parts[0]);
-    var chararray = dojo.map(bytearray, function(code) { return String.fromCharCode(code); });
-    var userjson = chararray.join('');
-    var user = dojo.fromJson(userjson);
-    return user;
-};
-
+// ask the server to popup the OpenID login window
 uow.triggerLogin = function() {
     var loginDeferred = new dojo.Deferred();
     uow._handleOpenIDResponse = function(flag) {
-        loginDeferred.callback({ flag: flag, user: uow.getUser() });
+        uow.getUser().addCallback(function(user) {
+            loginDeferred.callback({ flag: flag, user: user });
+        });
     }
     // uow._openIDWindowOpened = false;
     // setTimeout(function() {
@@ -85,3 +80,4 @@ uow.triggerLogin = function() {
     popup = window.open('/data/_auth', 'Login_Popup', 'width=790,height=580');
     return loginDeferred;
 };
+
