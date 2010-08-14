@@ -1,0 +1,45 @@
+<div class="catHark">
+  <h1><span style="color:red">DRAFT</span> harkthesound.org integration</h1>
+  <p>This document describes how the harkthesound.org home page discovers games to list, launches them, and communicates with them. It is currently a draft and subject to change.</p>
+  
+  <h2>Game metadata</h2>
+  <p>The home page lists entries in the <em>games</em> collection of the <em>harkhome</em> database. The following JSON depicts all of the required entry fields using a Tic-Tac-Toe game as an example:</p>
+  
+<pre>{
+  "url" : "tictactoe",
+  "label" : {
+    "en-us" : "Tic-tac-toe"
+  },
+  "tags" : {
+      "en-us" : "2-player, speech, sound, keyboard, mouse"
+  },
+  "description" : {
+      "en-us" : "The classic game of tic-tac-toe."
+  },
+  "media" : {
+      "icon" : "/tictactoe/info/icon.png",
+      "screenshots" : ['/tictactoe/info/screenshot.png']
+  }
+}</pre>
+
+  <h3>url</h3>
+  <p>The <em>url</em> field is the unique URL of the game relative to the root of the harkthesound.org games directory. The URL can contain a hash symbol indicating additional information the game can use to configure itself upon launch. Query parameters are not currently allowed.</p>
+  
+  <h3>label, description, tags</h3>
+  <p>These three fields are for human consumption. The <em>label</em> is the human readable title of the game. The <em>description</em> is a longer explanation of the game. The <em>tags</em> are additional keywords describing the game that one might use when searching for it.</p>
+    
+    <p>All three are objects with strings stored under standard language identifiers. The home page uses <em>dojo.locale</em> to determine which to display and falls back on <em>en-us</em> if there is no appropriate translation.</p>
+  
+  <h3>media</h3>
+  <p>The media object contains the URL of a 96x96 pixel <em>icon</em> representing the game on the home page. It also includes an array of 320x240 pixel screenshots of the game, at least one of which appears in the game details dialog.</p>
+  
+  <h2>Game container</h2>
+  <p>The harkthesound.org home page launches games in an iframe container. The home page sets the iframe <em>src</em> attribute to the exact <em>url</em> stored in the database for the game. The game is free to do whatever it needs within the iframe and interpret its URL in any way.</p>
+    
+  <p>While the game container is visible, the home page also displays a toolbar above the iframe with buttons for quitting the game, configuring common preferences (e.g., volume, speech rate), and getting help. The game in the iframe need not be aware of these controls per se, only the events they generate (see next section).</p>
+  
+  <p> The home page uses hash values on its own URL as a means of quick launching games (e.g., via bookmarks). The home page converts game URLs to slugs for user consumption and vice versa for setting the game container iframe URL. For example, if the URL of a game is <em>educational/bigwords#shopping</em>, clicking the game on the home page sets the browser address bar to <em>http://harkthesound.org/#educational-bigwords>shopping</em>. The change in hash value causes the game container to show with the iframe set to the URL <em>http://harkthesound.org/educational/bigwords#shopping</em>. If the user presses the home button in the game container toolbar, the home page resets browser address bar to <em>http://harkthesound.org/</em> causing the game container to hide and the iframe to unload the game.</p>
+ 
+  <h2>Cross-container communication</h2>
+  <p>To be written</p>
+</div>

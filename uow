@@ -3,6 +3,7 @@ import string
 import optparse
 import os.path as osp
 import os
+import sys
 import shutil
 import subprocess
 import datetime
@@ -150,7 +151,7 @@ class ComponentHandler(object):
 
     def init(self, section, value, cp):
         os.system(value)
-        
+
     def program(self, section, value, cp):
         # exist to avoid unsupported key warning
         pass
