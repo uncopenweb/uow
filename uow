@@ -17,6 +17,7 @@ ${upstreams}
 server {
     listen ${server_port};
     server_name ${server_name};
+    server_name_in_redirect off;
     location /libs {
         alias ../servers/${config_name}/www/libs;
     }
