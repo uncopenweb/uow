@@ -20,10 +20,6 @@ server {
     location /libs {
         alias ../servers/${config_name}/www/libs;
     }
-    location /local {
-        alias /home/gb/public_html;
-        autoindex on;
-    }
 ${aliases}
 ${upload}
 ${proxies}
@@ -34,7 +30,7 @@ upstream ${name} {
 }'''
 NGINX_ALIAS_TMPL = '''\
     location ${url} {
-        alias ../servers/${config_name}/${path};
+        alias ${path};
     }
 '''
 NGINX_PROXY_TMPL = '''\
@@ -98,6 +94,8 @@ class NginxTemplate(object):
     
     def add_alias(self, url, path):
         config_name = self.config_name
+        if not path.startswith('/'):
+            path = os.path.join('../servers', config_name, path)
         tmpl = string.Template(NGINX_ALIAS_TMPL)
         text = tmpl.safe_substitute(locals())
         self.aliases.append(text)
