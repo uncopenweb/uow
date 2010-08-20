@@ -13,6 +13,7 @@ dojo.require('uow.data.MongoStore');
 dojo.require('dojox.encoding.base64');
 dojo.require('dojo.cookie');
 
+// Gets the singleton JSonic audio manager
 uow._audio = null;
 uow.getAudio = function(args) {
     if(!uow._audio) {
@@ -25,6 +26,7 @@ uow.getAudio = function(args) {
     return def;
 };
 
+// Gets a MongoStore instance (like dojox.data.JSONRestStore)
 uow.getDatabase = function(args) {
     def = { idAttribute: '_id',
             mode: 'crud' };
@@ -52,9 +54,11 @@ uow.getDatabase = function(args) {
     return def;
 };
 
+// Placeholder
 uow._handleOpenIDResponse = function(id) {
 };
 
+// Gets information about the authenticated user
 uow.getUser = function() {
     var cookie = dojo.cookie('user');
     if (!cookie) {
@@ -68,6 +72,7 @@ uow.getUser = function() {
     return user;
 };
 
+// Triggers an OpenID login using whatever provider the server has configured
 uow.triggerLogin = function() {
     var loginDeferred = new dojo.Deferred();
     uow._handleOpenIDResponse = function(flag) {
@@ -84,4 +89,10 @@ uow.triggerLogin = function() {
     // }
     popup = window.open('/data/_auth', 'Login_Popup', 'width=790,height=580');
     return loginDeferred;
+};
+
+// Logs the user out and refreshes the page to clear private info.
+uow.logout = function() {
+    dojo.cookie('user', null, {path : '/', expires: -1});
+    window.location.reload();
 };
