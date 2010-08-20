@@ -1,0 +1,55 @@
+<div id="authContainer" class="catAuth">
+  <h1>Authentication</h1>
+  <p>User authentication is performed using <a href="http://openid.net/">OpenID</a> against the <a href="http://code.google.com/apis/accounts/docs/OpenID.html">Google OpenID Provider endpoint</a>. Any user with a Google Account can be authorized and identified by a UOW server.</p>
+
+  <h2>API</h2>
+  <p><code>uow.triggerLogin() &rarr; dojo.Deferred</code></p>
+  <p>This method attempts to authenticate the current user via a Google Account. A popup window appears in which Google asks the user to create a new Google Account or sign into an existing account if the user is not currently signed into any Google service. Once signed in, the popup windows asks the user to allow or deny the UOW server access to his or her name, email address, etc. for authentication.</p>
+  
+  <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive a object with the following properties:</p>
+  
+  <dl>
+    <dt>flag (string)</dt>
+    <dd>The string <em>ok</em> on successful login.</dd>
+    <dt>user (object)</dt>
+    <dd>The same user object provided by <tt>uow.getUser()</tt>. See below.</dd>
+  </dl>
+  
+  <p><code>uow.getUser() &rarr; dojo.Deferred</code></p>
+  <p>This method retrieves information about the user logged into the current domain.</p>
+  
+  <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive a object with the following properties:</p>
+  
+  <dl>
+    <dt>email (string)</dt>
+    <dd>The email address of the user.</dd>
+    <dt>first_name (string)</dt>
+    <dd>The user's family name.</dd>
+    <dt>last_name (string)</dt>
+    <dd>The user's given name.</dd>
+    <dt>locale (string)</dt>
+    <dd>The <a href="http://en.wikipedia.org/wiki/IETF_language_tag">IETF language tag</a> for the user's locale.</dd>
+    <dt>name (string)</dt>
+    <dd>The full name of the user for display.</dd>
+    <dt>role (string)</dt>
+    <dd>The role assigned to the user in the current UOW domain. The common values are the following, but custom roles can be assigned. See the <a href="#db">Database</a> documentation for details about how roles are mapped to database permissions (todo).
+      <dl>
+        <dt>developer</dt>
+        <dd>An authenticated developer with full permissions.</dd>
+        <dt>superuser</dt>
+        <dd>An authenticated user with administrative permissions.</dd>
+        <dt>identified</dt>
+        <dd>An authenticated user with no other, more specific role assigned.</dd>
+        <dt>anonymous</dt>
+        <dd>An unknown, unauthenticated user.</dd>
+      </dl>
+    </dd>
+  </dl>
+  
+  <p><code>uow.logout() &rarr; undefined</code></p>
+  <p>This method removes the authentication cookie for the user currently logged into the current domain. After removing the cookie, the method refreshes the page to ensure no private data remains displayed.</p>
+  
+  <p>This method returns no value as the page always refreshes after invocation.</p>
+
+  <h2>Examples</h2>
+</div>

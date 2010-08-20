@@ -59,9 +59,17 @@ p, dl {
     margin-bottom: 1em;
 }
 
-dd {
+dt {
     font-style: italic;
+}
+
+dd {
     margin-bottom: 1em;
+}
+
+dd > dl {
+    margin-top: 1em;
+    margin-left: 2em;
 }
 
 code {
@@ -69,10 +77,15 @@ code {
     font-size: 1em !important;
 }
 
+p > code {
+    font-size: 1.25em !important;
+}
+
 pre {
     margin-top: 0.5em;
     padding: 0.5em;
     margin-bottom: 2em;
+    font-size: 1em !important;
 }
 
 #nav ul, li {
