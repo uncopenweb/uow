@@ -35,9 +35,11 @@
     <dd>The role assigned to the user in the current UOW domain. The common values are the following, but custom roles can be assigned. See the <a href="#db">Database</a> documentation for details about how roles are mapped to database permissions (todo).
       <dl>
         <dt>developer</dt>
-        <dd>An authenticated developer with full permissions.</dd>
-        <dt>superuser</dt>
-        <dd>An authenticated user with administrative permissions.</dd>
+        <dd>An authenticated developer with full permissions (e.g., you).</dd>
+        <dt>admin</dt>
+        <dd>An authenticated user with administrative permissions where you define what "administrator" means for your application.</dd>
+        <dt>author</dt>
+        <dd>An authenticated user with edit permissions where you define what "editor" means for your application.</dd>
         <dt>identified</dt>
         <dd>An authenticated user with no other, more specific role assigned.</dd>
         <dt>anonymous</dt>
