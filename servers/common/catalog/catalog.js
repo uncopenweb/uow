@@ -43,6 +43,32 @@ dojo.ready(function() {
         }, item);
         dojo.destroy(item.firstChild);
     });
+    
+    // connect login / logout
+    var login = dojo.byId('loginLink');
+    dojo.connect(login, 'onclick', function() {
+        uow.triggerLogin().addCallback(location, 'reload');
+    });
+    var logout = dojo.byId('logoutLink');
+    dojo.connect(logout, 'onclick', uow, 'logout');
+
+    // show login / user+logout
+    var def = uow.getUser();
+    def.addCallback(function(user) {
+        if(user.email) {
+            // user logged in, show logout
+            var node = dojo.byId('userText');
+            var welcome = dojo.byId('welcomeText');
+            var text = dojo.replace(welcome.innerHTML, [user.email]);
+            welcome.innerHTML = text;
+            dojo.style(node, 'display', '');
+        } else {
+            throw new Error('not authed')
+        }            
+    }).addErrback(function(user) {
+        // user logged out, show login
+        dojo.style(login, 'display', '');
+    });
 });
 
 uow.app.catalog.serviceStatus = function(name, available) {

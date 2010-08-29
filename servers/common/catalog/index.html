@@ -24,9 +24,17 @@
     <script type="text/javascript" src="catalog.js"></script>
   </head>
   <body class="tundra loading">
-    <div dojoType="dijit.layout.BorderContainer" liveSplitters="true">
-      <div dojoType="dijit.layout.ContentPane" region="top" splitter="false">
-        <h1 id="title">UNC Open Web <span id="subtitle"></span></h1>
+    <div id="layout" dojoType="dijit.layout.BorderContainer" liveSplitters="true">
+      <div id="header" dojoType="dijit.layout.BorderContainer" region="top" liveSplitters="false" gutters="false">
+        <div dojoType="dijit.layout.ContentPane" region="left" splitter="false">
+          <h1 id="title">UNC Open Web <span id="subtitle"></span></h1>
+        </div>
+        <div dojoType="dijit.layout.ContentPane" region="right" splitter="false">
+          <div id="loginTool">
+            <a href="#" id="loginLink" style="display: none;">Login</a>
+            <span id="userText" style="display: none;"><span id="welcomeText">Welcome {0}</span> - <a href="#" id="logoutLink">Logout</a></span>
+          </div>
+        </div>
       </div>
       <div dojoType="dijit.layout.ContentPane" region="left" splitter="false" id="nav">
         <ul>
