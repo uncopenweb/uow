@@ -1,4 +1,9 @@
 <div id="authContainer" class="catAuth">
+  <script type="text/javascript">
+    dojo.ready(function() {
+      uow.app.catalog.parseExamples('dbContainer');
+    });
+  </script>
   <h1>Authentication</h1>
   <p>User authentication is performed using <a href="http://openid.net/">OpenID</a> against the <a href="http://code.google.com/apis/accounts/docs/OpenID.html">Google OpenID Provider endpoint</a>. Any user with a Google Account can be authorized and identified by a UOW server.</p>
 
@@ -54,5 +59,16 @@
   <p>This method returns no value as the page always refreshes after invocation.</p>
 
   <h2>Examples</h2>
-  <p>@todo</p>
+  <h3>Get information about the logged in user <button id="auth_ex1">Run</button></h3>
+  <label for="auth_ex1log">Results</label>
+  <textarea class="results" id="auth_ex1log"></textarea>
+  <div id="auth_ex1code">
+    <pre><code dojoType="dojox.highlight.Code"
+>var def = uow.getUser();
+def.addCallback(function(user) {
+  var text = dojo.toJson(user);
+  dojo.byId('auth_ex1log').innerHTML = text;
+});
+</code></pre>
+  </div>
 </div>
