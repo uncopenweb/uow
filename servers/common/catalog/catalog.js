@@ -62,6 +62,8 @@ dojo.ready(function() {
             var text = dojo.replace(welcome.innerHTML, [user.email]);
             welcome.innerHTML = text;
             dojo.style(node, 'display', '');
+            node = dojo.byId('tools');
+            dojo.style(node, 'display', '');
         } else {
             throw new Error('not authed')
         }            
