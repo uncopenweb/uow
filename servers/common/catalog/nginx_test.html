@@ -76,6 +76,13 @@
         });
         // dojo trace status
         serviceStatus('Trace', uow.trace !== undefined);
+        // auth status
+        uow.getUser()
+        .addCallback(function(user) {
+            serviceStatus('Authentication', true);
+        }).addErrback(function(user) {
+            serviceStatus('Authentication', false);
+        }); 
       });
     </script>
   </head>

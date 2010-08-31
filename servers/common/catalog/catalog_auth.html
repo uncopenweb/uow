@@ -1,7 +1,13 @@
 <div id="authContainer" class="catAuth">
   <script type="text/javascript">
     dojo.ready(function() {
-      uow.app.catalog.parseExamples('dbContainer');
+      uow.app.catalog.parseExamples('authContainer');
+      uow.getUser()
+      .addCallback(function(user) {
+          uow.app.catalog.serviceStatus('Authentication', true);
+      }).addErrback(function(user) {
+          uow.app.catalog.serviceStatus('Authentication', false);
+      });      
     });
   </script>
   <h1>Authentication</h1>

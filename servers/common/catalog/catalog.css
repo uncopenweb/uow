@@ -1,135 +1,140 @@
-html, body, #layout {
+/**
+ * UOW catalog application master stylesheet.
+ *
+ * Copyright UNC Open Web Team 2010. All Rights Reserved.
+ */
+html, body, .catalog #layout {
     width: 100%; 
     height: 100%;
     font-size: 0.95em;
 }
 
-#header {
+.catalog.loading {
+    visibility: hidden;
+}
+
+.catalog #header {
     height: 3.25em;
     background-color: white;
 }
 
-#header .dijitContentPane {
+.catalog  #header .dijitContentPane {
     overflow: hidden;
 }
 
-.dijitContentPane {
+.catalog .dijitContentPane {
     padding: 1em !important;
     background-color: white;
 }
 
-h1, h2 {
+.catalog h1, h2 {
     margin: 0em;
     margin-bottom: 0.5em;
     font-weight: normal;
 }
 
-h2 {
+.catalog h2 {
     font-size: 1.3em;
 }
 
-h3 {
+.catalog h3 {
     font-size: 1.1em;
 }
 
-h4 {
+.catalog h4 {
     font-size: 1.1em;
     font-weight: normal;
     font-style: italic;
 }
 
-h2, h3, h4 {
+.catalog h2, .catalog h3, .catalog h4 {
     margin-top: 1em;
 }
 
-#tabs h2 {
+.catalog #tabs h2 {
     border-bottom: 1px solid #555;
     font-size: 1.3em;
     width: 25em;
 }
 
-#title {
+.catalog #title {
     margin-bottom: 0em;
 }
 
-a {
+.catalog a {
     color: #336699;
 }
 
-#nav h2 {
+.catalog #nav h2 {
     margin-bottom: 0em;
     margin-top: 1em;
 
 }
 
-p, dl {
+.catalog p, .catalog dl {
     max-width: 50em;
     margin: 0em;
     margin-bottom: 1em;
 }
 
-dt {
+.catalog dt {
     font-style: italic;
 }
 
-dd {
+.catalog dd {
     margin-bottom: 1em;
 }
 
-dd > dl {
+.catalog dd > dl {
     margin-top: 1em;
     margin-left: 2em;
 }
 
-code {
+.catalog code {
     border-width: 0px !important; 
     font-size: 1em !important;
 }
 
-p > code {
+.catalog p > code {
     font-size: 1.25em !important;
 }
 
-pre {
+.catalog pre {
     margin-top: 0.5em;
     padding: 0.5em;
     margin-bottom: 2em;
     font-size: 1em !important;
 }
 
-#nav ul, li {
+.catalog #nav ul, .catalog li {
     padding-left: 0em;
     margin: 0em;
 }
 
-ul, ol {
+.catalog ul, .catalog ol {
     max-width: 50em;
     margin-top: 0em;
     margin-bottom: 1em;
 }
 
-#nav ul {
+.catalog #nav ul {
     list-style-type: none;
 }
 
-.loading {
-    visibility: hidden;
-}
-
-.results {
+.catalog .results {
     width: 100%;
     height: 100px;
 }
 
-.available {
+.catalog .available {
     color: green;
 }
 
-.unavailable {
+.catalog .unavailable {
     color: red;
 }
 
-#start label {
+.catalog #start label {
     text-align: left;
     width: 15em;
     padding-right: 1em;
@@ -138,6 +143,6 @@ ul, ol {
     margin-bottom: 10px;
 }
 
-#start input, select {
+.catalog #start input, .catalog select {
     width: 15em;
 }
