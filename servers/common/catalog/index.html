@@ -39,13 +39,17 @@
           <h2>Intro</h2>
           <li>Getting started</li>
           <li>Developing web apps</li>
-          <h2>Services</h2>
+          <li>harkthesound.org integration</li>
+          <h2>APIs</h2>
           <li>Audio</li>
           <li>Authentication</li>
           <li>Database</li>
           <li>Dojo Trace</li>
-          <h2>Sites</h2>
-          <li>harkthesound.org integration</li>
+          <div id="tools" style="display: none;">
+            <h2>Tools</h2>
+            <li>Database editor</li>
+            <li>User editor</li>
+          </div>
         </ul>
       </div>
       <div dojoType="dijit.layout.StackContainer" 
@@ -68,6 +72,11 @@
              title="Developing web apps" 
              href="catalog_app.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             id="hark"
+             preload="true"
+             title="harkthesound.org integration" 
+             href="catalog_hark.html"></div>
+        <div dojoType="dojox.layout.ContentPane" 
              id="audio"
              preload="true"
              title="Audio" 
@@ -88,10 +97,15 @@
              preload="true"
              href="catalog_trace.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
-             id="hark"
-             preload="true"
-             title="harkthesound.org integration" 
-             href="catalog_hark.html"></div>
+             id="dbtool"
+             preload="false"
+             title="Database editor" 
+             href="catalog_db_editor.html"></div>
+        <div dojoType="dojox.layout.ContentPane" 
+             id="usertool"
+             preload="false"
+             title="User editor" 
+             href="catalog_user_editor.html"></div>
       </div>
       <div dojoType="dijit.layout.ContentPane" region="bottom" splitter="false">
         Last updated: 8/29/2010
