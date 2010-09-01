@@ -24,7 +24,7 @@
     });
   </script>
   <h1>Database</h1>
-  <p>Data persistence services are provided by a <a href="http://www.mongodb.org/">MongoDB</a> on the server and access using the <a href="http://dojotoolkit.org/reference-guide/dojo/data.html">dojo.data</a> interfaces on the client. 
+  <p>Data persistence services are provided by <a href="http://www.mongodb.org/">MongoDB</a> on the server and accessed using the <a href="http://dojotoolkit.org/reference-guide/dojo/data.html">dojo.data</a> interfaces on the client. 
 
   <h2>Links</h2>
   <ul>
@@ -35,28 +35,30 @@
   
   <h2>API</h2>
   <p><code>uow.getDatabase(args) &rarr; dojo.Deferred</code></p>
-  <p>This method initializes the database interface for use in your application. You can call this function any number of times to get references to different databases and collections.</p>
-  <p>The <tt>args</tt> parameter must have the following attributes configuring your access to the database:</p>
+  <div class="apidesc">
+    <p>This method initializes the database interface for use in your application. You can call this function any number of times to get references to different databases and collections.</p>
+    <p>The <tt>args</tt> parameter must have the following attributes configuring your access to the database:</p>
   
-  <dl>
-    <dt>database (string)</dt>
-    <dd>Name of the database to access.</dd>
-    <dt>collection (string)</dt>
-    <dd>Name of the collection in the database to access.</dd>
-    <dt>mode (string)</dt>
-    <dd>Permissions requested for accessing the database. Right now, any permissions requested are granted. If mode is left undefined, all permissions are requested and granted. The mode string can contain one or more of the following characters representing permissions:
-      <ul>
-        <li>c : Create records</li>
-        <li>r : Read records</li>
-        <li>u : Update existing records</li>
-        <li>d : Delete records</li>
-        <li>D : Drop collection permission</li>
-        <li>L : List collections permission</li>
-      </ul>
-    </ds>
-  </dl>
+    <dl>
+      <dt>database (string)</dt>
+      <dd>Name of the database to access.</dd>
+      <dt>collection (string)</dt>
+      <dd>Name of the collection in the database to access.</dd>
+      <dt>mode (string)</dt>
+      <dd>Permissions requested for accessing the database. Right now, any permissions requested are granted. If mode is left undefined, all permissions are requested and granted. The mode string can contain one or more of the following characters representing permissions:
+        <ul>
+          <li>c : Create records</li>
+          <li>r : Read records</li>
+          <li>u : Update existing records</li>
+          <li>d : Delete records</li>
+          <li>D : Drop collection</li>
+          <li>L : List collections</li>
+        </ul>
+      </ds>
+    </dl>
   
-  <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive an instance of a <a href="http://docs.dojocampus.org/dojox/data/JsonRestStore"><tt>dojox.data.JsonRestStore</tt> subclass</a> for your use.</p>
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive an instance of a <a href="http://docs.dojocampus.org/dojox/data/JsonRestStore"><tt>dojox.data.JsonRestStore</tt> subclass</a> for your use.</p>
+  </div>
 
   <h2>Examples</h2>
   <h3>Save a new person object in the <em>rolodex</em> collection of the <em>catalog</em> database</h3>

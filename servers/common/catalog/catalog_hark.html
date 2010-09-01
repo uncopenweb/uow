@@ -41,5 +41,44 @@
   <p> The home page uses hash values on its own URL as a means of quick launching games (e.g., via bookmarks). The home page converts game URLs to slugs for user consumption and vice versa for setting the game container iframe URL. For example, if the URL of a game is <em>educational/bigwords#shopping</em>, clicking the game on the home page sets the browser address bar to <em>http://harkthesound.org/#educational-bigwords>shopping</em>. The change in hash value causes the game container to show with the iframe set to the URL <em>http://harkthesound.org/educational/bigwords#shopping</em>. If the user presses the home button in the game container toolbar, the home page resets browser address bar to <em>http://harkthesound.org/</em> causing the game container to hide and the iframe to unload the game.</p>
  
   <h2>Cross-container communication</h2>
-  <p>To be written</p>
+  <p>Hark games can use <em>dojo.subscribe</em> to listen to events from the game container.</p>
+
+  <p><code>dojo.subscribe('/org/hark/pause', pauseCallback) &rarr; undefined</code></p>
+  <div class="apidesc">
+    <p>This invocation registers a callback function that will be notified whenever the user pauses the game to interact with the preferences or other game container controls. Your callback function must have the following signature:</p>
+    <p><tt>function pauseCallback(paused) &rarr; undefined</tt></p>
+    <p>where the <tt>paused</tt> parameter indicating if the game is now paused (true) or running (false).</p>
+  </div>
+  
+  <p><code>dojo.subscribe('/org/hark/prefs/response', prefsCallback) &rarr; undefined</code></p>
+  <div class="apidesc">
+    <p>This invocation registers a callback function that will be notified whenever a user changes one of the preferences in the game container. Your callback function has the following signature:</p>
+    <p><tt>function prefsCallback(prefs, which) &rarr; undefined</tt></p>
+    <p>The <tt>prefs</tt> argument receives an object with the following properties:</p>
+  
+    <dl>
+      <dt>mouseEnabled (bool)</dt>
+      <dd>User wants mouse control enabled or disabled for this application.</dd>
+      <dt>speechEnabled (bool)</dt>
+      <dd>User wants speech enabled or disabled for this application.</dd>
+      <dt>volume (float)</dt>
+      <dd>User wants to set the master volume for all audio [0.0, 1.0].</dd>
+      <dt>speechVolume (float)</dt>
+      <dd>User wants to set the volume for all speech audio channels as a percentage of the master volume [0.0, 1.0].</dd>
+      <dt>soundVolume (float)</dt>
+      <dd>User wants to set the volume for all sound effect audio channels as a percentage of the master volume [0.0, 1.0].</dd>
+      <dt>musicVolume (float)</dt>
+      <dd>User wants to set the volume for all music track audio channels as a percentage of the master volume [0.0, 1.0].</dd>
+    </dl>
+
+    <p>The <tt>which</tt> argument receives the string name of the preference that changed or null if the preference that changed is indeterminate.</p>
+  </div>
+  
+  <p>Hark games can also <em>dojo.publish</em> to request information from the game container.</p>
+  
+  <p><code>dojo.publish('/org/hark/prefs/request') &rarr; undefined</code></p>
+  <div class="apidesc">
+    <p>This invocation sends a request for the current user preferences to the game container. The container responds with a <tt>/org/hark/prefs/response</tt> callback (see above).</p>
+    <p>Hark games should use this publish to get the initial preferences when the game first loads.</p>
+  </div>
 </div>
