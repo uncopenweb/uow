@@ -16,8 +16,10 @@ nginx/servers
 servers/dev
 servers/prod
 servers/spaceship
+servers/parente
 servers/active/*.conf
 supervisord/*.log
 supervisord/*.pid
 servers/common/catalog/templates/myapp/*
 servers/common/catalog/info
+backups/*
