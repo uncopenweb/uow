@@ -15,7 +15,7 @@ Install at least these versions and all their prerequisites on your server.
 * mongodb 1.3.3
 * nginx 0.7.64
 * supervisord 3.0
-* Tornado 0.2
+* Tornado 1.0
 * pycurl (for Tornado)
 * simplejson 2.1.1 (for Tornado)
 * pymongo 1.6 (for Torongo)
@@ -23,12 +23,14 @@ Install at least these versions and all their prerequisites on your server.
 * espeak 1.36.02 (for Jsonic)
 * lame 3.98.2 (for JSonic)
 * oggenc 1.2.0 (for JSonic)
+* jsonschema 0.2a (for Torongo)
 
 On Ubuntu Lucid
 ---------------
 
 * Install MongoDB from its homepage
 * Install Tornado from its homepage
+* Install jsonschema from its homepage (http://code.google.com/p/jsonschema/)
 * apt-get install supervisor nginx python-setuptools python2.6-dev python-pycurl vorbis-tools lame espeak
 * easy_install pymongo iterpipes
 
