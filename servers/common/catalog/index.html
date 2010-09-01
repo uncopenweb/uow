@@ -30,10 +30,7 @@
           <h1 id="title">UNC Open Web <span id="subtitle"></span></h1>
         </div>
         <div dojoType="dijit.layout.ContentPane" region="right" splitter="false">
-          <div id="loginTool">
-            <a href="#" id="loginLink" style="display: none;">Login</a>
-            <span id="userText" style="display: none;"><span id="welcomeText">Welcome {0}</span> - <a href="#" id="logoutLink">Logout</a></span>
-          </div>
+          <div dojoType="uow.ui.LoginButton" id="login"></div>
         </div>
       </div>
       <div dojoType="dijit.layout.ContentPane" region="left" splitter="false" id="nav">
