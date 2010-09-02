@@ -42,6 +42,12 @@ dojo.ready(function() {
         }, item);
         dojo.destroy(item.firstChild);
     });
+    // listen for login
+    dojo.subscribe('/uow/auth', function(user) {
+        if(user && user.email && user.role == 'developer') {
+            dojo.style(dojo.byId('tools'), 'display', '');
+        }
+    });
     
     // update login ui
     dijit.byId('login').triggerLogin();
