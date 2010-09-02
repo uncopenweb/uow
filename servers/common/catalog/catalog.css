@@ -146,3 +146,7 @@ html, body, .catalog #layout {
 .catalog #start input, .catalog select {
     width: 15em;
 }
+
+.catalog .apidesc {
+    margin-left: 2em;
+}
