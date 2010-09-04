@@ -6,8 +6,11 @@
     <style type="text/css">
       @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojo/resources/dojo.css";
       @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5/dijit/themes/tundra/tundra.css";
+      @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5.0/dojox/grid/resources/Grid.css";
+      @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5.0/dojox/grid/resources/tundraGrid.css";
       @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojox/highlight/resources/highlight.css";
       @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojox/highlight/resources/pygments/friendly.css";
+      @import "/libs/uow/ui/css/uow.css";
       @import "catalog.css";
     </style>
     <script type="text/javascript">
@@ -57,41 +60,49 @@
            region="center" 
            splitter="true">
         <div dojoType="dijit.layout.ContentPane" 
+             class="doc"
              id="home"
              title="Home"
              preload="true"
              href="catalog_home.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="start"
              preload="true"
              title="Getting started" 
              href="catalog_start.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="app"
              preload="true"
              title="Developing web apps" 
              href="catalog_app.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="hark"
              preload="true"
              title="harkthesound.org integration" 
              href="catalog_hark.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="audio"
              preload="true"
              title="Audio" 
              href="catalog_audio.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="auth"
              preload="true"
              title="Authentication" 
              href="catalog_auth.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="db"
              title="Database" 
              preload="true"
              href="catalog_db.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="trace"
              title="Dojo Trace" 
              preload="true"

@@ -1,0 +1,16 @@
+/**
+ * Styles for the collection editor widget.
+ *
+ * Copyright UNC Open Web Group. All Rights Reserved. 
+ */
+.uowCollectionEditor {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.uowCollectionEditor .dijitBorderContainer,
+.uowCollectionEditor .dijitBorderContainerNoGutter {
+    width: 100%;
+    height: 100%;
+}

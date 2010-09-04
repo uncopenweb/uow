@@ -19,10 +19,11 @@ html, body, .catalog #layout {
 }
 
 .catalog  #header .dijitContentPane {
+    padding: 1em !important;
     overflow: hidden;
 }
 
-.catalog .dijitContentPane {
+.catalog .dijitContentPane.doc {
     padding: 1em !important;
     background-color: white;
 }
@@ -149,4 +150,9 @@ html, body, .catalog #layout {
 
 .catalog .apidesc {
     margin-left: 2em;
+}
+
+.catalog .catUserEditor {
+    width: 100%;
+    height: 100%;
 }
