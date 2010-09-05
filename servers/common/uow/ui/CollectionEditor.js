@@ -6,6 +6,7 @@
 dojo.provide('uow.ui.CollectionEditor');
 dojo.require('dijit._Widget');
 dojo.require('dijit._Templated');
+dojo.require('dijit._Contained');
 dojo.require('dijit.Toolbar');
 dojo.require('dijit.layout.BorderContainer');
 dojo.require('dijit.layout.ContentPane');
@@ -14,7 +15,7 @@ dojo.require('dojox.json.schema');
 dojo.require('dojo.i18n');
 dojo.requireLocalization('uow.ui', 'CollectionEditor');
 
-dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated], {
+dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit._Contained], {
     // database and collection name pair as a tuple
     target : [],
     widgetsInTemplate: true,
@@ -32,6 +33,10 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated], {
     
     postCreate: function() {
         
+    },
+    
+    resize: function(box) {
+        this.borderContainer.resize(box);
     },
     
     _setTargetAttr: function(target) {
@@ -96,6 +101,7 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated], {
         this.connect(this._grid, 'onStyleRow', '_onStyleRow');
         this.contentPane.set('content', this._grid);
         this._grid.startup();
+        this.borderContainer.layout();
     },
     
     _buildLayout: function(schema) {

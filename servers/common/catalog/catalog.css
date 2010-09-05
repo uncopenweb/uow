@@ -28,7 +28,7 @@ html, body, .catalog #layout {
     background-color: white;
 }
 
-.catalog h1, h2 {
+.catalog h1, .catalog h2 {
     margin: 0em;
     margin-bottom: 0.5em;
     font-weight: normal;
@@ -52,7 +52,7 @@ html, body, .catalog #layout {
     margin-top: 1em;
 }
 
-.catalog #tabs h2 {
+.catalog .catPage h2 {
     border-bottom: 1px solid #555;
     font-size: 1.3em;
     width: 25em;
@@ -152,7 +152,10 @@ html, body, .catalog #layout {
     margin-left: 2em;
 }
 
-.catalog .catUserEditor {
-    width: 100%;
-    height: 100%;
+.catalog .catUserEditorPane {
+    padding: 0px;
+}
+
+.catalog .catTool h2 {
+    margin-top: 0px;
 }

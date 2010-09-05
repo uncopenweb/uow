@@ -1,3 +1,16 @@
-<div class="catUserEditor">
-  <div dojoType="uow.ui.CollectionEditor" target="Admin,AccessUsers"></div>
+<div dojoType="dijit.layout.BorderContainer" class="catUserEditor catTool" liveSplitters="true">
+  <div dojoType="dijit.layout.ContentPane" 
+       region="center"
+       class="catUserEditorPane">
+    <div dojoType="uow.ui.CollectionEditor" 
+         target="Admin,AccessUsers" 
+         region="center"></div>    
+  </div>
+  <div dojoType="dijit.layout.ContentPane" 
+       region="bottom" 
+       splitter="true">
+    <h2>User editor help</h2>
+    <p>Click <em>Create</em> ...</p>
+  
+  </div>
 </div>
