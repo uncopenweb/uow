@@ -144,7 +144,7 @@ html, body, .catalog #layout {
     margin-bottom: 10px;
 }
 
-.catalog #start input, .catalog select {
+.catalog #start input, .catalog #start select {
     width: 15em;
 }
 

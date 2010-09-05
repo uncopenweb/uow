@@ -1,0 +1,36 @@
+/**
+ * Icons for widgets.
+ *
+ * Copyright UNC Open Web Group. All Rights Reserved. 
+ */
+.uowDatabaseInsert {
+    background-image: url('icons/database-insert.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}
+
+.uowDatabaseDelete {
+    background-image: url('icons/database-delete.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}
+
+.uowUndo {
+    background-image: url('icons/arrow-curve-180-left.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}
+
+.uowRedo {
+    background-image: url('icons/arrow-curve-000-left.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}
