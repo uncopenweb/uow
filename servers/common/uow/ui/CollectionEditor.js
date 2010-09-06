@@ -27,12 +27,14 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
         this._schema = null;
         // fetched db
         this._db = null;
-        // grid
+        // grid widget
         this._grid = null;
-    },
-    
-    postCreate: function() {
-        
+        // undo history
+        this._undo = [];
+        // redo history
+        this._redo = [];
+        // undo mutex
+        this._undoMutex = false;
     },
     
     resize: function(box) {
@@ -61,7 +63,7 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
             this._db = db;
             // listen for updates
             this.connect(this._db, 'onSet', '_onSetItem');
-            this.connect(this._db, 'onInsert', '_onInsertItem');
+            this.connect(this._db, 'onNew', '_onNewItem');
             this.connect(this._db, 'onDelete', '_onDeleteItem');
             
             // fetch the schemas collection next
@@ -92,7 +94,6 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     _buildGrid: function(schema) {
         // parse it to get the layout
         var layout = this._buildLayout(schema);
-
         // build the grid
         this._grid = new dojox.grid.DataGrid({
             store : this._db,
@@ -142,37 +143,110 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     },
     
     _onSetItem: function(item, attr, oldValue, newValue) {
+        console.log('set', attr, newValue, oldValue);
+        // ignore id changes
+        if(attr == '_id' || newValue == oldValue) { 
+            this._grid.update();
+            return; 
+        }
+        if(!this._undoMutex) {
+            this.undoButton.attr('disabled', false);
+            this._undo.push({
+                action : 'set', 
+                item : item, 
+                attr: attr, 
+                newValue: newValue,
+                oldValue: oldValue
+            });
+        }
+        // if valid, commit
         var result = dojox.json.schema.validate(item, this._schema);
         if(result.valid) {
-            setTimeout(dojo.hitch(this._db, 'save'), 0);
+            setTimeout(dojo.hitch(this, function() {
+                this._db.save();
+            }), 0);
         }
+        console.log('set done');
     },
     
-    _onInsertItem: function(item, parentInfo) {
-        
+    _onNewItem: function(item, parentInfo) {
+        console.log('new', item);
+        if(!this._undoMutex) {
+            this.undoButton.attr('disabled', false);
+            this._undo.push({action : 'new', item : item});
+        }
+        // if valid, commit
+        var result = dojox.json.schema.validate(item, this._schema);
+        if(result.valid) {
+            setTimeout(dojo.hitch(this, function() {
+                this._db.save();
+            }), 0);
+        }
+        console.log('new done');
     },
     
     _onDeleteItem: function(item) {
-        
+        console.log('delete');
+        //var citem = dojo.clone(item);
+        if(!this._undoMutex) {
+            this.undoButton.attr('disabled', false);
+            this._undo.push({action : 'delete', item : item});
+        }
+        console.log('delete done');
     },
 
     _onClickNew: function() {
         var grid = this._grid;
         var item = this._db.newItem({});
         // start editing new cell immediately
-        var count = grid.attr('rowCount');
-        var cell = grid.getCell(0);
-        setTimeout(function() { grid.edit.start(cell, count-1, true); }, 0);
+        //var count = grid.attr('rowCount');
+        //var cell = grid.getCell(0);
+        //setTimeout(function() { grid.edit.start(cell, count-1, true); }, 0);
     },
     
     _onClickDelete: function() {
         this._grid.removeSelectedRows();
-        this._grid.edit.apply();
         this._db.save();
+        console.log('batch delete done');
+        //this._grid.edit.apply();
+        //this._db.save();
     },
     
     _onClickUndo: function() {
-        
+        // pop the last action
+        var obj = this._undo.pop();
+        // do the inverse
+        if(obj.action == 'new') {
+            // delete the item
+            console.log('undoing new');
+            this._undoMutex = true;
+            this._db.deleteItem(obj.item);
+            this._undoMutex = false;
+            this._db.save();
+            console.log('undo new done')
+        } else if(obj.action == 'delete') {
+            console.log('undoing delete');
+            // insert the deleted item, sans private attributes
+            for(var x in obj.item) {
+                if(x.charAt(0) == '_') {
+                    delete obj.item[x];
+                }
+            }
+            this._undoMutex = true;
+            var item = this._db.newItem(obj.item);
+            this._undoMutex = false;
+            // @todo: run through the history and fix any ids
+            console.log('undo delete done')
+        } else if(obj.action == 'set') {
+            console.log('undoing set', obj.attr);
+            this._undoMutex = true;
+            this._db.setValue(obj.item, obj.attr, obj.oldValue);
+            this._undoMutex = false;
+            console.log('undo set done');
+        }
+        if(!this._undo.length) {
+            this.undoButton.attr('disabled', true);
+        }
     },
     
     _onClickRedo: function() {
