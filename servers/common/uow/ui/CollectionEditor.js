@@ -227,15 +227,24 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
         } else if(obj.action == 'delete') {
             console.log('undoing delete');
             // insert the deleted item, sans private attributes
+            var copy = {};
+            console.log('deleted item id:', obj.item.__id, obj.item._id);
             for(var x in obj.item) {
-                if(x.charAt(0) == '_') {
-                    delete obj.item[x];
+                if(x.charAt(0) != '_') {
+                    copy[x] = obj.item[x];
                 }
             }
             this._undoMutex = true;
-            var item = this._db.newItem(obj.item);
+            var newItem = this._db.newItem(copy);
+            console.log('new item id:', newItem.__id, newItem._id);
             this._undoMutex = false;
-            // @todo: run through the history and fix any ids
+            // run through the history and fix any ids
+            dojo.forEach(this._undo, function(old) {
+                console.log('undo item', old.item.__id, old.item._id);
+                if(old.item._id == obj.item._id) {
+                    old.item = newItem;
+                }
+            });
             console.log('undo delete done')
         } else if(obj.action == 'set') {
             console.log('undoing set', obj.attr);
