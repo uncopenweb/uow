@@ -7,10 +7,20 @@
          region="center"></div>    
   </div>
   <div dojoType="dijit.layout.ContentPane" 
-       region="bottom" 
+       region="bottom"
+       style="height: 200px"
        splitter="true">
     <h2>User editor help</h2>
-    <p>Click <em>Create</em> ...</p>
-  
+    <h3>Add a user</h3>
+    <p>Click <em>Create</em> to insert a row for a new user. Double-click the <em>OpenID</em> cell, type a user ID, and press <em>Enter</em>. Double-click the <em>Role</em> cell, pick a role from the drop down, and press <em>Enter</em>.</p>
+    
+    <h3>Change a user</h3>
+    <p>Double-click a cell to edit and make your changes. Press <em>Enter</em> to save your edits or <em>Escape</em> to abort.</p>
+    
+    <h3>Delete users</h3>
+    <p>Single click a row to delete. Hold down <em>Shift</em> or <em>Meta</em> and click to select additional rows. Click <em>Delete</em> to remove the selected rows.</p> 
+    
+    <h3>Saving to the server</h3>
+    <p>Rows with red text are invalid and not yet saved to the server. Valid rows immediately save to the server.</p>
   </div>
 </div>
