@@ -28,6 +28,10 @@ html, body, .catalog #layout {
     background-color: white;
 }
 
+.catalog .dijitTitlePane {
+    margin-top: 1em;
+}
+
 .catalog h1, .catalog h2 {
     margin: 0em;
     margin-bottom: 0.5em;

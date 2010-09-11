@@ -11,6 +11,7 @@ dojo.require('dijit.layout.BorderContainer');
 dojo.require('dijit.layout.ContentPane');
 dojo.require('dijit.layout.StackContainer');
 dojo.require('dojox.layout.ContentPane');
+dojo.require('dijit.TitlePane');
 dojo.require("dojox.highlight");
 dojo.require("dojox.highlight.languages.javascript");
 dojo.require("dojox.highlight.languages.pygments.javascript");
