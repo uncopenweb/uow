@@ -35,6 +35,8 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
         this._redo = [];
         // undo mutex
         this._undoMutex = false;
+        // delete source
+        this._userDelete = false;
     },
     
     resize: function(box) {
@@ -144,24 +146,32 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     
     _onSetItem: function(item, attr, oldValue, newValue) {
         console.log('set', attr, newValue, oldValue);
-        // ignore id changes
+        // ignore id changes or noop changes
         if(attr == '_id' || newValue == oldValue) { 
             this._grid.update();
             return; 
         }
-        if(!this._undoMutex) {
-            this.undoButton.attr('disabled', false);
-            this._undo.push({
-                action : 'set', 
-                item : item, 
-                attr: attr, 
-                newValue: newValue,
-                oldValue: oldValue
-            });
-        }
-        // if valid, commit
+        // validate with old value first
+        item[attr] = oldValue;
+        var oldResult = dojox.json.schema.validate(item, this._schema);
+        item[attr] = newValue;
+        // now validate with new value
         var result = dojox.json.schema.validate(item, this._schema);
         if(result.valid) {
+            if(!this._undoMutex) {
+                this.undoButton.attr('disabled', false);
+                if(oldResult.valid) {
+                    this._undo.push({
+                        action : 'set', 
+                        item : item, 
+                        attr: attr, 
+                        newValue: newValue,
+                        oldValue: oldValue
+                    });
+                } else {
+                    this._undo.push({action : 'new', item : item});
+                }
+            }
             setTimeout(dojo.hitch(this, function() {
                 this._db.save();
             }), 0);
@@ -171,13 +181,12 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     
     _onNewItem: function(item, parentInfo) {
         console.log('new', item);
-        if(!this._undoMutex) {
-            this.undoButton.attr('disabled', false);
-            this._undo.push({action : 'new', item : item});
-        }
-        // if valid, commit
         var result = dojox.json.schema.validate(item, this._schema);
         if(result.valid) {
+            if(!this._undoMutex) {
+                this.undoButton.attr('disabled', false);
+                this._undo.push({action : 'new', item : item});
+            }
             setTimeout(dojo.hitch(this, function() {
                 this._db.save();
             }), 0);
@@ -187,8 +196,10 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     
     _onDeleteItem: function(item) {
         console.log('delete');
-        //var citem = dojo.clone(item);
-        if(!this._undoMutex) {
+        var result = dojox.json.schema.validate(item, this._schema);
+        console.log(result.valid);
+        console.log(this._userDelete);
+        if(!this._undoMutex && this._userDelete && result.valid) {
             this.undoButton.attr('disabled', false);
             this._undo.push({action : 'delete', item : item});
         }
@@ -205,7 +216,11 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     },
     
     _onClickDelete: function() {
+        this._userDelete = true;
+        console.log('removing selected rows');
         this._grid.removeSelectedRows();
+        console.log('done removing selected')
+        this._userDelete = false;
         this._db.save();
         console.log('batch delete done');
         //this._grid.edit.apply();
