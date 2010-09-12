@@ -34,3 +34,11 @@
     width: 16px;
     height: 16px;
 }
+
+.uowRefresh {
+    background-image: url('icons/arrow-circle-double-135.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}
