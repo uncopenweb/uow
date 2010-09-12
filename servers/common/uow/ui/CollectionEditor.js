@@ -210,9 +210,9 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
         var grid = this._grid;
         var item = this._db.newItem({});
         // start editing new cell immediately
-        //var count = grid.attr('rowCount');
-        //var cell = grid.getCell(0);
-        //setTimeout(function() { grid.edit.start(cell, count-1, true); }, 0);
+        var count = grid.attr('rowCount');
+        var cell = grid.getCell(0);
+        setTimeout(function() { grid.edit.start(cell, count-1, true); }, 0);
     },
     
     _onClickDelete: function() {
@@ -275,6 +275,10 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     
     _onClickRedo: function() {
         
+    },
+    
+    _onClickRefresh: function() {
+        this._grid.update();
     },
     
     _showGridLoading: function() {
