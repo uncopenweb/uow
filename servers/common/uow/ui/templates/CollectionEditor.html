@@ -1,0 +1,49 @@
+<div class="uowCollectionEditor">
+  <div dojoType="dijit.layout.BorderContainer" 
+       gutters="false"
+       dojoAttachPoint="borderContainer">
+    <div dojoType="dijit.Toolbar" region="top">
+      <button dojoType="dijit.form.Button" 
+              dojoAttachPoint="newButton" 
+              dojoAttachEvent="onClick:_onClickNew"
+              iconClass="uowDatabaseInsert"
+              title="${labels.new_button_title}"
+              type="button">${labels.new_button_label}</button
+      ><button dojoType="dijit.form.Button" 
+              dojoAttachPoint="deleteButton"
+              dojoAttachEvent="onClick:_onClickDelete" 
+              iconClass="uowDatabaseDelete"
+              title="${labels.delete_button_title}"
+              type="button">${labels.delete_button_label}</button
+      <span dojoType="dijit.ToolbarSeparator"></span
+      ><button dojoType="dijit.form.Button" 
+              dojoAttachPoint="refreshButton"
+              dojoAttachEvent="onClick:_onClickRefresh" 
+              iconClass="uowRefresh"
+              title="${labels.refresh_button_title}"
+              type="button">${labels.refresh_button_label}</button
+      ><button dojoType="dijit.form.Button" 
+              disabled
+              dojoAttachPoint="undoButton"
+              dojoAttachEvent="onClick:_onClickUndo" 
+              iconClass="uowUndo"
+              title="${labels.undo_button_title}"
+              type="button">${labels.undo_button_label}</button
+      ><button dojoType="dijit.form.Button" 
+              disabled
+              style="display: none;"
+              dojoAttachPoint="redoButton"
+              dojoAttachEvent="onClick:_onClickRedo" 
+              iconClass="uowRedo"
+              title="${labels.redo_button_title}"
+              type="button">${labels.redo_button_label}</button
+      ><span dojoType="dijit.ToolbarSeparator"></span
+      ><label><span dojoAttachPoint="dbNameNode"></span> &rarr; 
+       <span dojoAttachPoint="colNameNode"></span></label>
+    </div>
+    <div dojoType="dijit.layout.ContentPane"
+         dojoAttachPoint="contentPane" 
+         region="center">
+    </div>
+  </div>
+</div>
