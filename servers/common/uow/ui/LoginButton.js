@@ -6,6 +6,7 @@
 dojo.provide('uow.ui.LoginButton');
 dojo.require('dijit._Widget');
 dojo.require('dijit._Templated');
+dojo.require('dojo.hash');
 dojo.require('dojo.i18n');
 dojo.requireLocalization('uow.ui', 'LoginButton');
 
@@ -55,6 +56,7 @@ dojo.declare('uow.ui.LoginButton', [dijit._Widget, dijit._Templated], {
     },
     
     _onClickLogout: function() {
+        dojo.hash('#');
         uow.logout();
     }
 });

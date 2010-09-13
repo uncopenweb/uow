@@ -19,15 +19,20 @@ html, body, .catalog #layout {
 }
 
 .catalog  #header .dijitContentPane {
+    padding: 1em !important;
     overflow: hidden;
 }
 
-.catalog .dijitContentPane {
+.catalog .dijitContentPane.doc {
     padding: 1em !important;
     background-color: white;
 }
 
-.catalog h1, h2 {
+.catalog .dijitTitlePane {
+    margin-top: 1em;
+}
+
+.catalog h1, .catalog h2 {
     margin: 0em;
     margin-bottom: 0.5em;
     font-weight: normal;
@@ -51,7 +56,7 @@ html, body, .catalog #layout {
     margin-top: 1em;
 }
 
-.catalog #tabs h2 {
+.catalog .catPage h2 {
     border-bottom: 1px solid #555;
     font-size: 1.3em;
     width: 25em;
@@ -143,10 +148,18 @@ html, body, .catalog #layout {
     margin-bottom: 10px;
 }
 
-.catalog #start input, .catalog select {
+.catalog #start input, .catalog #start select {
     width: 15em;
 }
 
 .catalog .apidesc {
     margin-left: 2em;
+}
+
+.catalog .catUserEditorPane {
+    padding: 0px;
+}
+
+.catalog .catTool h2 {
+    margin-top: 0px;
 }

@@ -1,4 +1,4 @@
-<div class="catStart">
+<div class="catStart catPage">
   <script type="text/javascript">
   dojo.require('dojo.string');
     function startOnSubmit(event) {
@@ -47,142 +47,148 @@
     <label></label><button type="submit">Generate</button>
   </form>
   
-  <h2>Mac OS X</h2>
-  <h3>Install MacPorts</h3>
-  <ol>
-    <li>Visit <a href="http://www.macports.org/install.php">http://www.macports.org/install.php</a></li>
-    <li>Download the .dmg file for your OS version (Tiger, Leopard, or Snow Leopard).</li>
-    <li>Open the .dmg file when it finishes downloading.</li>
-    <li>Double click the .pkg file inside.</li>
-    <li>Work through the installer.</li>
-  </ol>
+  <div dojoType="dijit.TitlePane" open="false" title="Mac OS X">
+    <h2>Mac OS X</h2>
+    <h3>Install MacPorts</h3>
+    <ol>
+      <li>Visit <a href="http://www.macports.org/install.php">http://www.macports.org/install.php</a></li>
+      <li>Download the .dmg file for your OS version (Tiger, Leopard, or Snow Leopard).</li>
+      <li>Open the .dmg file when it finishes downloading.</li>
+      <li>Double click the .pkg file inside.</li>
+      <li>Work through the installer.</li>
+    </ol>
 
-  <h3>Install nginx</h3>
-  <ol>
-    <li>Open a Terminal window (Applications -> Utilities -> Terminal).</li>
-    <li>Update MacPorts by running the following command and entering your admin password if prompted:<br />
-    <code>sudo port -v selfupdate</code></li>
-    <li>Install nginx with the command: <br/>
-    <code>sudo port install nginx</code></li>
-  </ol>
+    <h3>Install nginx</h3>
+    <ol>
+      <li>Open a Terminal window (Applications -> Utilities -> Terminal).</li>
+      <li>Update MacPorts by running the following command and entering your admin password if prompted:<br />
+      <code>sudo port -v selfupdate</code></li>
+      <li>Install nginx with the command: <br/>
+      <code>sudo port install nginx</code></li>
+    </ol>
 
-  <h3>Configure nginx</h3>
-  <ol>
-    <li>Move the config file you generated into place:<br/>
-      <code>sudo mv ~/Downloads/nginx.conf /opt/local/etc/nginx/nginx.conf</code></li>
-    <li>Make sure Apache is disabled on your Mac by going to Apple menu -> System Preferences -> Sharing and unchecking the Web Sharing box.</li>
-  </ol>
+    <h3>Configure nginx</h3>
+    <ol>
+      <li>Move the config file you generated into place:<br/>
+        <code>sudo mv ~/Downloads/nginx.conf /opt/local/etc/nginx/nginx.conf</code></li>
+      <li>Make sure Apache is disabled on your Mac by going to Apple menu -> System Preferences -> Sharing and unchecking the Web Sharing box.</li>
+    </ol>
 
-  <h3>Run, stop, or restart nginx</h3>
-  <p>Nginx does not run automatically when you boot. When starting it, you may receive a firewall prompt to allow or disallow nginx to accept incoming connections. You can safely disallow nginx from accepting incoming connections so that you can access your local web server only from your local machine. This selection keeps your machine safe.</p>
+    <h3>Run, stop, or restart nginx</h3>
+    <p>Nginx does not run automatically when you boot. When starting it, you may receive a firewall prompt to allow or disallow nginx to accept incoming connections. You can safely disallow nginx from accepting incoming connections so that you can access your local web server only from your local machine. This selection keeps your machine safe.</p>
   
-  <ol>
-    <li>Open a Terminal window (Applications -> Utilities -> Terminal).</li>
-    <li>Start nginx with the command:<br />
-    <code>sudo nginx</code></li>
-    <li>Stop nginx with the command:<br/>
-      <code>sudo nginx -s quit</code></li>
-    <li>Restart nginx with the following command if you make configuration changes:<br/>
-    <code>sudo nginx -s reload</code></li>
-  </ol>
+    <ol>
+      <li>Open a Terminal window (Applications -> Utilities -> Terminal).</li>
+      <li>Start nginx with the command:<br />
+      <code>sudo nginx</code></li>
+      <li>Stop nginx with the command:<br/>
+        <code>sudo nginx -s quit</code></li>
+      <li>Restart nginx with the following command if you make configuration changes:<br/>
+      <code>sudo nginx -s reload</code></li>
+    </ol>
 
-  <h3>Test your setup</h3>
-  <ol>
-    <li>Right-click <a href="nginx_test.html">this test file link</a> and select <em>Save as</em>.</li>
-    <li>Save the file as <em>nginx_test.html</em> in your home directory <em>Sites</em> folder.</li>
-    <li><a href="http://localhost/local/nginx_test.html" target="_blank">Click this link</a> to test your local setup.</li>
-  </ol>
+    <h3>Test your setup</h3>
+    <ol>
+      <li>Right-click <a href="nginx_test.html">this test file link</a> and select <em>Save as</em>.</li>
+      <li>Save the file as <em>nginx_test.html</em> in your home directory <em>Sites</em> folder.</li>
+      <li><a href="http://localhost/local/nginx_test.html" target="_blank">Click this link</a> to test your local setup.</li>
+    </ol>
 
-  <h3>Go forth and code</h3>
-  <p>The nginx configuration makes the <em>Sites</em> folder in your Mac home folder web accessible via the URL <a href="http://localhost/local/">http://localhost/local/</a>. Develop your applications in that folder or a subfolder.</p>
+    <h3>Go forth and code</h3>
+    <p>The nginx configuration makes the <em>Sites</em> folder in your Mac home folder web accessible via the URL <a href="http://localhost/local/">http://localhost/local/</a>. Develop your applications in that folder or a subfolder.</p>
+  </div>
+
+  <div dojoType="dijit.TitlePane" open="false" title="Linux (Ubuntu)">
+    <h2>Linux (Ubuntu)</h2>
+    <h3>Install nginx</h3>
+    <ol>
+      <li>Start Synaptic (System -> Admin -> Synaptic package manager).</li>
+      <li>Type <em>nginx</em> in the Quick Search box.</li>
+      <li>Click the little box next to nginx.</li>
+      <li>Choose <em>Choose for Installation</em>.</li>
+      <li>Click <em>Apply</em>.</li>
+      <li>Click <em>Apply</em> again.</li>
+    </ol>
+
+    <h3>Configure nginx</h3>
+    <ol>
+      <li>Open a terminal window.</li>
+      <li>Make a public_html folder in your home directory:<br/>
+      <code>mkdir ~/public_html</code></li>
+      <li>Move the file you generated into the nginx sites directory:<br />
+      <code>sudo cp nginx.conf /etc/nginx/sites-available/uowlocal</code></li>
+      <li>In /etc/nginx/sites-enabled, remove the default and link in unclocal:<br />
+      <code>cd /etc/nginx/sites-enabled<br />
+      sudo rm default<br />
+      sudo ln -s /etc/nginx/sites-available/uowlocal</code></li>
+      <li>Make sure Apache is not running or set to run on boot.</li>
+    </ol>
   
-  <h2>Linux (Ubuntu)</h2>
-  <h3>Install nginx</h3>
-  <ol>
-    <li>Start Synaptic (System -> Admin -> Synaptic package manager).</li>
-    <li>Type <em>nginx</em> in the Quick Search box.</li>
-    <li>Click the little box next to nginx.</li>
-    <li>Choose <em>Choose for Installation</em>.</li>
-    <li>Click <em>Apply</em>.</li>
-    <li>Click <em>Apply</em> again.</li>
-  </ol>
-
-  <h3>Configure nginx</h3>
-  <ol>
-    <li>Open a terminal window.</li>
-    <li>Make a public_html folder in your home directory:<br/>
-    <code>mkdir ~/public_html</code></li>
-    <li>Move the file you generated into the nginx sites directory:<br />
-    <code>sudo cp nginx.conf /etc/nginx/sites-available/uowlocal</code></li>
-    <li>In /etc/nginx/sites-enabled, remove the default and link in unclocal:<br />
-    <code>cd /etc/nginx/sites-enabled<br />
-    sudo rm default<br />
-    sudo ln -s /etc/nginx/sites-available/uowlocal</code></li>
-    <li>Make sure Apache is not running or set to run on boot.</li>
-  </ol>
+    <h3>Run, stop, or restart nginx</h3>
+    <p>Nginx should start automatically when your computer boots. On a laptop with wireless that starts after login, nginx fails to start so you'll need to start it manually.</p>
   
-  <h3>Run, stop, or restart nginx</h3>
-  <p>Nginx should start automatically when your computer boots. On a laptop with wireless that starts after login, nginx fails to start so you'll need to start it manually.</p>
+    <ol>
+      <li>Open a terminal window.</li>
+      <li>Start nginx with the command:<br />
+      <code>sudo nginx</code></li>
+      <li>Stop nginx with the command:<br/>
+        <code>sudo nginx -s quit</code></li>
+      <li>Restart nginx with the following command if you make configuration changes:<br/>
+      <code>sudo nginx -s reload</code></li>
+    </ol>
   
-  <ol>
-    <li>Open a terminal window.</li>
-    <li>Start nginx with the command:<br />
-    <code>sudo nginx</code></li>
-    <li>Stop nginx with the command:<br/>
-      <code>sudo nginx -s quit</code></li>
-    <li>Restart nginx with the following command if you make configuration changes:<br/>
-    <code>sudo nginx -s reload</code></li>
-  </ol>
+    <h3>Test your setup</h3>
+    <ol>
+      <li>Right-click <a href="nginx_test.html">this test file link</a> and select <em>Save as</em>.</li>
+      <li>Save the file as <em>nginx_test.html</em> in your home directory <em>public_html</em> folder.</li>
+      <li><a href="http://localhost/local/nginx_test.html" target="_blank">Click this link</a> to test your local setup.</li>
+    </ol>
+
+    <h3>Go forth and code</h3>
+    <p>The nginx configuration makes the <em>public_html</em> folder in your  home folder web accessible via the URL <a href="http://localhost/local/">http://localhost/local/</a>. Develop your applications in that folder or a subfolder.</p>
+  </div>
   
-  <h3>Test your setup</h3>
-  <ol>
-    <li>Right-click <a href="nginx_test.html">this test file link</a> and select <em>Save as</em>.</li>
-    <li>Save the file as <em>nginx_test.html</em> in your home directory <em>public_html</em> folder.</li>
-    <li><a href="http://localhost/local/nginx_test.html" target="_blank">Click this link</a> to test your local setup.</li>
-  </ol>
-
-  <h3>Go forth and code</h3>
-  <p>The nginx configuration makes the <em>public_html</em> folder in your  home folder web accessible via the URL <a href="http://localhost/local/">http://localhost/local/</a>. Develop your applications in that folder or a subfolder.</p>
-
-  <h2>Windows</h2>
-  <h3>Install nginx</h3>
-  <ol>
-    <li>Download the latest stable version for Windows from <a href="http://nginx.org/en/download.html">the nginx home page</a>.</li>
-    <li>Unzip the .zip file you downloaded.</li>
-    <li>Rename the unzipped folder to <em>nginx</em>.</li>
-    <li>Move the <em>nginx</em> folder to the root of your hard drive (e.g., <em>C:\</em>).</li>
-  </ol>
+  <div dojoType="dijit.TitlePane" open="false" title="Windows">
+    <h2>Windows</h2>
+    <h3>Install nginx</h3>
+    <ol>
+      <li>Download the latest stable version for Windows from <a href="http://nginx.org/en/download.html">the nginx home page</a>.</li>
+      <li>Unzip the .zip file you downloaded.</li>
+      <li>Rename the unzipped folder to <em>nginx</em>.</li>
+      <li>Move the <em>nginx</em> folder to the root of your hard drive (e.g., <em>C:\</em>).</li>
+    </ol>
   
-  <h3>Configure nginx</h3>
-  <ol>
-    <li>Move the config file you generated into the <em>nginx/conf</em> folder.</li>
-    <li>Click OK to overwrite any file with the same name.</li>
-  </ol>
+    <h3>Configure nginx</h3>
+    <ol>
+      <li>Move the config file you generated into the <em>nginx/conf</em> folder.</li>
+      <li>Click OK to overwrite any file with the same name.</li>
+    </ol>
 
-  <h3>Run, stop, or restart nginx</h3>
-  <p>Nginx does not run automatically when you boot. When starting it, you may receive a firewall prompt to allow or disallow nginx to accept incoming connections. You can safely disallow nginx from accepting incoming connections so that you can access your local web server only from your local machine. This selection keeps your machine safe.</p>
+    <h3>Run, stop, or restart nginx</h3>
+    <p>Nginx does not run automatically when you boot. When starting it, you may receive a firewall prompt to allow or disallow nginx to accept incoming connections. You can safely disallow nginx from accepting incoming connections so that you can access your local web server only from your local machine. This selection keeps your machine safe.</p>
 
-  <ol>
-    <li>Open the Start menu.</li>
-    <li>Click <em>Run</em>.</li>
-    <li>Enter <em>cmd</em> to start the command prompt.</li>
-    <li>Change to the nginx folder you moved earlier.<br/>
-    <code>cd \nginx</code></li>
-    <li>Start nginx with the command:<br />
-    <code>start nginx.exe</code></li>
-    <li>Stop nginx with the command:<br/>
-      <code>nginx.exe -s quit</code></li>
-    <li>Restart nginx with the following command if you make configuration changes. Note that this does not work very well on Windows and may hang the server.<br/>
-    <code>nginx.exe -s reload</code></li>
-  </ol>
+    <ol>
+      <li>Open the Start menu.</li>
+      <li>Click <em>Run</em>.</li>
+      <li>Enter <em>cmd</em> to start the command prompt.</li>
+      <li>Change to the nginx folder you moved earlier.<br/>
+      <code>cd \nginx</code></li>
+      <li>Start nginx with the command:<br />
+      <code>start nginx.exe</code></li>
+      <li>Stop nginx with the command:<br/>
+        <code>nginx.exe -s quit</code></li>
+      <li>Restart nginx with the following command if you make configuration changes. Note that this does not work very well on Windows and may hang the server.<br/>
+      <code>nginx.exe -s reload</code></li>
+    </ol>
     
-  <h3>Test your setup</h3>
-  <ol>
-    <li>Right-click <a href="nginx_test.html">this test file link</a> and select <em>Save as</em>.</li>
-    <li>Save the file as <em>nginx_test.html</em> in the <em>nginx/html</em> folder.</li>
-    <li><a href="http://localhost/local/nginx_test.html" target="_blank">Click this link</a> to test your local setup.</li>
-  </ol>
+    <h3>Test your setup</h3>
+    <ol>
+      <li>Right-click <a href="nginx_test.html">this test file link</a> and select <em>Save as</em>.</li>
+      <li>Save the file as <em>nginx_test.html</em> in the <em>nginx/html</em> folder.</li>
+      <li><a href="http://localhost/local/nginx_test.html" target="_blank">Click this link</a> to test your local setup.</li>
+    </ol>
 
-  <h3>Go forth and code</h3>
-  <p>The nginx configuration makes the <em>nginx/html</em> folder in the root of your hard drive web accessible via the URL <a href="http://localhost/local/">http://localhost/local/</a>. Develop your applications in that folder or a subfolder.</p>
+    <h3>Go forth and code</h3>
+    <p>The nginx configuration makes the <em>nginx/html</em> folder in the root of your hard drive web accessible via the URL <a href="http://localhost/local/">http://localhost/local/</a>. Develop your applications in that folder or a subfolder.</p>
+  </div>
 </div>

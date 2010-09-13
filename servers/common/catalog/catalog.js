@@ -5,11 +5,13 @@
  */
 dojo.provide('uow.app.catalog');
 dojo.require('uow.ui.LoginButton');
+dojo.require('uow.ui.CollectionEditor');
 dojo.require('dojo.hash');
 dojo.require('dijit.layout.BorderContainer');
 dojo.require('dijit.layout.ContentPane');
 dojo.require('dijit.layout.StackContainer');
 dojo.require('dojox.layout.ContentPane');
+dojo.require('dijit.TitlePane');
 dojo.require("dojox.highlight");
 dojo.require("dojox.highlight.languages.javascript");
 dojo.require("dojox.highlight.languages.pygments.javascript");
@@ -41,6 +43,13 @@ dojo.ready(function() {
             innerHTML : text
         }, item);
         dojo.destroy(item.firstChild);
+    });
+
+    // listen for login
+    dojo.subscribe('/uow/auth', function(user) {
+        if(user && user.email && user.role == 'developer') {
+            dojo.style(dojo.byId('tools'), 'display', '');
+        }
     });
     
     // update login ui

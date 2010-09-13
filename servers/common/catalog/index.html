@@ -6,8 +6,11 @@
     <style type="text/css">
       @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojo/resources/dojo.css";
       @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5/dijit/themes/tundra/tundra.css";
+      @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5.0/dojox/grid/resources/Grid.css";
+      @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5.0/dojox/grid/resources/tundraGrid.css";
       @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojox/highlight/resources/highlight.css";
       @import "http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojox/highlight/resources/pygments/friendly.css";
+      @import "/libs/uow/ui/css/uow.css";
       @import "catalog.css";
     </style>
     <script type="text/javascript">
@@ -17,8 +20,8 @@
             baseUrl: './'
         };
     </script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojo/dojo.xd.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dijit/dijit.xd.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.5.0/dojo/dojo.xd.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.5.0/dijit/dijit.xd.js"></script>
     <script type="text/javascript" src="/libs/uow/trace.js"></script>
     <script type="text/javascript" src="/libs/uow.js"></script>
     <script type="text/javascript" src="catalog.js"></script>
@@ -39,13 +42,17 @@
           <h2>Intro</h2>
           <li>Getting started</li>
           <li>Developing web apps</li>
-          <h2>Services</h2>
+          <li>harkthesound.org integration</li>
+          <h2>APIs</h2>
           <li>Audio</li>
           <li>Authentication</li>
           <li>Database</li>
           <li>Dojo Trace</li>
-          <h2>Sites</h2>
-          <li>harkthesound.org integration</li>
+          <div id="tools" style="display: none;">
+            <h2>Tools</h2>
+            <li>Database editor</li>
+            <li>User editor</li>
+          </div>
         </ul>
       </div>
       <div dojoType="dijit.layout.StackContainer" 
@@ -53,48 +60,66 @@
            region="center" 
            splitter="true">
         <div dojoType="dijit.layout.ContentPane" 
+             class="doc"
              id="home"
              title="Home"
              preload="true"
              href="catalog_home.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="start"
              preload="true"
              title="Getting started" 
              href="catalog_start.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="app"
              preload="true"
              title="Developing web apps" 
              href="catalog_app.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
+             id="hark"
+             preload="true"
+             title="harkthesound.org integration" 
+             href="catalog_hark.html"></div>
+        <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="audio"
              preload="true"
              title="Audio" 
              href="catalog_audio.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="auth"
              preload="true"
              title="Authentication" 
              href="catalog_auth.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="db"
              title="Database" 
              preload="true"
              href="catalog_db.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
+             class="doc"
              id="trace"
              title="Dojo Trace" 
              preload="true"
              href="catalog_trace.html"></div>
         <div dojoType="dojox.layout.ContentPane" 
-             id="hark"
-             preload="true"
-             title="harkthesound.org integration" 
-             href="catalog_hark.html"></div>
+             id="dbtool"
+             preload="false"
+             title="Database editor" 
+             href="catalog_db_editor.html"></div>
+        <div dojoType="dojox.layout.ContentPane" 
+             id="usertool"
+             preload="false"
+             title="User editor" 
+             href="catalog_user_editor.html"></div>
       </div>
       <div dojoType="dijit.layout.ContentPane" region="bottom" splitter="false">
-        Last updated: 8/29/2010
+        Last updated: 9/11/10
       </div>
     </div>
   </body>
