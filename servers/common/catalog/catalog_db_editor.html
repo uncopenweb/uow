@@ -1,1 +1,60 @@
-<div>Coming soon</div>
+<div dojoType="dijit.layout.BorderContainer" 
+     design="sidebar"
+     class="catDbEditor catTool" 
+     liveSplitters="true">
+  <div dojoType="dijit.layout.BorderContainer" 
+       gutters="false"
+       region="top"
+       class="catDbEditorHeader">
+    <div dojoType="dijit.Toolbar"
+         region="center"
+         class="cat">
+      database, collection picker
+    </div>
+    <div dojoType="dijit.Toolbar"
+         region="right"
+         class="cat">
+      <input type="radio" 
+             checked
+             dojoType="dijit.form.RadioButton" 
+             name="catDbEditorMode"
+             id="catDbEditorModeC"
+             value="collection" /
+      ><label for="catDbEditorModeC">Collection</label>
+      <input type="radio" 
+             dojoType="dijit.form.RadioButton" 
+             name="catDbEditorMode"
+             id="catDbEditorModeD"
+             value="database" /
+      ><label for="catDbEditorModeD">Database</label>
+    </div>
+  </div>
+  <div dojoType="dijit.layout.TabContainer" 
+       region="center"
+       tabStrip="true"
+       class="cat">
+    <div dojoType="dijit.layout.ContentPane" 
+         title="Data"
+         class="cat">
+      collection editor
+    </div>
+    <div dojoType="dijit.layout.ContentPane" 
+         title="Access"
+         class="cat">
+      access editor
+    </div>
+    <div dojoType="dijit.layout.ContentPane" 
+         title="Schema"
+         class="cat">
+      schema editor
+    </div>
+  </div>
+  <div dojoType="dijit.layout.ContentPane" 
+       region="right"
+       style="width: 200px"
+       splitter="true">
+    <h2>Database editor help</h2>
+    <h3>Collection Mode</h3>
+    <h3>Database Mode</h3>
+  </div>
+</div>
