@@ -1,14 +1,11 @@
 /*
  * Factory functions for all UOW services. 
  *
- * :requires: Dojo 1.4.x, JSonic 0.1
- * :copyright: Gary Bishop, Peter Parente 2010
- * :license: BSD
+ * Copyright UNC Open Web Team 2010. All Rights Reserved.
 **/
 dojo.provide('uow');
-dojo.registerModulePath('info.mindtrove', '/libs/info/mindtrove');
 dojo.registerModulePath('uow', '/libs/uow');
-dojo.require('info.mindtrove.JSonic');
+dojo.require('uow.audio.JSonic');
 dojo.require('uow.data.MongoStore');
 dojo.require('dojox.encoding.base64');
 dojo.require('dojo.cookie');
