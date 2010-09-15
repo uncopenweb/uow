@@ -16,7 +16,7 @@ uow.getAudio = function(args) {
     if(!uow._audio) {
         args = args || {};
         args.jsonicURI = '/jsonic/';
-        uow._audio = new info.mindtrove.JSonic(args);
+        uow._audio = new uow.audio.JSonic(args);
     }
     var def = new dojo.Deferred();
     def.callback(uow._audio);
