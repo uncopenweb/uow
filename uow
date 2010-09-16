@@ -14,6 +14,8 @@ NGINX_SERVER_TMPL = '''\
 # DO NOT EDIT MANUALLY. Use the uow script to update this file.
 ${upstreams}
 
+${http_insert}
+
 server {
     listen ${server_port};
     server_name ${server_name};
@@ -24,6 +26,7 @@ server {
 ${aliases}
 ${upload}
 ${proxies}
+${server_insert}
 }'''
 NGINX_UPSTREAM_TMPL = '''\
 upstream ${name} {
@@ -81,6 +84,8 @@ class NginxTemplate(object):
         self.aliases = []
         self.server_name = None
         self.server_port = None
+        self.server_insert = ''
+        self.http_insert = ''
     
     def render(self):
         args = dict(self.__dict__)
@@ -122,6 +127,12 @@ class NginxTemplate(object):
         
     def set_server_name(self, name):
         self.server_name = name
+        
+    def set_server_insert(self, value):
+        self.server_insert = value
+        
+    def set_http_insert(self, value):
+        self.http_insert = value
 
 class NginxHandler(object):
     def __init__(self, config_name, nginx_tmpl):
@@ -136,6 +147,12 @@ class NginxHandler(object):
     
     def server_name(self, section, value, cp):
         self.nginx_tmpl.set_server_name(value)
+        
+    def server_insert(self, section, value, cp):
+        self.nginx_tmpl.set_server_insert(value)
+        
+    def http_insert(self, section, value, cp):
+        self.nginx_tmpl.set_http_insert(value)
 
 class ComponentHandler(object):
     def __init__(self, config_name, nginx_tmpl):
