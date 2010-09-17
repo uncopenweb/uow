@@ -45,10 +45,11 @@
       <dt>collection (string)</dt>
       <dd>Name of the collection in the database to access.</dd>
       <dt>mode (string)</dt>
-      <dd>Permissions requested for accessing the database. Right now, any permissions requested are granted. If mode is left undefined, all permissions are requested and granted. The mode string can contain one or more of the following characters representing permissions:
+      <dd>Permissions requested for accessing the database. If mode is left undefined, all permissions are requested and granted for developers, non-developers get what is allowed for the collection. The mode string can contain one or more of the following characters representing permissions:
         <ul>
           <li>c : Create records</li>
-          <li>r : Read records</li>
+          <li>r : Read records with any query</li>
+          <li>R : Restricted read that allows only simple equality queries that return a single record.
           <li>u : Update existing records</li>
           <li>d : Delete records</li>
           <li>D : Drop collection</li>
