@@ -6,6 +6,7 @@
 dojo.provide('uow.app.catalog');
 dojo.require('uow.ui.LoginButton');
 dojo.require('uow.ui.CollectionEditor');
+dojo.require('uow.ui.DatabaseEditor');
 dojo.require('dojo.hash');
 dojo.require('dijit.layout.BorderContainer');
 dojo.require('dijit.layout.ContentPane');

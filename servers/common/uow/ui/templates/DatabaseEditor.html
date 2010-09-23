@@ -1,0 +1,56 @@
+<div class="uowDatabaseEditor">
+  <div dojoType="dijit.layout.BorderContainer" 
+       gutters="false"
+       dojoAttachPoint="borderContainer">
+    <div dojoType="dijit.layout.BorderContainer" 
+         gutters="false"
+         region="top"
+         class="uowDatabaseEditorHeader">
+      <div dojoType="dijit.Toolbar"
+           region="center">
+        database, collection picker
+      </div>
+      <div dojoType="dijit.Toolbar"
+           region="right">
+        <input type="radio" 
+               checked
+               dojoType="dijit.form.RadioButton" 
+               name="uowDatabaseEditorMode"
+               id="${id}_collection_mode"
+               value="collection" /
+        ><label for="${id}_collection_mode">Collection</label>
+        <input type="radio" 
+               dojoType="dijit.form.RadioButton" 
+               name="uowDatabaseEditorMode"
+               id="${id}_database_mode"
+               value="database" /
+        ><label for="${id}_database_mode">Database</label>
+      </div>
+    </div>
+    <div dojoType="dijit.layout.StackContainer" 
+         region="center">
+      <div dojoType="dijit.layout.TabContainer" 
+           tabStrip="true">
+        <div dojoType="dijit.layout.ContentPane" 
+             title="Data">
+          <div dojoType="uow.ui.CollectionEditor"></div>
+        </div>
+        <div dojoType="dijit.layout.ContentPane" 
+             title="Access">
+          access editor
+        </div>
+        <div dojoType="dijit.layout.ContentPane" 
+             title="Schema">
+          schema editor
+        </div>
+      </div>
+      <div dojoType="dijit.layout.TabContainer" 
+           tabStrip="true">
+        <div dojoType="dijit.layout.ContentPane" 
+             title="Access">
+          access editor
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

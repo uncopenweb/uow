@@ -160,24 +160,10 @@ html, body, .catalog #layout {
     padding: 0px;
 }
 
+.catalog .catDatabaseEditorPane {
+    padding: 0px;
+}
+
 .catalog .catTool h2 {
     margin-top: 0px;
-}
-
-.catalog .catDbEditorHeader {
-    height: 24px;
-}
-
-.catalog .catDbEditorHeader .dijitRadio {
-    vertical-align: middle;
-    display: inline-block;
-    padding: 4px 0px;
-}    
-
-.catalog .catDbEditorHeader label {
-    vertical-align: middle;
-    display: inline-block;
-    font-size: 0.85em;
-    padding: 4px 0px;
-    padding-right: 3px;
 }
