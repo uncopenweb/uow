@@ -9,6 +9,8 @@ dojo.require('dijit._Widget');
 dojo.require('dijit._Templated');
 dojo.require('dijit.form.RadioButton');
 dojo.require('dijit.Toolbar');
+dojo.require('dijit.form.TextBox');
+dojo.require('dijit.form.FilteringSelect');
 dojo.require('dijit.layout.StackContainer');
 dojo.require('dijit.layout.ContentPane');
 dojo.require('dijit.layout.TabContainer');
@@ -31,5 +33,9 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated], {
     
     resize: function(box) {
         this.borderContainer.resize(box);
+    },
+    
+    _onDbConnect: function(event) {
+        
     }
 });

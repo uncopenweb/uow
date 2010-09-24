@@ -42,3 +42,11 @@
     width: 16px;
     height: 16px;
 }
+
+.uowDatabaseConnect {
+    background-image: url('icons/database-arrow.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}

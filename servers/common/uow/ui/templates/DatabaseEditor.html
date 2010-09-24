@@ -7,32 +7,52 @@
          region="top"
          class="uowDatabaseEditorHeader">
       <div dojoType="dijit.Toolbar"
+           class="uowDatabaseEditorPicker"
            region="center">
-        database, collection picker
+        <label>${labels.database_text_label}</label>
+        <input dojoType="dijit.form.TextBox"
+               dojoAttachPoint="dbNameWidget" /
+        ><button dojoType="dijit.form.Button"
+                 showLabel="false"
+                 dojoAttachEvent="onClick:_onDbConnect"
+                 iconClass="uowDatabaseConnect">${labels.connect_button_label}</button
+        ><span dojoType="dijit.ToolbarSeparator"></span
+        ><label>${labels.collection_text_label}</label>
+        <select dojoType="dijit.form.FilteringSelect"
+                disabled
+                dojoAttachPoint="colNameWidget"></select>
       </div>
       <div dojoType="dijit.Toolbar"
+           class="uowDatabaseEditorMode"
            region="right">
         <input type="radio" 
                checked
-               dojoType="dijit.form.RadioButton" 
-               name="uowDatabaseEditorMode"
-               id="${id}_collection_mode"
-               value="collection" /
-        ><label for="${id}_collection_mode">Collection</label>
-        <input type="radio" 
+               disabled
                dojoType="dijit.form.RadioButton" 
                name="uowDatabaseEditorMode"
                id="${id}_database_mode"
                value="database" /
-        ><label for="${id}_database_mode">Database</label>
+        ><label for="${id}_database_mode">${labels.database_text_label}</label>
+        <input type="radio" 
+               disabled
+               dojoType="dijit.form.RadioButton" 
+               name="uowDatabaseEditorMode"
+               id="${id}_collection_mode"
+               value="collection" /
+        ><label for="${id}_collection_mode">${labels.collection_text_label}</label>
       </div>
     </div>
     <div dojoType="dijit.layout.StackContainer" 
          region="center">
+      <div dojoType="dijit.layout.ContentPane"
+           class="uowDatabaseEditorIdle"
+           dojoAttachPoint="idlePane">${labels.idle_label}</div>
       <div dojoType="dijit.layout.TabContainer" 
+           dojoAttachPoint="collectionTabs"
            tabStrip="true">
         <div dojoType="dijit.layout.ContentPane" 
-             title="Data">
+             title="Data"
+             class="uowDatabaseEditorWrapper">
           <div dojoType="uow.ui.CollectionEditor"></div>
         </div>
         <div dojoType="dijit.layout.ContentPane" 
@@ -45,6 +65,7 @@
         </div>
       </div>
       <div dojoType="dijit.layout.TabContainer" 
+           dojoAttachPoint="databaseTabs"
            tabStrip="true">
         <div dojoType="dijit.layout.ContentPane" 
              title="Access">

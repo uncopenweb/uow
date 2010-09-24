@@ -13,16 +13,31 @@
     vertical-align: middle;
     display: inline-block;
     font-size: 0.85em;
-    color: gray;
-    padding: 4px 0px;
-    padding-right: 3px;
+    padding: 5px 0px;
+}
+
+.uowDatabaseEditor .uowDatabaseEditorPicker .dijitTextBox {
+    width: 100px;
+}
+
+.uowDatabaseEditor .uowDatabaseEditorPicker .dijitButtonText {
+    padding-bottom: 2px;
+}
+
+.uowDatabaseEditor .uowDatabaseEditorPicker label {
+    padding-left: 5px;
+}
+
+.uowDatabaseEditor .uowDatabaseEditorMode label {
+    padding-right: 5px;
 }
 
 .uowDatabaseEditor .uowDatabaseEditorHeader {
     height: 24px;
+    white-space:nowrap;
 }
 
-.uowDatabaseEditor .dijitRadio {
+.uowDatabaseEditor .uowDatabaseEditorMode .dijitRadio {
     vertical-align: middle;
     display: inline-block;
     padding: 4px 0px;
@@ -31,4 +46,15 @@
 .uowDatabaseEditor .dijitTabPaneWrapper, 
 .uowDatabaseEditor .dijitTabListWrapper {
     border-width: 0px !important;
+}
+
+.uowDatabaseEditor .uowDatabaseEditorWrapper {
+    padding: 0px;
+}
+
+.uowDatabaseEditor .uowDatabaseEditorIdle {
+    text-align: center;
+    margin-top: 3em;
+    font-size: 1.5em;
+    color: gray;
 }
