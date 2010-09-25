@@ -44,6 +44,14 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated], {
         }).then(dojo.hitch(this, '_onListDb'));
     },
     
+    _onClickCreate: function() {
+        
+    },
+    
+    _onClickDrop: function() {
+        
+    },
+    
     _onListDb: function(db) {
         // store the list only db
         this._db = db;

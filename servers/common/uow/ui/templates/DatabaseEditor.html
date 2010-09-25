@@ -9,20 +9,33 @@
       <div dojoType="dijit.Toolbar"
            class="uowDatabaseEditorPicker"
            region="center">
-        <label>${labels.database_text_label}</label>
+        <label "${id}_db_name">${labels.database_text_label}</label>
         <input dojoType="dijit.form.TextBox"
+               id="${id}_db_name"
                dojoAttachPoint="dbNameWidget" /
         ><button dojoType="dijit.form.Button"
                  showLabel="false"
                  dojoAttachEvent="onClick:_onClickConnect"
                  iconClass="uowDatabaseConnect">${labels.connect_button_label}</button
         ><span dojoType="dijit.ToolbarSeparator"></span
-        ><label>${labels.collection_text_label}</label>
+        ><label for="${id}_col_name">${labels.collection_text_label}</label>
         <select dojoType="dijit.form.FilteringSelect"
                 disabled
+                id="${id}_col_name"
                 searchAttr="url"
                 labelFunc="uow.ui.DatabaseEditor.formatCollectionLabel"
-                dojoAttachPoint="colNameWidget"></select>
+                dojoAttachPoint="colNameWidget"></select
+        ><button dojoType="dijit.form.Button"
+                 disabled
+                 showLabel="false"
+                 dojoAttachEvent="onClick:_onClickCreate"
+                 iconClass="uowCollectionCreate">${labels.create_button_label}</button
+        ><button dojoType="dijit.form.Button"
+                 disabled
+                 showLabel="false"
+                 dojoAttachEvent="onClick:_onClickDrop"
+                 iconClass="uowCollectionDrop">${labels.drop_button_label}</button
+        >
       </div>
       <div dojoType="dijit.Toolbar"
            class="uowDatabaseEditorMode"
