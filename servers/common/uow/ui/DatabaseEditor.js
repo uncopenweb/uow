@@ -24,7 +24,8 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated], {
 
     postMixInProperties: function() {
         this.labels = dojo.i18n.getLocalization('uow.ui','DatabaseEditor');
-        
+        // db connection for catalog list
+        this._db = null;
     },
 
     postCreate: function() {
@@ -35,7 +36,26 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated], {
         this.borderContainer.resize(box);
     },
     
-    _onDbConnect: function(event) {
-        
+    _onClickConnect: function(event) {
+        var def = uow.getDatabase({
+            database : this.dbNameWidget.attr('value'), 
+            collection: '*',
+            mode : 'L' // @todo: add delete support
+        }).then(dojo.hitch(this, '_onListDb'));
+    },
+    
+    _onListDb: function(db) {
+        // store the list only db
+        this._db = db;
+        debug = this._db;
+        // hook it to the filtering select for collection selection
+        this.colNameWidget.attr('store', this._db);
+        this.colNameWidget.attr('disabled', false);
     }
 });
+
+uow.ui.DatabaseEditor.formatCollectionLabel = function(item, store) {
+    var url = store.getValue(item, 'url');
+    var segs = url.split('/');
+    return segs[3] || url;
+};

@@ -14,12 +14,14 @@
                dojoAttachPoint="dbNameWidget" /
         ><button dojoType="dijit.form.Button"
                  showLabel="false"
-                 dojoAttachEvent="onClick:_onDbConnect"
+                 dojoAttachEvent="onClick:_onClickConnect"
                  iconClass="uowDatabaseConnect">${labels.connect_button_label}</button
         ><span dojoType="dijit.ToolbarSeparator"></span
         ><label>${labels.collection_text_label}</label>
         <select dojoType="dijit.form.FilteringSelect"
                 disabled
+                searchAttr="url"
+                labelFunc="uow.ui.DatabaseEditor.formatCollectionLabel"
                 dojoAttachPoint="colNameWidget"></select>
       </div>
       <div dojoType="dijit.Toolbar"
