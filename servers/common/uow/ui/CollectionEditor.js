@@ -44,7 +44,9 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     },
     
     _setTargetAttr: function(target) {
+        if(!this.target || !this.target.length) { return; }
         this.target = target;
+
         // destroy any existing grid
         if(this._grid) {
             this._grid.destroyRecursive();
