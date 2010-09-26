@@ -3,7 +3,7 @@
  *
  * Copyright UNC Open Web Group. All Rights Reserved. 
  */
-.uowDatabaseInsert {
+.uowRowInsert {
     background-image: url('icons/database-insert.png');
     background-repeat: no-repeat;
     background-position: 50% 50%;
@@ -11,7 +11,7 @@
     height: 16px;
 }
 
-.uowDatabaseDelete {
+.uowRowDelete {
     background-image: url('icons/database-delete.png');
     background-repeat: no-repeat;
     background-position: 50% 50%;
@@ -51,6 +51,14 @@
     height: 16px;
 }
 
+.uowDatabase {
+    background-image: url('icons/database.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;    
+}
+
 .uowCollectionCreate {
     background-image: url('icons/database-plus.png');
     background-repeat: no-repeat;
@@ -59,8 +67,48 @@
     height: 16px;
 }
 
+.dijitButtonDisabled .uowCollectionCreate {
+    background-image: url('icons/database-plus-disabled.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}
+
 .uowCollectionDrop {
     background-image: url('icons/database-minus.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}
+
+.dijitButtonDisabled .uowCollectionDrop {
+    background-image: url('icons/database-minus-disabled.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}
+
+.uowCollectionData {
+    background-image: url('icons/document-block.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}
+
+.uowCollectionSchema {
+    background-image: url('icons/document-tree.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}
+
+.uowCollectionAccess {
+    background-image: url('icons/key-pencil.png');
     background-repeat: no-repeat;
     background-position: 50% 50%;
     width: 16px;
