@@ -54,7 +54,7 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
             var def = uow.getDatabase({
                 database : db, 
                 collection: '*',
-                mode : 'LD'
+                mode : 'crud'
             }).then(dojo.hitch(this, '_onListDb'));
         }
     },
@@ -78,34 +78,34 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
     },
     
     _onSelectCollection: function(value) {
-        console.log(value);
-        // drop existing tabs
+        // build db/col target pair
+        var target = [
+            this.dbNameWidget.attr('value'),
+            this.colNameWidget.attr('value')
+        ];
         if(value) {
             this.dropButton.attr('disabled', false);
             if(this._colDataWidget) {
                 // update existing tabs
-                this._colDataWidget.attr('target', [
-                    this.dbNameWidget.attr('value'),
-                    this.colNameWidget.attr('value')
-                ]);
+                this._colDataWidget.attr('target', target);
+                this._colAccessWidget.attr('target', target);
             } else {
                 // build new tabs
                 this._colDataWidget = new uow.ui.CollectionEditor({
                     title : this.labels.data_tab_label,
-                    target : [
-                        this.dbNameWidget.attr('value'),
-                        this.colNameWidget.attr('value')
-                    ],
+                    target : target,
                     iconClass : 'uowCollectionData'
                 });
                 this.editorTabs.addChild(this._colDataWidget);
                 this._colSchemaWidget = new dijit.layout.ContentPane({
                     title : this.labels.schema_tab_label,
-                    iconClass : 'uowCollectionSchema'
+                    iconClass : 'uowCollectionSchema',
+                    content : 'Schema editor coming soon'
                 });
                 this.editorTabs.addChild(this._colSchemaWidget);
                 this._colAccessWidget = new uow.ui.CollectionAccessEditor({
                     title : this.labels.access_tab_label,
+                    target: target,
                     iconClass : 'uowCollectionAccess'
                 });
                 this.editorTabs.addChild(this._colAccessWidget);            

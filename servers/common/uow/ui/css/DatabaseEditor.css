@@ -9,11 +9,15 @@
     overflow: hidden;
 }
 
-.uowDatabaseEditor .dijitToolbar label {
+.uowDatabaseEditor .uowDatabaseEditorPicker label {
     vertical-align: middle;
     display: inline-block;
     font-size: 0.85em;
     padding: 5px 0px;
+}
+
+.uowDatabaseEditor .dijitTab .tabLabel {
+    font-size: 0.85em;
 }
 
 .uowDatabaseEditor .uowDatabaseEditorPicker .dijitTextBox {

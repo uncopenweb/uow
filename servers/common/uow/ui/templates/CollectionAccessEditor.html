@@ -2,7 +2,10 @@
   <table dojoAttachPoint="tableNode">
     <thead dojoAttachPoint="tableHead">
       <tr>
-        <th>Role/Mode</th>
+        <th>
+          <span dojoAttachPoint="dbNameNode"></span> &rarr; 
+          <span dojoAttachPoint="colNameNode"></span>
+        </th>
         <th data-mode="c">Create (c)</th>
         <th data-mode="r">Read (r)</th>
         <th data-mode="u">Update (u)</th>
@@ -13,7 +16,11 @@
     <tbody dojoAttachPoint="tableBody">
       <tr data-role="anonymous" dojoAttachPoint="anonymousRow">
         <td>anonymous</td>
-        <td colspan="5" rowspan="4">Test</td>
+        <td dojoAttachPoint="idleNode" 
+            class="uowCollectionAccessEditorIdle dijitContentPaneLoading"
+            style="display: none;" 
+            colspan="5" 
+            rowspan="4">Loading...</td>
       </tr>
       <tr data-role="identified" dojoAttachPoint="identifiedRow">
         <td>identified</td>
