@@ -138,7 +138,14 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
         var item = this._grid.getItem(row.index);
         // abort if we couldn't find the item for this row
         if(!item) {return;}
-        var result = dojox.json.schema.validate(item, this._schema);
+        // disable additional property checks here
+        var orig = this._schema.additionalProperties;
+        delete this._schema.additionalProperties;
+        try {
+            var result = dojox.json.schema.validate(item, this._schema);
+        } finally {
+            this._schema.additionalProperties = orig;
+        }
         if(result.valid) {
             dojo.query('td[role="gridcell"]', row.node).style('color', '');
         } else {
