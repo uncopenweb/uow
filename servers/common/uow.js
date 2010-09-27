@@ -7,7 +7,6 @@ dojo.provide('uow');
 dojo.registerModulePath('uow', '/libs/uow');
 dojo.require('uow.audio.JSonic');
 dojo.require('uow.data.MongoStore');
-dojo.require('dojox.encoding.base64');
 dojo.require('dojo.cookie');
 
 // Gets the singleton JSonic audio manager
@@ -72,6 +71,15 @@ uow.getDatabase = function(args) {
         def.errback(err);
     });
     return def;
+};
+
+// Return a store for listing and deleting collections from a database
+uow.manageDatabase = function(database) {
+    return uow.getDatabase({
+        database: database,
+        collection: '*',
+        mode: 'rd'
+    });
 };
 
 // Ask the server to return the current user
