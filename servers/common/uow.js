@@ -7,7 +7,6 @@ dojo.provide('uow');
 dojo.registerModulePath('uow', '/libs/uow');
 dojo.require('uow.audio.JSonic');
 dojo.require('uow.data.MongoStore');
-dojo.require('dojox.encoding.base64');
 dojo.require('dojo.cookie');
 
 // Gets the singleton JSonic audio manager
@@ -25,10 +24,10 @@ uow.getAudio = function(args) {
 
 // Gets a MongoStore instance (like dojox.data.JSONRestStore)
 uow.getDatabase = function(args) {
-    def = { idAttribute: '_id',
-            mode: 'crud' };
+    var defargs = { idAttribute: '_id',
+                    mode: 'crud' };
     args = args || {};
-    args = dojo.mixin(def, args);
+    args = dojo.mixin(defargs, args);
     var xhr = {
         url: '/data/_auth',
         handleAs: 'json',
@@ -49,6 +48,15 @@ uow.getDatabase = function(args) {
         def.errback(err);
     });
     return def;
+};
+
+// Return a store for listing and deleting collections from a database
+uow.manageDatabase = function(database) {
+    return uow.getDatabase({
+        database: database,
+        collection: '*',
+        mode: 'rd'
+    });
 };
 
 // Ask the server to return the current user
