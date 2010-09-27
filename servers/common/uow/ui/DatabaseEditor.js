@@ -16,6 +16,7 @@ dojo.require('dijit.layout.StackContainer');
 dojo.require('dijit.layout.ContentPane');
 dojo.require('dijit.layout.TabContainer');
 dojo.require('uow.ui.CollectionEditor');
+dojo.require('uow.ui.CollectionAccessEditor');
 dojo.require('dojo.i18n');
 dojo.requireLocalization('uow.ui', 'DatabaseEditor');
 
@@ -77,31 +78,46 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
     },
     
     _onSelectCollection: function(value) {
-        if(value && !this._colDataWidget) {
+        console.log(value);
+        // drop existing tabs
+        if(value) {
             this.dropButton.attr('disabled', false);
-            this._colDataWidget = new dijit.layout.ContentPane({
-                title : this.labels.data_tab_label,
-                iconClass : 'uowCollectionData'
-            });
-            this.editorTabs.addChild(this._colDataWidget);
-            this._colSchemaWidget = new dijit.layout.ContentPane({
-                title : this.labels.schema_tab_label,
-                iconClass : 'uowCollectionSchema'
-            });
-            this.editorTabs.addChild(this._colSchemaWidget);
-            this._colAccessWidget = new dijit.layout.ContentPane({
-                title : this.labels.access_tab_label,
-                iconClass : 'uowCollectionAccess'
-            });
-            this.editorTabs.addChild(this._colAccessWidget);            
-        } else if(!value && this._colDataWidget) {
+            if(this._colDataWidget) {
+                // update existing tabs
+                this._colDataWidget.attr('target', [
+                    this.dbNameWidget.attr('value'),
+                    this.colNameWidget.attr('value')
+                ]);
+            } else {
+                // build new tabs
+                this._colDataWidget = new uow.ui.CollectionEditor({
+                    title : this.labels.data_tab_label,
+                    target : [
+                        this.dbNameWidget.attr('value'),
+                        this.colNameWidget.attr('value')
+                    ],
+                    iconClass : 'uowCollectionData'
+                });
+                this.editorTabs.addChild(this._colDataWidget);
+                this._colSchemaWidget = new dijit.layout.ContentPane({
+                    title : this.labels.schema_tab_label,
+                    iconClass : 'uowCollectionSchema'
+                });
+                this.editorTabs.addChild(this._colSchemaWidget);
+                this._colAccessWidget = new uow.ui.CollectionAccessEditor({
+                    title : this.labels.access_tab_label,
+                    iconClass : 'uowCollectionAccess'
+                });
+                this.editorTabs.addChild(this._colAccessWidget);            
+            }
+        } else if(this._colDataWidget) {
             this.dropButton.attr('disabled', true);
             this.editorTabs.removeChild(this._colAccessWidget);
             this._colAccessWidget = null;
             this.editorTabs.removeChild(this._colSchemaWidget);
             this._colSchemaWidget = null;
             this.editorTabs.removeChild(this._colDataWidget);
-            this._colDataWidget = null;
+            this._colDataWidget = null;        
         }
     },
     

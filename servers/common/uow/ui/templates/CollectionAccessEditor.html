@@ -1,12 +1,28 @@
 <div class="uowCollectionAccessEditor">
-  <table>
-    <thead>
+  <table dojoAttachPoint="tableNode">
+    <thead dojoAttachPoint="tableHead">
       <tr>
-        <td colspan="5">anonymous</td>
-        <td colspan="5">identified</td>
-        <td colspan="5">author</td>
-        <td colspan="5">admin</td>
+        <th>Role/Mode</th>
+        <th data-mode="c">Create (c)</th>
+        <th data-mode="r">Read (r)</th>
+        <th data-mode="u">Update (u)</th>
+        <th data-mode="d">Delete (d)</th>
+        <th data-mode="R">Restricted read (R)</th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody dojoAttachPoint="tableBody">
+      <tr data-role="anonymous" dojoAttachPoint="anonymousRow">
+        <td>anonymous</td>
+        <td colspan="5" rowspan="4">Test</td>
+      </tr>
+      <tr data-role="identified" dojoAttachPoint="identifiedRow">
+        <td>identified</td>
+      </tr>
+      <tr data-role="author" dojoAttachPoint="authorRow">
+        <td>author</td>
+      </tr>
+      <tr data-role="admin" dojoAttachPoint="adminRow">
+        <td>admin</td>
+      </tr>
+    </tbody>
 </div>

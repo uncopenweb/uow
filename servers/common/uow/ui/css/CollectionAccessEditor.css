@@ -1,0 +1,21 @@
+/**
+ * Styles for the collection access editor widget.
+ *
+ * Copyright UNC Open Web Group. All Rights Reserved. 
+ */
+.uowCollectionAccessEditor table {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+    margin: 1em;
+}
+
+.uowCollectionAccessEditor td {
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+
+.uowCollectionAccessEditor th {
+    background-color: #f2f2f2;
+    padding: 5px;
+    border: 1px solid #ccc;
+}
