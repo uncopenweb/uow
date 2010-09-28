@@ -47,6 +47,7 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
                 var cb = new dijit.form.CheckBox({
                     id : this.id+'_'+role+'_'+mode
                 });
+                cb.domNode.setAttribute('data-mode', mode);
                 dojo.place(cb.domNode, td);
                 this.connect(cb, 'onChange', 
                     dojo.partial(this._onCheck, role, mode));
@@ -93,11 +94,62 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
     
     _onCheck: function(role, mode, value) {
         if(this._mutex) { return; }
-        // @todo: collect all checks in the row
-        // check if the appropriate access item exists
-        // create it or update its permission attr
-        // save the result
-        console.log(role, mode, value);
+
+        // if r or R is going on, make sure the other is off
+        if(value) {
+            var rw;
+            if(mode == 'R') {
+                rw = dijit.byId(this.id+'_'+role+'_r');
+                if(rw.attr('checked')) {
+                    rw.attr('checked', false);
+                    // don't do anything else, we'll get another checked event
+                    // for that widget
+                    return;
+                }
+            } else if(mode == 'r') {
+                rw = dijit.byId(this.id+'_'+role+'_R');
+                if(rw.attr('checked')) {
+                    rw.attr('checked', false);
+                    return;
+                }            
+            }
+        }
+        
+        // get the row for the role
+        var row = dojo.query('tr[data-role="'+role+'"]', this.tableBody)[0];
+        // get all the checkboxes
+        var modes = dojo.query('[widgetid]', row).map(function(node) {
+            var w = dijit.byNode(node);
+            if(w.attr('checked')) {
+                return node.getAttribute('data-mode');
+            } else {
+                return '';
+            }
+        });
+        var modeStr = modes.join();
+        
+        // update an item for the db/collection/role in the the Admin, 
+        // AccessModes collection, else create one
+        var args = {
+            role : role, 
+            database : this.target[0], 
+            collection : this.target[1]
+        };
+        this._db.fetch({
+            query : args,
+            onComplete: function(items) {
+                if(items.length) {
+                    // @todo: handle more than one match, that's badness
+                    this._db.setValue(items[0], 'permission', modeStr);
+                } else {
+                    // create a new item to hold the permission
+                    args.permission = modeStr;
+                    this._db.newItem(permission);
+                }
+                this._db.save();
+            },
+            scope: this
+        });
     },
     
     _buildGrid: function(items) {
