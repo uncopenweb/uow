@@ -51,10 +51,8 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
         if(!db) { 
            this._enableDbControls(null);
         } else {
-            var def = uow.getDatabase({
-                database : db, 
-                collection: '*',
-                mode : 'crud'
+            var def = uow.manageDatabase({
+                database : db
             }).then(dojo.hitch(this, '_onListDb'));
         }
     },
