@@ -74,9 +74,10 @@ uow.getDatabase = function(args) {
 };
 
 // Return a store for listing and deleting collections from a database
-uow.manageDatabase = function(database) {
+uow.manageDatabase = function(args) {
+    args = args || {};
     return uow.getDatabase({
-        database: database,
+        database: args.database,
         collection: '*',
         mode: 'rd'
     });
