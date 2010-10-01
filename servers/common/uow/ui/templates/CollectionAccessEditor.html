@@ -6,30 +6,30 @@
           <span dojoAttachPoint="dbNameNode"></span> &rarr; 
           <span dojoAttachPoint="colNameNode"></span>
         </th>
-        <th data-mode="c">Create (c)</th>
-        <th data-mode="r">Read (r)</th>
-        <th data-mode="u">Update (u)</th>
-        <th data-mode="d">Delete (d)</th>
-        <th data-mode="R">Restricted read (R)</th>
+        <th data-mode="c">${labels.create_column_label}</th>
+        <th data-mode="r">${labels.read_column_label}</th>
+        <th data-mode="u">${labels.update_column_label}</th>
+        <th data-mode="d">${labels.delete_column_label}</th>
+        <th data-mode="R">${labels.restricted_read_column_label}</th>
       </tr>
     </thead>
     <tbody dojoAttachPoint="tableBody">
       <tr data-role="anonymous" dojoAttachPoint="anonymousRow">
-        <td>anonymous</td>
+        <td>${labels.anonymous_row_label}</td>
         <td dojoAttachPoint="idleNode" 
             class="uowCollectionAccessEditorIdle dijitContentPaneLoading"
             style="display: none;" 
             colspan="5" 
-            rowspan="4">Loading...</td>
+            rowspan="4">${labels.loading_label}</td>
       </tr>
       <tr data-role="identified" dojoAttachPoint="identifiedRow">
-        <td>identified</td>
+        <td>${labels.identified_row_label}</td>
       </tr>
       <tr data-role="author" dojoAttachPoint="authorRow">
-        <td>author</td>
+        <td>${labels.author_row_label}</td>
       </tr>
       <tr data-role="admin" dojoAttachPoint="adminRow">
-        <td>admin</td>
+        <td>${labels.admin_row_label}</td>
       </tr>
     </tbody>
 </div>
