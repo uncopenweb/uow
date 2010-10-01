@@ -17,6 +17,7 @@ dojo.require('dijit.layout.ContentPane');
 dojo.require('dijit.layout.TabContainer');
 dojo.require('uow.ui.CollectionEditor');
 dojo.require('uow.ui.CollectionAccessEditor');
+dojo.require('uow.ui.DatabaseAccessEditor');
 dojo.require('dojo.i18n');
 dojo.requireLocalization('uow.ui', 'DatabaseEditor');
 
@@ -53,7 +54,7 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
         } else {
             var def = uow.manageDatabase({
                 database : db
-            }).then(dojo.hitch(this, '_onListDb'));
+            }).then(dojo.hitch(this, '_enableDbControls'));
         }
     },
     
@@ -69,10 +70,6 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
     
     _onClickDrop: function() {
         
-    },
-    
-    _onListDb: function(db) {
-        this._enableDbControls(db);
     },
     
     _onSelectCollection: function(value) {
