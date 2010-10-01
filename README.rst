@@ -12,15 +12,15 @@ Prerequisites
 Install at least these versions and all their prerequisites on your server.
 
 * Python 2.6
-* mongodb 1.3.3
+* mongodb 1.6.3
 * nginx 0.7.64
 * supervisord 3.0
 * Tornado 1.0
 * pycurl (for Tornado)
-* simplejson 2.1.1 (for Tornado)
-* pymongo 1.6 (for Torongo)
-* iterpipes 0.3 (for JSonic)
-* espeak 1.36.02 (for Jsonic)
+* simplejson 2.1.1 (for Tornado, optional)
+* pymongo 1.9 (for Torongo)
+* iterpipes 0.4 (for JSonic)
+* espeak 1.40.02 (for Jsonic)
 * lame 3.98.2 (for JSonic)
 * oggenc 1.2.0 (for JSonic)
 * jsonschema 0.2a (for Torongo)
