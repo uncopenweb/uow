@@ -1,5 +1,5 @@
 /**
- * Widget for assigning granting access modes to roles for a single collection.
+ * Widget for granting access modes to roles for a single collection.
  *
  * Copyright UNC Open Web Team 2010. All Rights Reserved.
  */
@@ -60,9 +60,8 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
     },
 
     _setTargetAttr: function(target) {
-        if(!this.target || !this.target.length) { return; }
-        // start over
         this.target = target;
+        if(!this.target || !this.target.length) { return; }
         this._db = null;
         // hide checkbox cells
         dojo.query('td[data-input]', this.tableBody).style({display: 'none'});
