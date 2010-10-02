@@ -11,8 +11,8 @@ dojo.require('dijit._Contained');
 dojo.require('dojo.i18n');
 dojo.requireLocalization('uow.ui', 'DatabaseAccessEditor');
 
-dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
-											   dijit._Container, dijit._Contained], {
+dojo.declare('uow.ui.DatabaseAccessEditor', [dijit._Widget, dijit._Templated, 
+											 dijit._Container, dijit._Contained], {
     // database object
     database : null,
     widgetsInTemplate: true,
@@ -28,17 +28,30 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated,
 	
 	_setDatabaseAttr: function(database) {
         this.database = database;
-        if(!database) { return; }
-        // destroy the current widgets
+		 // destroy the current widgets and dom
 		this.destroyDescendants();
-		// @todo: destroy the child nodes?
+		dojo.empty(this.containerNode);
+        if(!database) { return; }       
 		this.database.fetch({
-			onItem: this._onPopulate,
+			onItem: this._onAddCollection,
 			scope: this
 		});
     },
 
 	_onAddCollection: function(item) {
-		console.log(item);
+		var col = item.url.split('/');
+		var a = dojo.create('a', {href : '#'}, this.containerNode);
+		var h2 = dojo.create('h2', {
+			innerHTML : col[3]
+		}, a);
+		dojo.connect(a, 'onclick', this, function(event) {
+			dojo.stopEvent(event);
+			// invoke extension point
+			this.onSelectCollection(col[3]);
+		});
+	},
+	
+	onSelectCollection: function(value) {
+		// extension point
 	}
 });

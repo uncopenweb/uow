@@ -50,10 +50,10 @@
       <div dojoType="dijit.layout.TabContainer" 
            dojoAttachPoint="editorTabs"
            tabStrip="true">
-        <div dojoType="dijit.layout.ContentPane" 
+        <div dojoType="uow.ui.DatabaseAccessEditor" 
              iconClass="uowDatabase"
-             title="${labels.database_tab_label}">
-          Database info coming soon
+             title="${labels.database_tab_label}"
+			 dojoAttachPoint="dbAccessWidget">
         </div>
       </div>
     </div>

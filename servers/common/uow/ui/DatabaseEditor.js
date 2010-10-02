@@ -39,13 +39,26 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
     },
 
     postCreate: function() {
-        // connect to private methods
+        // connect to catch enter on db select
         this.connect(this.dbNameWidget.domNode, 'onkeyup', '_onKeyUpConnect');
+		// listen for collection change events from the db access widgets
+		this.connect(this.dbAccessWidget, 'onSelectCollection', function(value) {
+			this.colNameWidget.attr('value', value);
+		});
     },
     
     resize: function(box) {
         this.borderContainer.resize(box);
     },
+
+	_setTabTitle: function(tab, title) {
+		tab.attr('title', title);
+		var tabs = this.editorTabs;
+		try {
+    		tabs.tablist.pane2button[tab].attr('label', title);
+		} catch(e) {}
+        //tabs.tablist.pane2button[tab].attr('title', titleNotSpliced);
+	},
 
     _onClickConnect: function(event) {
         var db = this.dbNameWidget.attr('value');
@@ -76,7 +89,7 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
         // build db/col target pair
         var target = [
             this.dbNameWidget.attr('value'),
-            this.colNameWidget.attr('value')
+            value
         ];
         if(value) {
             this.dropButton.attr('disabled', false);
@@ -103,8 +116,15 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
                     target: target,
                     iconClass : 'uowCollectionAccess'
                 });
-                this.editorTabs.addChild(this._colAccessWidget);            
+                this.editorTabs.addChild(this._colAccessWidget);
             }
+			// set tab titles
+			var title = dojo.replace(this.labels.data_tab_label, [value]);
+			this._setTabTitle(this._colDataWidget, title);
+			title = dojo.replace(this.labels.schema_tab_label, [value]);
+			this._setTabTitle(this._colSchemaWidget, title);
+			title = dojo.replace(this.labels.access_tab_label, [value]);
+			this._setTabTitle(this._colAccessWidget, title);
         } else if(this._colDataWidget) {
             this.dropButton.attr('disabled', true);
             this.editorTabs.removeChild(this._colAccessWidget);
@@ -124,6 +144,10 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
             this._db = db;
             // hook it to the filtering select for collection selection
             this.colNameWidget.attr('store', this._db);
+			// hook it to the database access view
+			this.dbAccessWidget.attr('database', this._db);
+			var title = dojo.replace(this.labels.database_tab_label, [db.database]);
+			this._setTabTitle(this.dbAccessWidget, title);
             // enable available controls now
             this.colNameWidget.attr('disabled', false);
             this.createButton.attr('disabled', false);
@@ -131,6 +155,7 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
         } else {
             // clear collection choices
             this._db = null;
+			this.dbAccessWidget.attr('database', null);
             this.colNameWidget.attr('store', null);
             // go back to idle
             this.colNameWidget.attr('disabled', true);

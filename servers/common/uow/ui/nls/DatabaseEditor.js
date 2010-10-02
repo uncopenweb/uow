@@ -5,8 +5,8 @@
     connect_button_label : 'Connect',
     create_button_label : 'Create collection',
     drop_button_label : 'Drop collection',
-    access_tab_label : 'Collection access',
-    data_tab_label : 'Collection data',
-    schema_tab_label : 'Collection schema',
-    database_tab_label : 'Database info'
+    access_tab_label : '{0} access',
+    data_tab_label : '{0} data',
+    schema_tab_label : '{0} schema',
+    database_tab_label : '{0} info'
 }

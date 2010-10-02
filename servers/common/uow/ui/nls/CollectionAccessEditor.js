@@ -1,6 +1,6 @@
 {
     create_column_label : 'Create (c)',
-	read_column_label : 'Read (r)'
+	read_column_label : 'Read (r)',
 	update_column_label : 'Update (u)',
 	delete_column_label : 'Delete (d)',
 	restricted_read_column_label : 'Restricted read (R)',
