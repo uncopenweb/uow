@@ -3,7 +3,10 @@
        gutters="false"
        dojoAttachPoint="borderContainer">
     <div dojoType="dijit.Toolbar" region="top">
-      <button dojoType="dijit.form.Button" 
+	  	<label><span dojoAttachPoint="dbNameNode"></span> &rarr; 
+	       <span dojoAttachPoint="colNameNode"></span></label
+      ><span dojoType="dijit.ToolbarSeparator"></span
+	    ><button dojoType="dijit.form.Button" 
               dojoAttachPoint="newButton" 
               dojoAttachEvent="onClick:_onClickNew"
               iconClass="uowRowInsert"
@@ -36,10 +39,7 @@
               dojoAttachEvent="onClick:_onClickRedo" 
               iconClass="uowRedo"
               title="${labels.redo_button_title}"
-              type="button">${labels.redo_button_label}</button
-      ><span dojoType="dijit.ToolbarSeparator"></span
-      ><label><span dojoAttachPoint="dbNameNode"></span> &rarr; 
-       <span dojoAttachPoint="colNameNode"></span></label>
+              type="button">${labels.redo_button_label}</button>
     </div>
     <div dojoType="dijit.layout.ContentPane"
          dojoAttachPoint="contentPane" 

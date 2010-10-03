@@ -26,6 +26,10 @@ dojo.declare('uow.ui.DatabaseAccessEditor', [dijit._Widget, dijit._Templated,
 		
 	},
 	
+	resize: function(box) {
+        dojo.marginBox(this.domNode, {w : box.w, h: box.h});
+    },
+	
 	_setDatabaseAttr: function(database) {
         this.database = database;
 		 // destroy the current widgets and dom
@@ -34,21 +38,47 @@ dojo.declare('uow.ui.DatabaseAccessEditor', [dijit._Widget, dijit._Templated,
         if(!database) { return; }       
 		this.database.fetch({
 			onItem: this._onAddCollection,
+			onComplete: this._onParseWidgets,
 			scope: this
 		});
     },
 
 	_onAddCollection: function(item) {
 		var col = item.url.split('/');
-		var a = dojo.create('a', {href : '#'}, this.containerNode);
-		var h2 = dojo.create('h2', {
-			innerHTML : col[3]
-		}, a);
-		dojo.connect(a, 'onclick', this, function(event) {
+		var tmpl = dojo.cache('uow.ui.templates', 'DatabaseAccessEditorItem.html');
+		var args = {
+			labels : this.labels,
+			collection : col[3],
+			target : this.database.database + ',' + col[3],
+			id : this.id + '_' + item.url
+		};
+		var html = dojo.replace(tmpl, args);
+		dojo.place(html, this.containerNode);
+		// hook events
+		var a = dojo.byId('a_'+args.id);
+		var tok = dojo.connect(a, 'onclick', this, function(event) {
 			dojo.stopEvent(event);
 			// invoke extension point
-			this.onSelectCollection(col[3]);
+			this.onSelectCollection(args.collection);
 		});
+		// hook nodes
+		var total = dojo.byId('total_'+args.id);
+		// show total number of records
+		uow.getDatabase({database: this.database.database, collection : col[3]})
+			.then(dojo.hitch(this, function(db) {
+				db.fetch({
+					query : {},
+					start : 0,
+					count : 0,
+					onBegin: function(size, request) {
+						total.innerHTML = size;
+					}
+				});
+			}));
+	},
+	
+	_onParseWidgets: function() {
+		dojo.parser.parse(this.containerNode);
 	},
 	
 	onSelectCollection: function(value) {

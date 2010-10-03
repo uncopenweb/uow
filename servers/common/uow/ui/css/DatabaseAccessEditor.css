@@ -3,6 +3,19 @@
  *
  * Copyright UNC Open Web Group. All Rights Reserved. 
  */
-.uowDatabaseAccessEditor h2 {
+.uowDatabaseAccessEditor {
+	overflow: auto;
 	padding: 0.5em;
+}
+.uowDatabaseAccessEditor h1 {
+	padding-bottom: 0em;
+}
+.uowDatabaseAccessEditorItem {
+	margin-bottom: 2.0em;
+}
+.uowDatabaseAccessEditorItem p {
+	margin: 0em 1em !important;
+}
+.uowDatabaseAccessEditorItem h2 {
+	margin-top: 0.5em !important;
 }

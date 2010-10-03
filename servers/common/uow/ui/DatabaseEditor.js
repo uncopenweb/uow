@@ -87,10 +87,7 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
     
     _onSelectCollection: function(value) {
         // build db/col target pair
-        var target = [
-            this.dbNameWidget.attr('value'),
-            value
-        ];
+        var target = [this._db.database, value];
         if(value) {
             this.dropButton.attr('disabled', false);
             if(this._colDataWidget) {
@@ -125,6 +122,10 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
 			this._setTabTitle(this._colSchemaWidget, title);
 			title = dojo.replace(this.labels.access_tab_label, [value]);
 			this._setTabTitle(this._colAccessWidget, title);
+			// switch to data tab
+			if(this.editorTabs.selectedChildWidget == this.dbAccessWidget) {
+				this.editorTabs.selectChild(this._colDataWidget);
+			}
         } else if(this._colDataWidget) {
             this.dropButton.attr('disabled', true);
             this.editorTabs.removeChild(this._colAccessWidget);
