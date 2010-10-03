@@ -1,0 +1,8 @@
+/**
+ * Styles for the collection schema editor widget.
+ *
+ * Copyright UNC Open Web Team 2010. All Rights Reserved. 
+ */
+.uowCollectionSchemaEditor textarea {
+    border: 1px solid #ccc;
+}
