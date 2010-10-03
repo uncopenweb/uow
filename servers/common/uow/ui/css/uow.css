@@ -1,11 +1,12 @@
 /**
  * UOW widget master stylesheet.
  *
- * Copyright UNC Open Web Group. All Rights Reserved. 
+ * Copyright UNC Open Web Team 2010. All Rights Reserved. 
  */
 @import url("LoginButton.css");
-@import url("DatabaseAccessEditor.css");
-@import url("CollectionAccessEditor.css");
-@import url("CollectionEditor.css");
 @import url("DatabaseEditor.css");
+@import url("DatabaseAccessEditor.css");
+@import url("CollectionEditor.css");
+@import url("CollectionSchemaEditor.css");
+@import url("CollectionAccessEditor.css");
 @import url("Icons.css");

@@ -16,7 +16,7 @@ dojo.require('dijit.layout.StackContainer');
 dojo.require('dijit.layout.ContentPane');
 dojo.require('dijit.layout.TabContainer');
 dojo.require('uow.ui.CollectionEditor');
-dojo.require('uow.ui.CollectionAccessEditor');
+dojo.require('uow.ui.CollectionSchemaEditor');
 dojo.require('uow.ui.DatabaseAccessEditor');
 dojo.require('dojo.i18n');
 dojo.requireLocalization('uow.ui', 'DatabaseEditor');
@@ -102,10 +102,10 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
                     iconClass : 'uowCollectionData'
                 });
                 this.editorTabs.addChild(this._colDataWidget);
-                this._colSchemaWidget = new dijit.layout.ContentPane({
+                this._colSchemaWidget = new uow.ui.CollectionSchemaEditor({
                     title : this.labels.schema_tab_label,
-                    iconClass : 'uowCollectionSchema',
-                    content : 'Schema editor coming soon'
+					target: target,
+                    iconClass : 'uowCollectionSchema'
                 });
                 this.editorTabs.addChild(this._colSchemaWidget);
                 /*this._colAccessWidget = new uow.ui.CollectionAccessEditor({

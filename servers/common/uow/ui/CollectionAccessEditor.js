@@ -62,6 +62,7 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
     _setTargetAttr: function(target) {
         this.target = target;
         if(!this.target || !this.target.length) { return; }
+		// @todo: don't have to refetch db all the time
         this._db = null;
         // hide checkbox cells
         dojo.query('td[data-input]', this.tableBody).style({display: 'none'});
