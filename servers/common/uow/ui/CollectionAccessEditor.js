@@ -69,7 +69,7 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
         this._showGridLoading();
         // show db / col names
         this.dbNameNode.textContent = target[0];
-        this.colNameNode.textContent = target[1];
+        this.colNameNode.textContent = target[1];		
         // open the access modes for the db,collection
         var def = uow.getDatabase({
             database : 'Admin', 
@@ -117,15 +117,15 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
         // get the row for the role
         var row = dojo.query('tr[data-role="'+role+'"]', this.tableBody)[0];
         // get all the checkboxes
-        var modes = dojo.query('[widgetid]', row).map(function(node) {
+        var modes = [];
+        dojo.query('[widgetid]', row).forEach(function(node) {
             var w = dijit.byNode(node);
             if(w.attr('checked')) {
-                return node.getAttribute('data-mode');
-            } else {
-                return '';
+                modes.push(node.getAttribute('data-mode'));
             }
         });
-        var modeStr = modes.join();
+        var modeStr = modes.join('');
+        console.log(modeStr);
         
         // update an item for the db/collection/role in the the Admin, 
         // AccessModes collection, else create one

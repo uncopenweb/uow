@@ -33,7 +33,7 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
         
         // collection views
         this._dbAccessWidget = null;
-        this._colAccessWidget = null;
+        // this._colAccessWidget = null;
         this._colSchemaWidget = null;
         this._colDataWidget = null;
     },
@@ -93,7 +93,7 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
             if(this._colDataWidget) {
                 // update existing tabs
                 this._colDataWidget.attr('target', target);
-                this._colAccessWidget.attr('target', target);
+                // this._colAccessWidget.attr('target', target);
             } else {
                 // build new tabs
                 this._colDataWidget = new uow.ui.CollectionEditor({
@@ -108,28 +108,28 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
                     content : 'Schema editor coming soon'
                 });
                 this.editorTabs.addChild(this._colSchemaWidget);
-                this._colAccessWidget = new uow.ui.CollectionAccessEditor({
+                /*this._colAccessWidget = new uow.ui.CollectionAccessEditor({
                     title : this.labels.access_tab_label,
                     target: target,
                     iconClass : 'uowCollectionAccess'
                 });
-                this.editorTabs.addChild(this._colAccessWidget);
+                this.editorTabs.addChild(this._colAccessWidget);*/
             }
 			// set tab titles
 			var title = dojo.replace(this.labels.data_tab_label, [value]);
 			this._setTabTitle(this._colDataWidget, title);
 			title = dojo.replace(this.labels.schema_tab_label, [value]);
 			this._setTabTitle(this._colSchemaWidget, title);
-			title = dojo.replace(this.labels.access_tab_label, [value]);
-			this._setTabTitle(this._colAccessWidget, title);
+			//title = dojo.replace(this.labels.access_tab_label, [value]);
+			//this._setTabTitle(this._colAccessWidget, title);
 			// switch to data tab
 			if(this.editorTabs.selectedChildWidget == this.dbAccessWidget) {
 				this.editorTabs.selectChild(this._colDataWidget);
 			}
         } else if(this._colDataWidget) {
             this.dropButton.attr('disabled', true);
-            this.editorTabs.removeChild(this._colAccessWidget);
-            this._colAccessWidget = null;
+            // this.editorTabs.removeChild(this._colAccessWidget);
+            //             this._colAccessWidget = null;
             this.editorTabs.removeChild(this._colSchemaWidget);
             this._colSchemaWidget = null;
             this.editorTabs.removeChild(this._colDataWidget);

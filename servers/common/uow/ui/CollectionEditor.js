@@ -112,6 +112,8 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     _buildLayout: function(schema) {
         schema = dojo.fromJson(schema);
         this._schema = schema;
+        // disable additional property checks on the client
+        delete this._schema.additionalProperties;
         var layout = [];
         for(var name in schema.properties) {
             var prop = schema.properties[name];
@@ -138,14 +140,7 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
         var item = this._grid.getItem(row.index);
         // abort if we couldn't find the item for this row
         if(!item) {return;}
-        // disable additional property checks here
-        var orig = this._schema.additionalProperties;
-        delete this._schema.additionalProperties;
-        try {
-            var result = dojox.json.schema.validate(item, this._schema);
-        } finally {
-            this._schema.additionalProperties = orig;
-        }
+		var result = dojox.json.schema.validate(item, this._schema);
         if(result.valid) {
             dojo.query('td[role="gridcell"]', row.node).style('color', '');
         } else {
@@ -154,9 +149,9 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     },
     
     _onSetItem: function(item, attr, oldValue, newValue) {
-        console.log('set', attr, newValue, oldValue);
+        // console.log('set', attr, newValue, oldValue);
         // ignore id changes or noop changes
-        if(attr == '_id' || newValue == oldValue) { 
+        if(attr == '_id' || attr == '_owner' || newValue == oldValue) { 
             this._grid.update();
             return; 
         }
@@ -185,11 +180,11 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
                 this._db.save();
             }), 0);
         }
-        console.log('set done');
+        // console.log('set done');
     },
     
     _onNewItem: function(item, parentInfo) {
-        console.log('new', item);
+        // console.log('new', item);
         var result = dojox.json.schema.validate(item, this._schema);
         if(result.valid) {
             if(!this._undoMutex) {
@@ -200,19 +195,19 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
                 this._db.save();
             }), 0);
         }
-        console.log('new done');
+        // console.log('new done');
     },
     
     _onDeleteItem: function(item) {
-        console.log('delete');
+        // console.log('delete');
         var result = dojox.json.schema.validate(item, this._schema);
-        console.log(result.valid);
-        console.log(this._userDelete);
+        // console.log(result.valid);
+        // console.log(this._userDelete);
         if(!this._undoMutex && this._userDelete && result.valid) {
             this.undoButton.attr('disabled', false);
             this._undo.push({action : 'delete', item : item});
         }
-        console.log('delete done');
+        // console.log('delete done');
     },
 
     _onClickNew: function() {
@@ -226,12 +221,12 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     
     _onClickDelete: function() {
         this._userDelete = true;
-        console.log('removing selected rows');
+        // console.log('removing selected rows');
         this._grid.removeSelectedRows();
-        console.log('done removing selected')
+        // console.log('done removing selected')
         this._userDelete = false;
         this._db.save();
-        console.log('batch delete done');
+        // console.log('batch delete done');
         //this._grid.edit.apply();
         //this._db.save();
     },
@@ -242,17 +237,17 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
         // do the inverse
         if(obj.action == 'new') {
             // delete the item
-            console.log('undoing new');
+            // console.log('undoing new');
             this._undoMutex = true;
             this._db.deleteItem(obj.item);
             this._undoMutex = false;
             this._db.save();
-            console.log('undo new done')
+            // console.log('undo new done')
         } else if(obj.action == 'delete') {
-            console.log('undoing delete');
+            // console.log('undoing delete');
             // insert the deleted item, sans private attributes
             var copy = {};
-            console.log('deleted item id:', obj.item.__id, obj.item._id);
+            // console.log('deleted item id:', obj.item.__id, obj.item._id);
             for(var x in obj.item) {
                 if(x.charAt(0) != '_') {
                     copy[x] = obj.item[x];
@@ -260,22 +255,22 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
             }
             this._undoMutex = true;
             var newItem = this._db.newItem(copy);
-            console.log('new item id:', newItem.__id, newItem._id);
+            // console.log('new item id:', newItem.__id, newItem._id);
             this._undoMutex = false;
             // run through the history and fix any ids
             dojo.forEach(this._undo, function(old) {
-                console.log('undo item', old.item.__id, old.item._id);
+                // console.log('undo item', old.item.__id, old.item._id);
                 if(old.item._id == obj.item._id) {
                     old.item = newItem;
                 }
             });
-            console.log('undo delete done')
+            // console.log('undo delete done')
         } else if(obj.action == 'set') {
-            console.log('undoing set', obj.attr);
+            // console.log('undoing set', obj.attr);
             this._undoMutex = true;
             this._db.setValue(obj.item, obj.attr, obj.oldValue);
             this._undoMutex = false;
-            console.log('undo set done');
+            // console.log('undo set done');
         }
         if(!this._undo.length) {
             this.undoButton.attr('disabled', true);
