@@ -88,7 +88,8 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
                         // show error indicator
                         this._showGridError(this.labels.schema_error_label);
                     } else {
-                        this._buildGrid(items[0].schema);
+                        var grid = this._buildGrid(items[0].schema);
+						this._showGrid(grid);
                     }
                 })
             });
@@ -104,9 +105,7 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
             structure: layout
         });
         this.connect(this._grid, 'onStyleRow', '_onStyleRow');
-        this.contentPane.set('content', this._grid);
-        this._grid.startup();
-        this.borderContainer.layout();
+		return this._grid;
     },
     
     _buildLayout: function(schema) {
@@ -284,13 +283,28 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     _onClickRefresh: function() {
         this._grid.update();
     },
+
+	_showGrid: function(grid) {
+		this.contentPane.set('content', grid);
+        grid.startup();
+        this.borderContainer.layout();		
+		this.newButton.attr('disabled', false);
+		this.deleteButton.attr('disabled', false);
+		this.refreshButton.attr('disabled', false);	
+	},
     
     _showGridLoading: function() {
         this.contentPane.attr('content', this.contentPane.loadingMessage);
+		this.newButton.attr('disabled', true);
+		this.deleteButton.attr('disabled', true);
+		this.refreshButton.attr('disabled', true);
     },
     
     _showGridError: function(msg) {
         msg = dojo.replace("<span class='dijitContentPaneError'>{0}</span>", [msg]);
         this.contentPane.attr('content', msg);
+		this.newButton.attr('disabled', true);
+		this.deleteButton.attr('disabled', true);
+		this.refreshButton.attr('disabled', true);
     }
 });

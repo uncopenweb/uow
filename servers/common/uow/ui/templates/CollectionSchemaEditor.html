@@ -1,3 +1,23 @@
 <div class="uowCollectionSchemaEditor">
-	<textarea dojoAttachPoint="textNode"></textarea>
+	<div dojoType="dijit.layout.BorderContainer" 
+       gutters="false"
+       dojoAttachPoint="borderContainer">
+    <div dojoType="dijit.Toolbar" region="top">
+	  	<label><span dojoAttachPoint="dbNameNode"></span> &rarr; 
+	       <span dojoAttachPoint="colNameNode"></span></label
+      ><span dojoType="dijit.ToolbarSeparator"></span
+	    ><button dojoType="dijit.form.Button" 
+              dojoAttachPoint="saveButton" 
+              dojoAttachEvent="onClick:_onClickSave"
+              iconClass="uowCollectionSave"
+              title="${labels.save_button_title}"
+              type="button">${labels.save_button_label}</button>
+    </div>
+		<div dojoType="dijit.layout.ContentPane"
+         dojoAttachPoint="contentPane" 
+         region="center">
+			<textarea dojoAttachPoint="textNode"
+							  dojoAttachEvent="onkeyup:_onChangeText,onblur:_onChangeText,onfocus:_onChangeText"></textarea>
+    </div>
+  </div>
 </div>

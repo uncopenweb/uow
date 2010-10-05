@@ -93,6 +93,7 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
             if(this._colDataWidget) {
                 // update existing tabs
                 this._colDataWidget.attr('target', target);
+				this._colSchemaWidget.attr('target', target);
                 // this._colAccessWidget.attr('target', target);
             } else {
                 // build new tabs

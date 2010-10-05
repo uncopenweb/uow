@@ -3,6 +3,18 @@
  *
  * Copyright UNC Open Web Team 2010. All Rights Reserved. 
  */
+.uowCollectionSchemaEditor .dijitToolbar label {
+    vertical-align: middle;
+    display: inline-block;
+    padding: 5px 10px 5px 5px;
+    font-size: 0.85em;
+}
+
+.uowCollectionSchemaEditor .dijitContentPane {
+	overflow: hidden;
+}
+
 .uowCollectionSchemaEditor textarea {
-    border: 1px solid #ccc;
+	width: 100%;
+	height: 100%;
 }
