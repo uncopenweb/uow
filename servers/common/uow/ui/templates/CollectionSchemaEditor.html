@@ -11,7 +11,14 @@
               dojoAttachEvent="onClick:_onClickSave"
               iconClass="uowCollectionSave"
               title="${labels.save_button_title}"
-              type="button">${labels.save_button_label}</button>
+              type="button">${labels.save_button_label}</button
+			><span dojoType="dijit.ToolbarSeparator"></span
+	    ><button dojoType="dijit.form.Button" 
+              dojoAttachPoint="refreshButton" 
+              dojoAttachEvent="onClick:_onClickRefresh"
+              iconClass="uowRefresh"
+              title="${labels.revert_button_title}"
+              type="button">${labels.revert_button_label}</button
     </div>
 		<div dojoType="dijit.layout.ContentPane"
          dojoAttachPoint="contentPane" 
