@@ -46,10 +46,10 @@ uow.getAudio = function(args) {
 };
 
 // Gets a MongoStore instance (like dojox.data.JSONRestStore)
-uow.getDatabase = uow.data.getDatabase;
+uow.getDatabase = function(args) { return uow.data.getDatabase(args); };
 
 // Return a store for listing and deleting collections from a database
-uow.manageDatabase = uow.data.manageDatabase;
+uow.manageDatabase = function(args) { return uow.data.manageDatabase(args); };
 
 // Ask the server to return the current user
 uow.getUser = function(args) {
