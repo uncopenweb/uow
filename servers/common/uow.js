@@ -64,7 +64,7 @@ uow.getDatabase = function(args) {
 
     var def = new dojo.Deferred();
     dojo.xhrPost(xhr).addCallback(function(response) {
-        args.target = response.url;
+        args.target = response.key + '$' + response.url; // add the key to overcome caching of services
         args.accessKey = response.key;
         def.callback(new uow.data.MongoStore(args));
     }).addErrback(function(err) {
