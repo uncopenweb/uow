@@ -58,6 +58,20 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
     resize: function(box) {
         dojo.marginBox(this.tableNode, {w : box.w});
     },
+    
+    _getAccessCollection: function() {
+        if(!this._db) {
+            return uow.getDatabase({
+                database : 'Admin', 
+                collection: 'AccessModes',
+                mode : 'cur'
+            });
+        } else {
+            var def = new dojo.Deferred();
+            def.callback(this._db);
+            return def;
+        }
+    },
 
     _setTargetAttr: function(target) {
         this.target = target;
@@ -70,13 +84,10 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
         this._showGridLoading();
         // show db / col names
         this.dbNameNode.textContent = target[0];
-        this.colNameNode.textContent = target[1];		
-        // open the access modes for the db,collection
-        var def = uow.getDatabase({
-            database : 'Admin', 
-            collection: 'AccessModes',
-            mode : 'cur'
-        }).then(dojo.hitch(this, function(db) {
+        this.colNameNode.textContent = target[1];
+        // get the access collection
+        var def = this._getAccessCollection();
+        def.then(dojo.hitch(this, function(db) {
             this._db = db;
             // fetch the roles/modes for the target db/col
             db.fetch({
@@ -144,7 +155,7 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
                 } else {
                     // create a new item to hold the permission
                     args.permission = modeStr;
-                    this._db.newItem(permission);
+                    this._db.newItem(args);
                 }
                 this._db.save();
             },
