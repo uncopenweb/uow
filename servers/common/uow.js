@@ -12,13 +12,36 @@ dojo.require('dojo.cookie');
 // Gets the singleton JSonic audio manager
 uow._audio = null;
 uow.getAudio = function(args) {
+    var def = new dojo.Deferred();
     if(!uow._audio) {
         args = args || {};
         args.jsonicURI = '/jsonic/';
-        uow._audio = new uow.audio.JSonic(args);
+        if (!args.audioEngine && dojo.isChrome) {
+            args.audioEngine = 'flash';
+        }
+        if (args.audioEngine == 'flash' && typeof(soundManager) === 'undefined') {
+            dojo.xhrGet({
+                url: '/libs/uow/audio/soundmanager2.js',
+                handleAs: 'javascript',
+                load: function(data) {
+                    soundManager.url = '/libs/uow/audio/swf/';
+                    soundManager.flashVersion = 9; // optional: shiny features (default = 8)
+                    soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
+                    soundManager.consoleOnly = true;
+                    soundManager.debugMode = false;
+                    soundManager.onready(function() {
+                        uow._audio = new uow.audio.JSonic(args);
+                        def.callback(uow._audio);
+                    });
+                }
+            });
+        } else {
+            uow._audio = new uow.audio.JSonic(args);
+            def.callback(uow._audio);
+        }
+    } else {
+        def.callback(uow._audio);
     }
-    var def = new dojo.Deferred();
-    def.callback(uow._audio);
     return def;
 };
 
@@ -75,7 +98,7 @@ uow.triggerLogin = function() {
         uow.getUser().addCallback(function(user) {
             loginDeferred.callback({ flag: flag, user: user });
         });
-    }
+    };
     // uow._openIDWindowOpened = false;
     // setTimeout(function() {
     //     if (!uow._openIDWindowOpened) {
