@@ -152,7 +152,8 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
 			this._setTabTitle(this.dbAccessWidget, title);
             // enable available controls now
             this.colNameWidget.attr('disabled', false);
-            this.createButton.attr('disabled', false);
+            // @todo: after implementing wizard
+            // this.createButton.attr('disabled', false);
             this.stackWidget.selectChild(this.editorTabs);
         } else {
             // clear collection choices
@@ -161,7 +162,8 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
             this.colNameWidget.attr('store', null);
             // go back to idle
             this.colNameWidget.attr('disabled', true);
-            this.createButton.attr('disabled', true);
+            // @todo
+            // this.createButton.attr('disabled', true);
             this.stackWidget.selectChild(this.idlePane);
         }
     }
