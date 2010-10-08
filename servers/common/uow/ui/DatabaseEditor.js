@@ -15,6 +15,8 @@ dojo.require('dijit.form.FilteringSelect');
 dojo.require('dijit.layout.StackContainer');
 dojo.require('dijit.layout.ContentPane');
 dojo.require('dijit.layout.TabContainer');
+dojo.require('dijit.form.Button');
+dojo.require('dijit.Dialog');
 dojo.require('uow.ui.CollectionEditor');
 dojo.require('uow.ui.CollectionSchemaEditor');
 dojo.require('uow.ui.DatabaseAccessEditor');
@@ -33,9 +35,10 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
         
         // collection views
         this._dbAccessWidget = null;
-        // this._colAccessWidget = null;
         this._colSchemaWidget = null;
         this._colDataWidget = null;
+        // confirm dialog
+        this._confirmDialog = null;
     },
 
     postCreate: function() {
@@ -50,6 +53,10 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
     resize: function(box) {
         this.borderContainer.resize(box);
     },
+    
+    uninitialize: function() {
+        this._confirmDialog.destroyRecursive();
+    },
 
 	_setTabTitle: function(tab, title) {
 		tab.attr('title', title);
@@ -57,10 +64,31 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
 		try {
     		tabs.tablist.pane2button[tab].attr('label', title);
 		} catch(e) {}
-        //tabs.tablist.pane2button[tab].attr('title', titleNotSpliced);
+	},
+	
+	_getConfirmDialog: function(description) {
+	    var dlg = this._confirmDialog;
+	    if(!dlg) {
+	        // build dialog only once
+            dlg = new dijit.Dialog({title : this.labels.drop_dialog_title});
+            this._confirmDialog = dlg;
+            this.subscribe('/db/confirm', '_onDropResponse');
+        }
+        var template = dojo.cache('uow.ui.templates', 'ConfirmDialog.html');
+        var args = {
+            description : description,
+            yes : this.labels.yes_button_label,
+            no : this.labels.no_button_label
+        };
+        var html = dojo.replace(template, args);
+        dlg.attr('content', html);
+        return dlg;
 	},
 
     _onClickConnect: function(event) {
+        if(this._db) {
+            this._db.close();
+        }
         var db = this.dbNameWidget.attr('value');
         if(!db) { 
            this._enableDbControls(null);
@@ -82,7 +110,39 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
     },
     
     _onClickDrop: function() {
-        
+        var col = this.colNameWidget.attr('value');
+        var description = dojo.replace(this.labels.drop_dialog_label, 
+            [this._db.database, col]);
+        var dlg = this._getConfirmDialog(description);
+        dlg.show();
+    },
+
+    _onDropResponse: function(value) {
+        if(value) {
+            var dbName = this._db.database;
+            var colName = this.colNameWidget.attr('value');
+            // fetch existing collection
+            this._db.fetch({
+                query: {url : '/data/'+dbName+'/'+colName+'/'},
+                onComplete: function(items) {
+                    if(items.length == 1) {
+                        this._db.deleteItem(items[0]);
+                        this._db.save({
+                            onComplete: function() {
+                                // reset the ui
+                                this.colNameWidget.attr('value', '');
+                                this.dbAccessWidget.attr('database', this._db);
+                                this._confirmDialog.hide();
+                            },
+                            scope: this
+                        });
+                    }
+                },
+                scope: this
+            });
+        } else {
+            this._confirmDialog.hide();
+        }
     },
     
     _onSelectCollection: function(value) {
@@ -94,7 +154,6 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
                 // update existing tabs
                 this._colDataWidget.attr('target', target);
 				this._colSchemaWidget.attr('target', target);
-                // this._colAccessWidget.attr('target', target);
             } else {
                 // build new tabs
                 this._colDataWidget = new uow.ui.CollectionEditor({
@@ -109,28 +168,18 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
                     iconClass : 'uowCollectionSchema'
                 });
                 this.editorTabs.addChild(this._colSchemaWidget);
-                /*this._colAccessWidget = new uow.ui.CollectionAccessEditor({
-                    title : this.labels.access_tab_label,
-                    target: target,
-                    iconClass : 'uowCollectionAccess'
-                });
-                this.editorTabs.addChild(this._colAccessWidget);*/
             }
 			// set tab titles
 			var title = dojo.replace(this.labels.data_tab_label, [value]);
 			this._setTabTitle(this._colDataWidget, title);
 			title = dojo.replace(this.labels.schema_tab_label, [value]);
 			this._setTabTitle(this._colSchemaWidget, title);
-			//title = dojo.replace(this.labels.access_tab_label, [value]);
-			//this._setTabTitle(this._colAccessWidget, title);
 			// switch to data tab
 			if(this.editorTabs.selectedChildWidget == this.dbAccessWidget) {
 				this.editorTabs.selectChild(this._colDataWidget);
 			}
         } else if(this._colDataWidget) {
             this.dropButton.attr('disabled', true);
-            // this.editorTabs.removeChild(this._colAccessWidget);
-            //             this._colAccessWidget = null;
             this.editorTabs.removeChild(this._colSchemaWidget);
             this._colSchemaWidget = null;
             this.editorTabs.removeChild(this._colDataWidget);

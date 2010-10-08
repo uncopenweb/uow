@@ -137,7 +137,6 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
             }
         });
         var modeStr = modes.join('');
-        console.log(modeStr);
         
         // update an item for the db/collection/role in the the Admin, 
         // AccessModes collection, else create one

@@ -1,0 +1,9 @@
+<div class="uowConfirmDialog">
+	<label>{description}</label>
+	<div class="uowConfirmDialogActions">
+		<button dojoType="dijit.form.Button" 
+					  onClick="dojo.publish('/db/confirm', [false]);">{no}</button
+		><button dojoType="dijit.form.Button" 
+					   onClick="dojo.publish('/db/confirm', [true]);">{yes}</button>
+	</div>
+</div>

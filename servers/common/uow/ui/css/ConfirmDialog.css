@@ -1,0 +1,19 @@
+/**
+ * Styles for the confirm dialog widget.
+ *
+ * Copyright UNC Open Web Team 2010. All Rights Reserved. 
+ */
+.uowConfirmDialog {
+    width: 300px;
+    height: 150px;
+}
+
+.uowConfirmDialog .uowConfirmDialogActions {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    padding-top: 5px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+}
