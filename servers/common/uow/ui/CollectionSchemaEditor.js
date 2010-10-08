@@ -25,6 +25,8 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
         this.labels = dojo.i18n.getLocalization('uow.ui','CollectionSchemaEditor');
         // Admin database, Schemas collection 
         this._db = null;
+        // last text for save comparison
+        this._lastText = null;
     },
 
     resize: function(box) {
@@ -63,28 +65,38 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
     
     _fetchSchema: function() {
         // fetch the schema for the target db/col
+        var args = {
+            database : this.target[0],
+            collection : this.target[1]
+        };
         this._db.fetch({
-            query : {
-                database : this.target[0],
-                collection : this.target[1]
-            },
-            onComplete: dojo.hitch(this, function(items) {
+            query : args,
+            onComplete: function(items) {
                 if(items.length > 1) {
                     this._showSchemaError(this.labels.schema_error_label);
-                } else {
+                } else if(items.length == 1) {
                     this._showSchema(items[0].schema);
+                } else {
+                    this._showSchema('');
                 }
-            })
+            },
+            scope: this
         });
     },
 
     _onChangeText: function(event) {
         // make sure the json is at least valid, even if the schema isn't
+        var text = this.textNode.value;
         try {
-            dojo.fromJson(this.textNode.value);
+            dojo.fromJson(text);
             this.saveButton.attr('disabled', false);
         } catch(e) {
             this.saveButton.attr('disabled', true);
+        }
+        if(this._lastText !== text) {
+            dojo.addClass(this.textNode, 'uowCollectionSchemaEditorUnsaved');
+        } else {
+            dojo.removeClass(this.textNode, 'uowCollectionSchemaEditorUnsaved');
         }
     },
 
@@ -105,7 +117,15 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
                     args.schema = schema;
                     this._db.newItem(args);
                 }
-                this._db.save();
+                this._db.save({
+                    onComplete: function() {
+                        // indicate we have saved
+                        this._lastText = items[0].schema;
+                        dojo.removeClass(this.textNode, 'uowCollectionSchemaEditorUnsaved');
+                        this.saveButton.attr('disabled', true);
+                    },
+                    scope : this
+                });
             },
             scope: this
         });
@@ -116,6 +136,7 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
     },
     
     _showSchema: function(schema) {
+        this._lastText = schema;
         this.textNode.value = schema;
         this.contentPane.attr('content', this.textNode);
         this.saveButton.attr('disabled', false);
