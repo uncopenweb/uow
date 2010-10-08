@@ -46,42 +46,10 @@ uow.getAudio = function(args) {
 };
 
 // Gets a MongoStore instance (like dojox.data.JSONRestStore)
-uow.getDatabase = function(args) {
-    var defargs = { idAttribute: '_id',
-                    mode: 'crud' };
-    args = args || {};
-    args = dojo.mixin(defargs, args);
-    var xhr = {
-        url: '/data/_auth',
-        handleAs: 'json',
-        postData: dojo.toJson({
-            database: args.database,
-            collection: args.collection,
-            mode: args.mode
-        }),
-        headers: { "Content-Type": "application/json" }
-    };
-
-    var def = new dojo.Deferred();
-    dojo.xhrPost(xhr).addCallback(function(response) {
-        args.target = response.url;
-        args.accessKey = response.key;
-        def.callback(new uow.data.MongoStore(args));
-    }).addErrback(function(err) {
-        def.errback(err);
-    });
-    return def;
-};
+uow.getDatabase = function(args) { return uow.data.getDatabase(args); };
 
 // Return a store for listing and deleting collections from a database
-uow.manageDatabase = function(args) {
-    args = args || {};
-    return uow.getDatabase({
-        database: args.database,
-        collection: '*',
-        mode: 'rd'
-    });
-};
+uow.manageDatabase = function(args) { return uow.data.manageDatabase(args); };
 
 // Ask the server to return the current user
 uow.getUser = function(args) {
