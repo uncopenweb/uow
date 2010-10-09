@@ -87,16 +87,23 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
     _onChangeText: function(event) {
         // make sure the json is at least valid, even if the schema isn't
         var text = this.textNode.value;
+        var valid = false;
         try {
             dojo.fromJson(text);
-            this.saveButton.attr('disabled', false);
+            valid = true;            
         } catch(e) {
-            this.saveButton.attr('disabled', true);
         }
-        if(this._lastText !== text) {
-            dojo.addClass(this.textNode, 'uowCollectionSchemaEditorUnsaved');
+        this.saveButton.attr('disabled', false);
+        if(valid) {
+            dojo.removeClass(this.textNode, 'uowCollectionSchemaEditorInvalid');
+            if(this._lastText !== text) {
+                this.saveButton.attr('disabled', false);
+            } else {
+                this.saveButton.attr('disabled', true);
+            }
         } else {
-            dojo.removeClass(this.textNode, 'uowCollectionSchemaEditorUnsaved');
+            dojo.addClass(this.textNode, 'uowCollectionSchemaEditorInvalid');
+            this.saveButton.attr('disabled', true);
         }
     },
 
@@ -121,7 +128,7 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
                     onComplete: function() {
                         // indicate we have saved
                         this._lastText = items[0].schema;
-                        dojo.removeClass(this.textNode, 'uowCollectionSchemaEditorUnsaved');
+                        dojo.removeClass(this.textNode, 'uowCollectionSchemaEditorInvalid');
                         this.saveButton.attr('disabled', true);
                     },
                     scope : this
@@ -139,7 +146,8 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
         this._lastText = schema;
         this.textNode.value = schema;
         this.contentPane.attr('content', this.textNode);
-        this.saveButton.attr('disabled', false);
+        this.saveButton.attr('disabled', true);
+        dojo.removeClass(this.textNode, 'uowCollectionSchemaEditorInvalid');
     },
 
     _showSchemaLoading: function() {

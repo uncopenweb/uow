@@ -19,6 +19,6 @@
 	height: 100%;
 }
 
-.uowCollectionSchemaEditor .uowCollectionSchemaEditorUnsaved {
+.uowCollectionSchemaEditor .uowCollectionSchemaEditorInvalid {
     color: red;
 }
