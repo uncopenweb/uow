@@ -69,7 +69,7 @@ dojo.declare('uow.ui.DatabaseAccessEditor', [dijit._Widget, dijit._Templated,
 				db.fetch({
 					query : {},
 					start : 0,
-					count : 0,
+					count : 2,
 					onBegin: function(size, request) {
 						total.innerHTML = size;
 					}
