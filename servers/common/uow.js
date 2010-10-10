@@ -52,12 +52,7 @@ uow.getDatabase = function(args) { return uow.data.getDatabase(args); };
 uow.manageDatabase = function(args) { return uow.data.manageDatabase(args); };
 
 // Ask the server to return the current user
-uow.getUser = function(args) {
-    return dojo.xhrGet( {
-        url: '/data/_auth/user',
-        handleAs: 'json'
-    } );
-};
+uow.getUser = function(args) { return uow.data.getUser(args); };
 
 // Triggers an OpenID login using whatever provider the server has configured
 uow.triggerLogin = function() {
