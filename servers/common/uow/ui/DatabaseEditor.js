@@ -134,9 +134,20 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
                                 this.dbAccessWidget.attr('database', this._db);
                                 this._confirmDialog.hide();
                             },
+                            onError: function(err) {
+                                this._confirmDialog.hide();
+                                console.error('drop failed:', err);
+                            },
                             scope: this
                         });
+                    } else {
+                        this._confirmDialog.hide();
+                        console.error('drop failed:', items.length, ' collections found');
                     }
+                },
+                onError: function(err) {
+                    this._confirmDialog.hide();
+                    console.error('drop failed:', err);
                 },
                 scope: this
             });
