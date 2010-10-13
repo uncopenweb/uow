@@ -116,18 +116,20 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
         this._db.fetch({
             query : args,
             onComplete: function(items) {
+                var item;
                 if(items.length) {
                     // @todo: handle more than one match, that's badness
                     this._db.setValue(items[0], 'schema', schema);
+                    item = items[0];
                 } else {
                     // create a new item to hold the permission
                     args.schema = schema;
-                    this._db.newItem(args);
+                    item = this._db.newItem(args);
                 }
                 this._db.save({
                     onComplete: function() {
                         // indicate we have saved
-                        this._lastText = items[0].schema;
+                        this._lastText = item.schema;
                         dojo.removeClass(this.textNode, 'uowCollectionSchemaEditorInvalid');
                         this.saveButton.attr('disabled', true);
                     },
@@ -140,6 +142,51 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
     
     _onClickRefresh: function(event) {
         this._fetchSchema();
+    },
+    
+    _onClickGuess: function(event) {
+        uow.getDatabase({
+            database: this.target[0],
+            collection: this.target[1],
+            mode: 'r'
+        }).then(dojo.hitch(this, function(db) {
+            db.fetch({
+                query: {},
+                count: 1,
+                onItem: dojo.hitch(this, function(item) {
+                    var schema = this._guessSchema(item);
+                    this._showSchema(dojo.toJson(schema, true));
+                    this.saveButton.attr('disabled', false);
+                }),
+                scope: this
+            });
+        }));
+    },
+    
+    _guessSchema: function(item) {
+        if (typeof(item) === 'string') {
+            return { type: 'string' };
+        } else if (dojo.isArray(item)) {
+            return { type: 'array',
+                     items: this._guessSchema(item[0]) };
+        } else if (typeof(item) === 'number') {
+            if (Math.floor(item) === item) {
+                return { type: 'integer' };
+            } else {
+                return { type: 'number' };
+            }
+        } else if (typeof(item) === 'object') {
+            var r = { type: 'object',
+                      properties: {} };
+            for (var p in item) {
+                if (!p.match(/_/)) {
+                    r.properties[p] = this._guessSchema(item[p]);
+                }
+            }
+            return r;
+        } else {
+            return { type: 'unknown' };
+        }
     },
     
     _showSchema: function(schema) {

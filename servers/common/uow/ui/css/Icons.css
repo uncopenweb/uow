@@ -122,3 +122,11 @@
     width: 16px;
     height: 16px;
 }
+
+.uowSchemaGuess {
+    background-image: url('icons/question_frame.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;
+}
