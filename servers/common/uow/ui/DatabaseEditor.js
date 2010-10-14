@@ -122,28 +122,23 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
             var dbName = this._db.database;
             var colName = this.colNameWidget.attr('value');
             // fetch existing collection
-            this._db.fetch({
-                query: {url : '/data/'+dbName+'/'+colName+'/'},
-                onComplete: function(items) {
-                    if(items.length == 1) {
-                        this._db.deleteItem(items[0]);
-                        this._db.save({
-                            onComplete: function() {
-                                // reset the ui
-                                this.colNameWidget.attr('value', '');
-                                this.dbAccessWidget.attr('database', this._db);
-                                this._confirmDialog.hide();
-                            },
-                            onError: function(err) {
-                                this._confirmDialog.hide();
-                                console.error('drop failed:', err);
-                            },
-                            scope: this
-                        });
-                    } else {
-                        this._confirmDialog.hide();
-                        console.error('drop failed:', items.length, ' collections found');
-                    }
+            this._db.fetchItemByIdentity({
+                identity: colName,
+                onItem: function(item) {
+                    this._db.deleteItem(item);
+                    this._db.save({
+                        onComplete: function() {
+                            // reset the ui
+                            this.colNameWidget.attr('value', '');
+                            this.dbAccessWidget.attr('database', this._db);
+                            this._confirmDialog.hide();
+                        },
+                        onError: function(err) {
+                            this._confirmDialog.hide();
+                            console.error('drop failed:', err);
+                        },
+                        scope: this
+                    });
                 },
                 onError: function(err) {
                     this._confirmDialog.hide();
@@ -230,7 +225,5 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
 });
 
 uow.ui.DatabaseEditor.formatCollectionLabel = function(item, store) {
-    var url = store.getValue(item, 'url');
-    var segs = url.split('/');
-    return segs[3] || url;
+    return item._id;
 };

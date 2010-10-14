@@ -44,13 +44,13 @@ dojo.declare('uow.ui.DatabaseAccessEditor', [dijit._Widget, dijit._Templated,
     },
 
 	_onAddCollection: function(item) {
-		var col = item.url.split('/');
+		var col = item._id;
 		var tmpl = dojo.cache('uow.ui.templates', 'DatabaseAccessEditorItem.html');
 		var args = {
 			labels : this.labels,
-			collection : col[3],
-			target : this.database.database + ',' + col[3],
-			id : this.id + '_' + item.url
+			collection : col,
+			target : this.database.database + ',' + col,
+			id : this.id + '_' + this.database.database + '_' + col
 		};
 		var html = dojo.replace(tmpl, args);
 		dojo.place(html, this.containerNode);
@@ -64,12 +64,12 @@ dojo.declare('uow.ui.DatabaseAccessEditor', [dijit._Widget, dijit._Templated,
 		// hook nodes
 		var total = dojo.byId('total_'+args.id);
 		// show total number of records
-		uow.getDatabase({database: this.database.database, collection : col[3]})
+		uow.getDatabase({database: this.database.database, collection : col})
 			.then(dojo.hitch(this, function(db) {
 				db.fetch({
 					query : {},
 					start : 0,
-					count : 2,
+					count : 0,
 					onBegin: function(size, request) {
 						total.innerHTML = size;
 					}

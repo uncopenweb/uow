@@ -19,6 +19,13 @@
               iconClass="uowRefresh"
               title="${labels.revert_button_title}"
               type="button">${labels.revert_button_label}</button
+			><span dojoType="dijit.ToolbarSeparator"></span
+	    ><button dojoType="dijit.form.Button" 
+              dojoAttachPoint="guessButton" 
+              dojoAttachEvent="onClick:_onClickGuess"
+              iconClass="uowSchemaGuess"
+              title="${labels.guess_button_title}"
+              type="button">${labels.guess_button_label}</button>
     </div>
 		<div dojoType="dijit.layout.ContentPane"
          dojoAttachPoint="contentPane" 
