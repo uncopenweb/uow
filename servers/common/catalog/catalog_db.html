@@ -30,11 +30,12 @@
   <ul>
     <li><a href="http://dojotoolkit.org/reference-guide/dojo/data.html">dojo.data documentation</a></li>
     <li><a href="http://docs.dojocampus.org/dojox/data/JsonRestStore">dojox.data.JsonRestStore documentation</a></li>
-    <li><a href="http://www.mongodb.org/display/DOCS/Home">MongoDB documentation</a></li>
+    <li><a href="http://www.dojotoolkit.org/reference-guide/quickstart/data/usingdatastores.html#quickstart-data-usingdatastores">Using Dojo Data Stores</a></li>
   </ul>
   
   <h2>API</h2>
-  <p><code>uow.getDatabase(args) &rarr; dojo.Deferred</code></p>
+	<h3>Factory functions</h3>
+  <p><code>uow.data.getDatabase(args) &rarr; dojo.Deferred</code></p>
   <div class="apidesc">
     <p>This method initializes the database interface for use in your application. You can call this function any number of times to get references to different databases and collections.</p>
     <p>The <tt>args</tt> parameter must have the following attributes configuring your access to the database:</p>
@@ -45,7 +46,7 @@
       <dt>collection (string)</dt>
       <dd>Name of the collection in the database to access or * to list collections.</dd>
       <dt>mode (string)</dt>
-      <dd>Permissions requested for accessing the database. If mode is left undefined, all permissions are requested and granted for developers, non-developers get what is allowed for the collection. The mode string can contain one or more of the following characters representing permissions:
+      <dd>Permissions requested for accessing the database. If mode is left undefined, <em>crud</em> is requested and granted for developers while non-developers get what they are allowed for the collection (see <tt>uow.data.setAccess</tt>). The mode string can contain one or more of the following characters representing permissions:
         <ul>
           <li>c : Create records</li>
           <li>r : Read records with any query</li>
@@ -56,8 +57,119 @@
       </ds>
     </dl>
   
-    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive an instance of a <a href="http://docs.dojocampus.org/dojox/data/JsonRestStore"><tt>dojox.data.JsonRestStore</tt> subclass</a> for your use.</p>
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive a <tt>uow.data.MongoStore</tt> instance for your use.</p>
+
+		<p><strong>Note:</strong> The modes granted may not match the modes requested. The intersection depends on the permissions allowed for the user role using <tt>uow.data.setAccess</tt> or an equivalent function. You can invoke the <tt>getMode</tt> method on the <tt>uow.data.MongoStore</tt> instance to determine what permissions were actually granted.</p>
   </div>
+
+	<p><code>uow.data.manageDatabase(args) &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>This method allows you to list and delete the collections in a database. You can call this function any number of times to get references to different databases.</p>
+    <p>The <tt>args</tt> parameter must have the following attributes identifying which database you want to manage:</p>
+  
+    <dl>
+      <dt>database (string)</dt>
+      <dd>Name of the database to access.</dd>
+    </dl>
+  
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive a <tt>uow.data.MongoStore</tt> instance with delete and read permissions for your use in listing and dropping collections in the database.</p>
+  </div>
+
+	<p><code>uow.data.setAccess(args) &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>This function sets the permissions allowed for a user role when accessing a given database and collection. Only those permissions allowed here will be granted to a user in the named role when accessing the database / collection pair using <tt>uow.data.getDatabase</tt>.</p>
+    <p>The <tt>args</tt> parameter must have the following attributes identifying the database, collection, and user role to configure:</p>
+  
+    <dl>
+      <dt>database (string)</dt>
+      <dd>Name of the database.</dd>
+			<dt>collection (string)</dt>
+			<dd>Name of the collection on which to set the allowed permissions.</dd>
+			<dt>role (string)</dt>
+			<dd>User role name on which to set the allowed permissions.</dd>
+			<dt>permission (string)</dt>
+			<dd>Permission to allow user's of the role to request. The permission string can contain one or more of the <em>mode</em> characters defined for the <tt>uow.data.getDatabase</tt> function. Alternatively, it can be <tt>null</tt> to remove all granted permissions.</dd>
+    </dl>
+  
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive the record created, updated, or deleted in the <tt>Admin:AccessModes</tt> collection defining the allowed permission.</p>
+  </div>
+
+	<p><code>uow.data.setRole(args) &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>This function assigns a associates a user's Open ID with a role. The association exists across all databases and collections on the server.</p>
+
+    <p>The <tt>args</tt> parameter must have the following attributes identifying the user and role:</p>
+  
+    <dl>
+			<dt>user (string)</dt>
+			<dd>Open ID (i.e., email address) of the user</dd> 
+			<dt>role (string)</dt>
+			<dd>One of the assigned role names defined by <tt>uow.getUser</tt>, namely <tt>author</tt> or <tt>admin</tt>, or <tt>null</tt> to remove the user / role association.</dd>
+    </dl>
+  
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive the record created, updated, or deleted in the <tt>Admin:AccessUsers</tt> collection defining the role association.</p>
+  </div>
+
+	<p><code>uow.data.setSchema(args) &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>This function sets the <a href="http://jsonschema.org">JSON Schema</a> for all future records in a given collection. When a schema exists, only those operations that produce items deemed valid by the schema are allowed. All other operations are denied.</p>
+
+    <p>The <tt>args</tt> parameter must have the following attributes identifying the database, collection, and schema:</p>
+  
+    <dl>
+      <dt>database (string)</dt>
+      <dd>Name of the database.</dd>
+			<dt>collection (string)</dt>
+			<dd>Name of the collection.</dd>
+			<dt>schema (string)</dt>
+			<dd>JSON schema to enforce for future record creation and updates or <tt>null</tt> to remove the schema and allow items with arbitrary structure in the collection.</dd>
+    </dl>
+  
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive the record created, updated, or deleted in the <tt>Admin:Schemas</tt> collection defining the schema.</p>
+  </div>
+
+	<p><code>uow.data.touchCollection(args) &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>This method creates a new, empty collection in a database. Normally, you do not need to invoke this function as the collection is brought into existence when you write the first record to it. This function is useful, however, if you need a collection to appear when fetched using <tt>uow.data.manageDatabase</tt>.</p>
+    <p>The <tt>args</tt> parameter must have the following attributes identifying the collection to create:</p>
+  
+    <dl>
+      <dt>database (string)</dt>
+      <dd>Name of the database to access.</dd>
+			<dt>collection (string)</dt>
+			<dd>Name of the collection to create.</dd>
+    </dl>
+  
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive a <tt>uow.data.MongoStore</tt> instance for the new collection with <em>crud</em> permissions.</p>
+  </div>
+
+	<h3>uow.data.MongoStore class</h3>
+	<p>The <tt>MongoStore</tt> is a subclass of <a href="http://docs.dojocampus.org/dojox/data/JsonRestStore"><tt>dojox.data.JsonRestStore</tt></a> which implements the read, write, identity, and notification interfaces of <a href="http://www.dojotoolkit.org/reference-guide/dojo/data/api.html">dojo.data</a>. <tt>MongoStore</tt> instances expose additional methods beyond those defined by the basic dojo.data interfaces. These convenience methods are listed below.</p>
+	
+	<p><code>deleteOne(args) &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>todo</p>
+	</div>
+
+	<p><code>fetchOne(args) &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>todo</p>
+	</div>
+
+	<p><code>getMode() &rarr; string</code></p>
+  <div class="apidesc">
+    <p>todo</p>
+	</div>
+
+	<p><code>putOne(args) &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>todo</p>
+	</div>
+
+	<p><code>updateOne(args) &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>todo</p>
+	</div>
 
   <h2>Examples</h2>
   <h3>Save a new person object in the <em>rolodex</em> collection of the <em>catalog</em> database</h3>
@@ -70,7 +182,7 @@
   <button id="db_ex1">Run</button></label>
   <div id="db_ex1code">
     <pre><code dojoType="dojox.highlight.Code"
->var def = uow.getDatabase({
+>var def = uow..data.getDatabase({
   database: 'catalog', 
   collection : 'rolodex', 
   mode : 'c'
@@ -90,7 +202,7 @@ def.addCallback(function(db) {
   <textarea class="results" id="db_ex1log"></textarea>
   <div id="db_ex2code">
     <pre><code dojoType="dojox.highlight.Code"
->var def = uow.getDatabase({
+>var def = uow.data.getDatabase({
   database: 'catalog', 
   collection : 'rolodex', 
   mode : 'r'

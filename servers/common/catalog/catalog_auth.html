@@ -14,20 +14,6 @@
   <p>User authentication is performed using <a href="http://openid.net/">OpenID</a> against the <a href="http://code.google.com/apis/accounts/docs/OpenID.html">Google OpenID Provider endpoint</a>. Any user with a Google Account can be authorized and identified by a UOW server.</p>
 
   <h2>API</h2>
-  <p><code>uow.triggerLogin() &rarr; dojo.Deferred</code></p>
-  <div class="apidesc">
-    <p>This method attempts to authenticate the current user via a Google Account. A popup window appears in which Google asks the user to create a new Google Account or sign into an existing account if the user is not currently signed into any Google service. Once signed in, the popup windows asks the user to allow or deny the UOW server access to his or her name, email address, etc. for authentication.</p>
-  
-    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive a object with the following properties:</p>
-  
-    <dl>
-      <dt>flag (string)</dt>
-      <dd>The string <em>ok</em> on successful login.</dd>
-      <dt>user (object)</dt>
-      <dd>The same user object provided by <tt>uow.getUser()</tt>. See below.</dd>
-    </dl>
-  </div>
-  
   <p><code>uow.getUser() &rarr; dojo.Deferred</code></p>
   <div class="apidesc">
     <p>This method retrieves information about the user logged into the current domain.</p>
@@ -68,6 +54,20 @@
     <p>This method removes the authentication cookie for the user currently logged into the current domain. After removing the cookie, the method refreshes the page to ensure no private data remains displayed.</p>
   
     <p>This method returns no value as the page always refreshes after invocation.</p>
+  </div>
+
+<p><code>uow.triggerLogin() &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>This method attempts to authenticate the current user via a Google Account. A popup window appears in which Google asks the user to create a new Google Account or sign into an existing account if the user is not currently signed into any Google service. Once signed in, the popup windows asks the user to allow or deny the UOW server access to his or her name, email address, etc. for authentication.</p>
+  
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive a object with the following properties:</p>
+  
+    <dl>
+      <dt>flag (string)</dt>
+      <dd>The string <em>ok</em> on successful login.</dd>
+      <dt>user (object)</dt>
+      <dd>The same user object provided by <tt>uow.getUser()</tt>. See below.</dd>
+    </dl>
   </div>
 
   <h2>Examples</h2>
