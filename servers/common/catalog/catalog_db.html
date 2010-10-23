@@ -53,7 +53,7 @@
           <li>R : Restricted read that allows only simple equality queries that return a single record
           <li>u : Update existing records</li>
           <li>d : Delete records</li>
-          <li>O : Override ownership checks on item operations</li> 
+          <li>O : Override ownership checks on delete and update operations</li> 
         </ul>
       </ds>
     </dl>
@@ -61,6 +61,8 @@
     <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive a <tt>uow.data.MongoStore</tt> instance for your use.</p>
 
     <p><strong>Note:</strong> The modes granted may not match the modes requested. The intersection depends on the permissions allowed for the user role using <tt>uow.data.setAccess</tt> or an equivalent function. You can invoke the <tt>getMode</tt> method on the <tt>uow.data.MongoStore</tt> instance to determine what permissions were actually granted.</p>
+
+    <p>Create operations record the current user's id in the _owner field. Delete and Update operations fail unless the _owner is equal to the current user id or _owner is null or Override has been granted.</p>
   </div>
 
   <p><code>uow.data.manageDatabase(args) &rarr; dojo.Deferred</code></p>
