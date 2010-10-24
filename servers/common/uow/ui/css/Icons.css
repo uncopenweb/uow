@@ -3,6 +3,11 @@
  *
  * Copyright UNC Open Web Team 2010. All Rights Reserved. 
  */
+.uowIcon {
+    display: inline-block;
+    vertical-align: bottom;
+}
+
 .uowRowInsert {
     background-image: url('icons/database-insert.png');
     background-repeat: no-repeat;
@@ -129,4 +134,20 @@
     background-position: 50% 50%;
     width: 16px;
     height: 16px;
+}
+
+.uowUserIcon {
+    background-image: url('icons/user.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;    
+}
+
+.uowLoginIcon {
+    background-image: url('icons/key.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 16px;
+    height: 16px;    
 }
