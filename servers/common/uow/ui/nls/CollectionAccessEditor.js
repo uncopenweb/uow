@@ -4,6 +4,7 @@
 	update_column_label : 'Update (u)',
 	delete_column_label : 'Delete (d)',
 	restricted_read_column_label : 'Restricted read (R)',
+	override_column_label : 'Override owner (O)',
 	anonymous_row_label : 'anonymous',
 	identified_row_label : 'identified',
 	author_row_label : 'author',

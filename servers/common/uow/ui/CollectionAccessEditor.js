@@ -64,7 +64,7 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
             return uow.getDatabase({
                 database : 'Admin', 
                 collection: 'AccessModes',
-                mode : 'cur'
+                mode : 'Ocur'
             });
         } else {
             var def = new dojo.Deferred();
