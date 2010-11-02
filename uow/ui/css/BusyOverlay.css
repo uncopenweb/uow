@@ -1,0 +1,31 @@
+/**
+ * Styles for the busy overlay widget.
+ *
+ * Copyright UNC Open Web Team 2010. All Rights Reserved. 
+ */
+.uowBusyOverlay {
+    opacity: 0.95;
+    font-size: 1.5em;
+    color: gray;
+    background-color: white;
+}
+
+.uowBusyOverlayCenter {
+    position: absolute; 
+    top: 50%;
+    left: 50%;
+}
+
+.uowBusyOverlayMessage {
+    position: relative; 
+    top: -2.75em;
+    left: -50%;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.uowBusyOverlay .uowBusyIcon {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
