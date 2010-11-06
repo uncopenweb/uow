@@ -106,26 +106,6 @@ dojo.declare('uow.ui.CollectionAccessEditor', [dijit._Widget, dijit._Templated, 
     _onCheck: function(role, mode, value) {
         if(this._mutex) { return; }
 
-        // if r or R is going on, make sure the other is off
-        if(value) {
-            var rw;
-            if(mode == 'R') {
-                rw = dijit.byId(this.id+'_'+role+'_r');
-                if(rw.attr('checked')) {
-                    rw.attr('checked', false);
-                    // don't do anything else, we'll get another checked event
-                    // for that widget
-                    return;
-                }
-            } else if(mode == 'r') {
-                rw = dijit.byId(this.id+'_'+role+'_R');
-                if(rw.attr('checked')) {
-                    rw.attr('checked', false);
-                    return;
-                }            
-            }
-        }
-        
         // get the row for the role
         var row = dojo.query('tr[data-role="'+role+'"]', this.tableBody)[0];
         // get all the checkboxes
