@@ -16,29 +16,8 @@ uow.getAudio = function(args) {
     if(!uow._audio) {
         args = args || {};
         args.jsonicURI = '/jsonic/';
-        if (!args.audioEngine && dojo.isChrome) {
-            args.audioEngine = 'flash';
-        }
-        if (args.audioEngine == 'flash' && typeof(soundManager) === 'undefined') {
-            dojo.xhrGet({
-                url: '/libs/uow/audio/soundmanager2.js',
-                handleAs: 'javascript',
-                load: function(data) {
-                    soundManager.url = '/libs/uow/audio/swf/';
-                    soundManager.flashVersion = 9; // optional: shiny features (default = 8)
-                    soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
-                    soundManager.consoleOnly = true;
-                    soundManager.debugMode = false;
-                    soundManager.onready(function() {
-                        uow._audio = new uow.audio.JSonic(args);
-                        def.callback(uow._audio);
-                    });
-                }
-            });
-        } else {
-            uow._audio = new uow.audio.JSonic(args);
-            def.callback(uow._audio);
-        }
+        uow._audio = new uow.audio.JSonic(args);
+        def.callback(uow._audio);
     } else {
         def.callback(uow._audio);
     }
