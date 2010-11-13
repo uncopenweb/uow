@@ -6,6 +6,7 @@
 dojo.provide('uow');
 dojo.registerModulePath('uow', '/libs/uow');
 dojo.require('uow.audio.JSonic');
+dojo.require('uow.ui.BrowserDialog');
 dojo.require('uow.data.MongoStore');
 dojo.require('dojo.cookie');
 
@@ -17,10 +18,8 @@ uow.getAudio = function(args) {
         args = args || {};
         args.jsonicURI = '/jsonic/';
         uow._audio = new uow.audio.JSonic(args);
-        def.callback(uow._audio);
-    } else {
-        def.callback(uow._audio);
     }
+    def.callback(uow._audio);
     return def;
 };
 
@@ -41,15 +40,6 @@ uow.triggerLogin = function() {
             loginDeferred.callback({ flag: flag, user: user });
         });
     };
-    // uow._openIDWindowOpened = false;
-    // setTimeout(function() {
-    //     if (!uow._openIDWindowOpened) {
-    //         loginDeferred.errback('timeout waiting for login window');
-    //     }
-    // }, 1000);
-    // uow._handleOpenIDStart = function() {
-    //     uow._openIDWindowOpened = true;
-    // }
     popup = window.open('/data/_auth', 'Login_Popup', 'width=790,height=580');
     return loginDeferred;
 };
@@ -58,4 +48,12 @@ uow.triggerLogin = function() {
 uow.logout = function() {
     dojo.cookie('user', null, {path : '/', expires: -1});
     window.location.reload();
+};
+
+// Check browser compatibility
+uow.checkBrowser = function() {
+    // @todo: what to check? right now just IE
+    if(dojo.isIE) {
+        uow.ui.BrowserDialog.show();
+    }
 };

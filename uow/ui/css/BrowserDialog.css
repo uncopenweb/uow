@@ -1,0 +1,18 @@
+/**
+ * Styles for the browser dialog widget.
+ *
+ * Copyright UNC Open Web Team 2010. All Rights Reserved. 
+ */
+.uowBrowserDialog {
+    width: 350px;
+    height: 200px;
+}
+
+.uowBrowserDialog table {
+    width: 100%;
+    text-align: center;
+}
+
+.uowBrowserDialog img {
+    margin: 10px 10px 0px 10px;
+}
