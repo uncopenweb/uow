@@ -52,8 +52,12 @@ uow.logout = function() {
 
 // Check browser compatibility
 uow.checkBrowser = function() {
+    var def = new dojo.Deferred();
     // @todo: what to check? right now just IE
-    if(dojo.isIE) {
+    var ok = !dojo.isIE;
+    if(!ok) {
         uow.ui.BrowserDialog.show();
     }
+    def.callback(ok);
+    return def;
 };
