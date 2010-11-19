@@ -63,6 +63,8 @@
     <p><strong>Note:</strong> The modes granted may not match the modes requested. The intersection depends on the permissions allowed for the user role using <tt>uow.data.setAccess</tt> or an equivalent function. You can invoke the <tt>getMode</tt> method on the <tt>uow.data.MongoStore</tt> instance to determine what permissions were actually granted.</p>
 
     <p>Create operations record the current user's id in the _owner field. Delete and Update operations fail unless the _owner is equal to the current user id or _owner is null or Override has been granted.</p>
+    
+    <p>Records are checked in two ways on create and update operations. First they are checked against the schema if one is provided. Then, any strings values are filtered to protect against common XSS attacks. If the field name ends with <code>HTML</code>, the content is filtered against a white list that only allows a subset of tags and attributes. In all other string valued fields, the characters &lt;, &gt;, &quot;, &#39; and &amp; (outside of entities) are replaced with HTML entities. If you have some very rare case where these transformations will be a problem, you should encode your data before saving it to the db.</p>
   </div>
 
   <p><code>uow.data.manageDatabase(args) &rarr; dojo.Deferred</code></p>
