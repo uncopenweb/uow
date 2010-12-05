@@ -109,7 +109,6 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
     },
     
     _buildLayout: function(schema) {
-        schema = dojo.fromJson(schema);
         this._schema = schema;
         // disable additional property checks on the client
         delete this._schema.additionalProperties;

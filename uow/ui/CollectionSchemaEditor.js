@@ -75,7 +75,7 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
                 if(items.length > 1) {
                     this._showSchemaError(this.labels.schema_error_label);
                 } else if(items.length == 1) {
-                    this._showSchema(items[0].schema);
+                    this._showSchema(dojo.toJson(items[0].schema, true));
                 } else {
                     this._showSchema('');
                 }
@@ -108,7 +108,7 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
     },
 
     _onClickSave: function(event) {
-        var schema = this.textNode.value;
+        var schema = dojo.fromJson(this.textNode.value);
         var args = {
             database : this.target[0], 
             collection : this.target[1]
