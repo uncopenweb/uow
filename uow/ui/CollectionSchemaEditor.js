@@ -63,6 +63,27 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
         }));
     },
     
+    _cleanUpData: function(o) {
+        // clean up the CRAP they put in objects from the database
+        var res;
+        if (typeof(o) == 'object') {
+            res = {};
+            for(var p in o) {
+                if (p[0] != '_') {
+                    res[p] = this._cleanUpData(o[p])
+                }
+            }
+        } else if(typeof(o) == 'array') {
+            res = [];
+            for(var i = 0; i < o.length; i++) {
+                res[i] = this._cleanUpData(o[i]);
+            }
+        } else {
+            res = o;
+        }
+        return res;
+    },
+    
     _fetchSchema: function() {
         // fetch the schema for the target db/col
         var args = {
@@ -75,7 +96,7 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
                 if(items.length > 1) {
                     this._showSchemaError(this.labels.schema_error_label);
                 } else if(items.length == 1) {
-                    this._showSchema(dojo.toJson(items[0].schema, true));
+                    this._showSchema(dojo.toJson(this._cleanUpData(items[0].schema), true));
                 } else {
                     this._showSchema('');
                 }
