@@ -114,6 +114,9 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
         delete this._schema.additionalProperties;
         var layout = [];
         for(var name in schema.properties) {
+            if (/^__/.test(name)) {
+                continue;
+            }
             var prop = schema.properties[name];
             var col = {};
             col.field = name;
