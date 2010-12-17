@@ -5,29 +5,27 @@
 **/
 dojo.provide('uow');
 dojo.registerModulePath('uow', '/libs/uow');
-dojo.require('uow.audio.JSonic');
-dojo.require('uow.ui.BrowserDialog');
 dojo.require('uow.data.MongoStore');
 dojo.require('dojo.cookie');
 
 // Gets the singleton JSonic audio manager
 uow._audio = null;
 uow.getAudio = function(args) {
+    dojo.require('uow.audio.JSonic');
     var def = new dojo.Deferred();
-    if(!uow._audio) {
-        args = args || {};
-        args.jsonicURI = '/jsonic/';
-        uow._audio = new uow.audio.JSonic(args);
-    }
-    def.callback(uow._audio);
+    dojo.ready(function() {
+        if(!uow._audio) {
+            args = args || {};
+            args.jsonicURI = '/jsonic/';
+            uow._audio = new uow.audio.JSonic(args);
+        }
+        def.callback(uow._audio);
+    });
     return def;
 };
 
 // Gets a MongoStore instance (like dojox.data.JSONRestStore)
 uow.getDatabase = function(args) { return uow.data.getDatabase(args); };
-
-// Return a store for listing and deleting collections from a database
-uow.manageDatabase = function(args) { return uow.data.manageDatabase(args); };
 
 // Ask the server to return the current user
 uow.getUser = function(args) { return uow.data.getUser(args); };
@@ -51,13 +49,38 @@ uow.logout = function() {
 };
 
 // Check browser compatibility
-uow.checkBrowser = function() {
+uow.ui = {};
+uow.ui.checkBrowser = function() {
+    dojo.require('uow.ui.BrowserDialog');
     var def = new dojo.Deferred();
-    // @todo: what to check? right now just IE
-    var ok = !dojo.isIE;
-    if(!ok) {
-        uow.ui.BrowserDialog.show();
-    }
-    def.callback(ok);
+    dojo.ready(function() {
+        var ok = !dojo.isIE;
+        if(!ok) {
+            uow.ui.BrowserDialog.show();
+        }
+        def.callback(ok);
+    });
+    return def;
+};
+
+// Show a busy overlay
+uow.ui.showBusy = function(args) {
+    dojo.require('uow.ui.BusyOverlay');
+    var def = new dojo.Deferred();
+    dojo.ready(function() {
+        var inst = uow.ui.BusyOverlay.show(args);
+        def.callback(inst);
+    });
+    return def;
+};
+
+// Hide a busy overlay
+uow.ui.hideBusy = function(inst) {
+    dojo.require('uow.ui.BusyOverlay');
+    var def = new dojo.Deferred();
+    dojo.ready(function() {
+        uow.ui.BusyOverlay.hide(inst);
+        def.callback();
+    });
     return def;
 };
