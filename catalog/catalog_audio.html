@@ -28,7 +28,7 @@
   <p><code>uow.getAudio(args) &rarr; dojo.Deferred</code></p>
   <div class="apidesc">
     <p>This method initializes the JSonic speech and sound interface for use in your application. You need to call this method only once per application.</p>
-    <p>The <tt>args</tt> parameter is the one passed to the <a href="http://parente.github.com/jsonic/js.html#the-jsonic-factory">JSonic factory documented here</a>. The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive a <a href="http://parente.github.com/jsonic/js.html#the-jsonic-interface"><tt>info.mindtrove.JSonic</tt> instance</a> for your use.</p>
+    <p>The <tt>args</tt> parameter is the one passed to the <a href="http://parente.github.com/jsonic/js.html#the-jsonic-factory">JSonic factory documented here</a>. The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive a <a href="http://parente.github.com/jsonic/js.html#the-jsonic-interface"><tt>info.mindtrove.JSonic</tt> instance</a> for your use.</p>
   </div>
   
   <h2>Examples</h2>
@@ -36,7 +36,7 @@
   <h3>Say a greeting <button id="audio_ex1">Run</button></h3>
   <div id="audio_ex1code">
     <pre><code dojoType="dojox.highlight.Code"
->uow.getAudio().addCallback(function(a) {
+>uow.getAudio().then(function(a) {
   a.say({text : "Welcome to the UNC Open Web Server!"});
 });</code></pre>
   </div>
@@ -44,7 +44,7 @@
   <h3>Play a sound <button id="audio_ex2">Run</button></h3>
   <div id="audio_ex2code">
     <pre><code dojoType="dojox.highlight.Code"
->uow.getAudio().addCallback(function(a) {
+>uow.getAudio().then(function(a) {
   a.play({url : "baritone_blues"});  
 });</code></pre>
   </div>

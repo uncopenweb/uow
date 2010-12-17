@@ -35,7 +35,7 @@
   
   <h2>API</h2>
   <h3>Factory functions</h3>
-  <p><code>uow.getDatabase(args) &rarr; dojo.Deferred</code></p>
+  <p><code>uow.data.getDatabase(args) &rarr; dojo.Deferred</code></p>
   <div class="apidesc">
     <p>This method opens a database collection for use in your application. You can call this function any number of times to open connections to different databases and collections and with different modes of access (e.g., read, write, etc.)</p>
     <p>The <tt>args</tt> parameter must have the following attributes configuring your access to the database:</p>
@@ -55,7 +55,7 @@
           <li>d : Delete records</li>
           <li>O : Override ownership checks on delete and update operations</li> 
         </ul>
-      </ds>
+      </dd>
     </dl>
   
     <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive a <tt>uow.data.MongoStore</tt> instance for your use.</p>
@@ -240,7 +240,7 @@
   collection : 'rolodex', 
   mode : 'c'
 });
-def.addCallback(function(db) {
+def.then(function(db) {
   var fn = dojo.byId('db_ex1first');
   var ln = dojo.byId('db_ex1last');
   db.newItem({firstName : fn.value, lastName : ln.value});
@@ -260,7 +260,7 @@ def.addCallback(function(db) {
   collection : 'rolodex', 
   mode : 'r'
 });
-def.addCallback(function(db) {
+def.then(function(db) {
   var i = 1;
   db.fetch({
     count: 5,
