@@ -6,11 +6,97 @@
   </script>
   <h1>UI Widgets</h1>
   <p>Various reusable widgets and utilities are available for use in your projects.</p>
-
+  
   <h2>API</h2>
-  <p><code>uow.checkBrowser() &rarr; dojo.Deferred</code></p>
+  <h3>Factory functions</h3>
+  <p><code>uow.ui.checkBrowser() &rarr; dojo.Deferred</code></p>
   <div class="apidesc">
-    <p>This method checks if the user's browser supports the modern HTML5 features required by the UOW framework. If not, shows a dialog suggesting the user download Chrome or Firefox.</p>
-    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive a boolean response, true if the browser is acceptable and false if not.</p>
+    <p>This method checks if the user's browser supports the modern HTML5 features required by the UOW framework. If not, the method shows a dialog suggesting the user download Chrome or Firefox.</p>
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive a boolean response, true if the browser is acceptable and false if not.</p>
+    <p><strong>Note:</strong> For the dialog to display properly, you should include the <tt>/libs/uow/ui/css/uow.css</tt> stylesheet in your <tt>index.html</tt> or, if only using this widget, the <tt>/libs/uow/ui/css/BrowserDialog.css</tt> stylesheet.</p>
+  </div>
+
+  <p><code>uow.ui.hideBusy(args) &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>This method overlays a DOM node with a spinner and optional message indicating the underlying portion of the application is busy.</p>
+    <p>The <tt>args</tt> parameter must have the following attributes configuring the overlay:</p>
+        
+    <dl>
+      <dt>overlay (uow.ui.BusyOverlay)</dt>
+      <dd>The overlay returned by <tt>uow.ui.showBusy</tt> to hide.</dd>
+    </dl>
+    
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will fire after the overlay hides.</p>
+  </div>
+
+  <p><code>uow.ui.showBusy(args) &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>This method overlays a DOM node with a spinner and optional message indicating the underlying portion of the application is busy.</p>
+    <p>The <tt>args</tt> parameter must have the following attributes configuring the overlay:</p>
+        
+    <dl>
+      <dt>busyNode (DOM node)</dt>
+      <dd>The node to use to compute the position and dimensions of the overlay.</dd>
+      <dt>parentNode (DOM node)</dt>
+      <dd>The node that will contain the overlay. If left undefined, defaults to <tt>document.body</tt>.</dd>
+      <dt>message (string)</dt>
+      <dd>The optional text message include in the overlay.</dd>
+      <dt>animate (bool)</dt>
+      <dd>True to show an animated spinner in the overlay or false to just show the overlay and optional message. If undefined, defaults to true.</dd>
+      <dt>takeFocus (bool)</dt>
+      <dd>True to force keyboard focus to the overlay when it appears or false to leave it where it is. If undefined, defaults to true.</dd>
+      <dt>delayShow (int)</dt>
+      <dd>Delays the appearance of the busy overlay by this many milliseconds. Useful to prevent flashing the overlay when the application is busy for only a short while. If undefined, defaults to 250 ms.</dd>
+      <dt>zIndex (int)</dt>
+      <dd>Sets the z-index CSS property on the overlay to this value. If left undefined, tries to automatically compute the z-index to use based on the values set by the <tt>busyNode</tt> and its DOM ancestors.</dd>
+    </dl>
+    
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive the <tt>uow.ui.BusyOverlay</tt> instance now showing.</p>
+
+    <p><strong>Note:</strong> For the dialog to display properly, you should include the <tt>/libs/uow/ui/css/uow.css</tt> stylesheet in your <tt>index.html</tt> or, if only using this widget, the <tt>/libs/uow/ui/css/BusyOverlay.css</tt> stylesheet.</p>
+  </div>
+  
+  <!-- <h3>uow.ui.LoginButton</h3>
+  <p>@todo</p> -->
+  
+  <h2>Examples</h2>
+  <h3>Check the user's browser for compatibility with UOW <button id="ui_ex1">Run</button></h3>
+  <div id="ui_ex1code">
+    <pre><code dojoType="dojox.highlight.Code"
+>uow.ui.checkBrowser().then(function(compat) {
+  if(compat) { alert('browser is OK'); }
+});</code></pre>
+  </div>
+
+  <h3>Show a busy overlay over the form below</h3>
+  <div id="ui_ex2form">
+    <label>Fake input #1 <input type="text" /></label><br />
+    <label>Fake input #2 <input type="text" /></label><br />
+    <label>Fake input #3 <input type="text" /></label><br />
+    <label>Fake input #4 <input type="text" /></label><br />
+    <label>Fake input #5 <input type="text" /></label><br />
+    <label>Fake input #6 <input type="text" /></label><br />
+    <button id="ui_ex2">Run</button>
+  </div>
+  <div id="ui_ex2code">
+    <pre><code dojoType="dojox.highlight.Code"
+>// get the DOM node of the form
+var node = dojo.byId('ui_ex2form');
+var args = {
+  // overlay the form node
+  busyNode : node, 
+  // want the overlay to go inside this scrolling pane so it scrolls too
+  parentNode : node.parentNode, 
+  // tell users we're submitting
+  message : 'Submitting ...', 
+  // don't delay showing the overlay if we know the submit will take a while
+  delayShow: 0
+};
+uow.ui.showBusy(args).then(function(o) {
+  // simulate a wait before hiding the overlay
+  setTimeout(function() {
+    uow.ui.hideBusy({overlay : o});
+  }, 3000);
+});</code></pre>
   </div>
 </div>
