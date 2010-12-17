@@ -20,6 +20,8 @@ dojo.declare('uow.ui.BusyOverlay', [dijit._Widget, dijit._Templated], {
     takeFocus: true,
     // delay showing and taking focus for this many ms
     delayShow: 250,
+    // force to this z-index instead of trying to compute
+    zIndex: null,
     templatePath: dojo.moduleUrl('uow.ui', 'templates/BusyOverlay.html'),
     postCreate: function() {
         this._delayToken = null;
@@ -74,7 +76,7 @@ dojo.declare('uow.ui.BusyOverlay', [dijit._Widget, dijit._Templated], {
             width: c.w+'px',
             height: c.h+'px'
         };
-        if(this.parentNode) {
+        if(this.parentNode || c.x === undefined) {
             dojo.marginBox(this.domNode, {l : c.l, t : c.t});
         } else {
             dojo.marginBox(this.domNode, {l : c.x , t : c.y});
@@ -84,24 +86,28 @@ dojo.declare('uow.ui.BusyOverlay', [dijit._Widget, dijit._Templated], {
     
     _computeZIndex: function() {
         var z = 'auto';
-        var node = this.busyNode;
-        if(this.busyNode.currentStyle) {
-            do {
-                z = parseFloat(node.currentStyle['zIndex']);
-                z = (isNaN(z)) ? 'auto' : z;
-                node = node.parentNode;
-            } while(z == 'auto' && node && node.currentStyle);
+        if(this.zIndex !== null) {
+            z = this.zIndex;
         } else {
-            do {
-                try {
-                    var s = document.defaultView.getComputedStyle(node, null);
-                    z = parseFloat(s.getPropertyValue('z-index'));
-                } catch (e) {
-                    z = NaN;
-                }
-                z = (isNaN(z)) ? 'auto' : z;
-                node = node.parentNode;
-            } while(z == 'auto' && node);
+            var node = this.busyNode;
+            if(this.busyNode.currentStyle) {
+                do {
+                    z = parseFloat(node.currentStyle['zIndex']);
+                    z = (isNaN(z)) ? 'auto' : z;
+                    node = node.parentNode;
+                } while(z == 'auto' && node && node.currentStyle);
+            } else {
+                do {
+                    try {
+                        var s = document.defaultView.getComputedStyle(node, null);
+                        z = parseFloat(s.getPropertyValue('z-index'));
+                    } catch (e) {
+                        z = NaN;
+                    }
+                    z = (isNaN(z)) ? 'auto' : z;
+                    node = node.parentNode;
+                } while(z == 'auto' && node);
+            }
         }
         this.domNode.style.zIndex = z;
     }

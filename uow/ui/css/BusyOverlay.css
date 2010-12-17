@@ -9,23 +9,3 @@
     color: gray;
     background-color: white;
 }
-
-.uowBusyOverlayCenter {
-    position: absolute; 
-    top: 50%;
-    left: 50%;
-}
-
-.uowBusyOverlayMessage {
-    position: relative; 
-    top: -2.75em;
-    left: -50%;
-    white-space: nowrap;
-    text-align: center;
-}
-
-.uowBusyOverlay .uowBusyIcon {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
