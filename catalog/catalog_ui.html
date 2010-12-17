@@ -1,0 +1,16 @@
+<div id="uiContainer" class="catUI catPage">
+  <script type="text/javascript">
+    dojo.ready(function() {
+      uow.app.catalog.parseExamples('uiContainer');
+    });
+  </script>
+  <h1>UI Widgets</h1>
+  <p>Various reusable widgets and utilities are available for use in your projects.</p>
+
+  <h2>API</h2>
+  <p><code>uow.checkBrowser() &rarr; dojo.Deferred</code></p>
+  <div class="apidesc">
+    <p>This method checks if the user's browser supports the modern HTML5 features required by the UOW framework. If not, shows a dialog suggesting the user download Chrome or Firefox.</p>
+    <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>addCallback</tt> on the deferred to register a callback function that will receive a boolean response, true if the browser is acceptable and false if not.</p>
+  </div>
+</div>
