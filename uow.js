@@ -75,11 +75,11 @@ uow.ui.showBusy = function(args) {
 };
 
 // Hide a busy overlay
-uow.ui.hideBusy = function(inst) {
+uow.ui.hideBusy = function(args) {
     dojo.require('uow.ui.BusyOverlay');
     var def = new dojo.Deferred();
     dojo.ready(function() {
-        uow.ui.BusyOverlay.hide(inst);
+        uow.ui.BusyOverlay.hide(args.overlay);
         def.callback();
     });
     return def;
