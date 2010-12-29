@@ -93,7 +93,7 @@ dojo.declare('uow.ui.DatabaseEditor', [dijit._Widget, dijit._Templated, dijit._C
         if(!db) { 
            this._enableDbControls(null);
         } else {
-            var def = uow.manageDatabase({
+            var def = uow.data.manageDatabase({
                 database : db
             }).then(dojo.hitch(this, '_enableDbControls'));
         }
