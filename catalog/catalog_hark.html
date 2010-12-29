@@ -38,8 +38,6 @@
     
   <p>While the game container is visible, the home page also displays a toolbar above the iframe with buttons for quitting the game, configuring common preferences (e.g., volume, speech rate), and getting help. The game in the iframe need not be aware of these controls per se, only the events they generate (see next section).</p>
   
-  <p> The home page uses hash values on its own URL as a means of quick launching games (e.g., via bookmarks). The home page converts game URLs to slugs for user consumption and vice versa for setting the game container iframe URL. For example, if the URL of a game is <em>educational/bigwords#shopping</em>, clicking the game on the home page sets the browser address bar to <em>http://harkthesound.org/#educational-bigwords>shopping</em>. The change in hash value causes the game container to show with the iframe set to the URL <em>http://harkthesound.org/educational/bigwords#shopping</em>. If the user presses the home button in the game container toolbar, the home page resets browser address bar to <em>http://harkthesound.org/</em> causing the game container to hide and the iframe to unload the game.</p>
- 
   <h2>Cross-container communication</h2>
   <p>Hark games can use <em>dojo.subscribe</em> to listen to events from the game container.</p>
 
