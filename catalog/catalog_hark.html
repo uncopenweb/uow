@@ -5,7 +5,7 @@
   <p>This document describes how the harkthesound.org home page discovers games to list, launches them, and communicates with them. It is currently a draft and subject to change.</p>
   
   <h2>Game metadata</h2>
-  <p>The home page lists entries in the <em>games</em> collection of the <em>harkhome</em> database. The following JSON depicts all of the required entry fields using a Tic-Tac-Toe game as an example:</p>
+  <p>The home page lists entries in the <em>games</em> collection of the <em>harkhome</em> database. The following JSON depicts all of the required entry fields using a tic-tac-toe game as an example:</p>
   
 <pre>{
   "url" : "tictactoe#3x3",
@@ -19,14 +19,14 @@
       "en-us" : "The classic game of tic-tac-toe on a 3x3 board."
   },
   "media" : {
-      "icon" : "/tictactoe/info/icon.png",
+      "icon" : "tictactoe/info/icon.png",
       "screenshots" : ['/tictactoe/info/screenshot.png']
   },
   "attribution" : "tictactoe/info/attribution.json"
 }</pre>
 
   <h3>url</h3>
-  <p>The <em>url</em> field is the unique URL of the game relative to the root of the harkthesound.org games directory. The URL can contain a hash symbol indicating additional information the game can use to configure itself upon launch. Query parameters are not currently allowed.</p>
+  <p>The <em>url</em> field is the unique, relative URL of the game under http://harkthesound.org/. The URL can contain a hash symbol indicating additional information the game can use to configure itself upon launch. Query parameters are not currently allowed.</p>
   
   <p>In the example above, the metadata includes an app defined hash of <em>3x3</em>. The tic-tac-toe game might use <em>dojo.hash()</em> to retrieve this value when launched to configure the size of the board. Other similar entries with hashes of <em>4x4</em>, <em>10x10</em>, etc. might get registered in the database for more challenging instances of the game if desired.</p>
   
