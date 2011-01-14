@@ -77,7 +77,7 @@
   <div id="auth_ex1code">
     <pre><code dojoType="dojox.highlight.Code"
 >var def = uow.getUser();
-def.thenk(function(user) {
+def.then(function(user) {
   var text = dojo.toJson(user);
   dojo.byId('auth_ex1log').innerHTML = text;
 });
