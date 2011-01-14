@@ -1,12 +1,14 @@
 <div class="catHark catPage">
-  <h1><span style="color:red">DRAFT</span> harkthesound.org integration</h1>
+  <h1>harkthesound.org integration</h1>
+  <p style="color:red">Note: This spec is still evolving. Be prepared.</p>
+  
   <p>This document describes how the harkthesound.org home page discovers games to list, launches them, and communicates with them. It is currently a draft and subject to change.</p>
   
   <h2>Game metadata</h2>
   <p>The home page lists entries in the <em>games</em> collection of the <em>harkhome</em> database. The following JSON depicts all of the required entry fields using a Tic-Tac-Toe game as an example:</p>
   
 <pre>{
-  "url" : "tictactoe",
+  "url" : "tictactoe#3x3",
   "label" : {
     "en-us" : "Tic-tac-toe"
   },
@@ -14,16 +16,19 @@
       "en-us" : "2-player, speech, sound, keyboard, mouse"
   },
   "description" : {
-      "en-us" : "The classic game of tic-tac-toe."
+      "en-us" : "The classic game of tic-tac-toe on a 3x3 board."
   },
   "media" : {
       "icon" : "/tictactoe/info/icon.png",
       "screenshots" : ['/tictactoe/info/screenshot.png']
-  }
+  },
+  "attribution" : "tictactoe/info/attribution.json"
 }</pre>
 
   <h3>url</h3>
   <p>The <em>url</em> field is the unique URL of the game relative to the root of the harkthesound.org games directory. The URL can contain a hash symbol indicating additional information the game can use to configure itself upon launch. Query parameters are not currently allowed.</p>
+  
+  <p>In the example above, the metadata includes an app defined hash of <em>3x3</em>. The tic-tac-toe game might use <em>dojo.hash()</em> to retrieve this value when launched to configure the size of the board. Other similar entries with hashes of <em>4x4</em>, <em>10x10</em>, etc. might get registered in the database for more challenging instances of the game if desired.</p>
   
   <h3>label, description, tags</h3>
   <p>These three fields are for human consumption. The <em>label</em> is the human readable title of the game. The <em>description</em> is a longer explanation of the game. The <em>tags</em> are additional keywords describing the game that one might use when searching for it.</p>
@@ -33,6 +38,20 @@
   <h3>media</h3>
   <p>The media object contains the URL of a 96x96 pixel <em>icon</em> representing the game on the home page. It also includes an array of 320x240 pixel screenshots of the game, at least one of which appears in the game details dialog.</p>
   
+  <h3>attribution</h3>
+  <p>The optional attribution string can reference another JSON file containing attribution info for 3rd party resources (e.g., Creative Commons licensed images, sounds, and music). The top level object in this JSON file is an array. It contains further objects in the following form:</p>
+
+<pre>{
+    "name" : "hvylas.wav",
+    "license" : "Creative Commons Sampling Plus 1.0 License",
+    "creator" : "inferno",
+    "year" : "2006",
+    "url" : "http://www.freesound.org/samplesViewSingle.php?id=18382",
+    "type" : "sound"
+}</pre>
+
+<p>All of these fields are optional. The <em>type</em> field should be one of <em>image</em>, <em>sound</em>, <em>music</em>, or <em>code</em>.</p>
+
   <h2>Game container</h2>
   <p>The harkthesound.org home page launches games in an iframe container. The home page sets the iframe <em>src</em> attribute to the exact <em>url</em> stored in the database for the game. The game is free to do whatever it needs within the iframe and interpret its URL in any way.</p>
     
