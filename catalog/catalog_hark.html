@@ -5,35 +5,57 @@
   <p>This document describes how the harkthesound.org home page discovers games to list, launches them, and communicates with them. It is currently a draft and subject to change.</p>
   
   <h2>Game metadata</h2>
-  <p>The home page lists entries in the <em>games</em> collection of the <em>harkhome</em> database. The following JSON depicts all of the required entry fields using a tic-tac-toe game as an example:</p>
-  
+  <p>The home page lists entries in the <em>games</em> collection of the <em>harkhome</em> database. A game should create a <em>hark.json</e<>> file in one of its subfolders to act as an "installer" for the hark.org site. The JSON below depicts a possible installer for a tic-tac-toe game that has two difficulty levels to list separately on the site:</p>
+
 <pre>{
-  "url" : "tictactoe#3x3",
-  "label" : {
-    "en-us" : "Tic-tac-toe"
-  },
-  "tags" : {
-      "en-us" : "2-player, speech, sound, keyboard, mouse"
-  },
-  "description" : {
-      "en-us" : "The classic game of tic-tac-toe on a 3x3 board."
-  },
-  "media" : {
-      "icon" : "tictactoe/info/icon.png",
-      "screenshots" : ['/tictactoe/info/screenshot.png']
-  },
-  "attribution" : "tictactoe/info/attribution.json"
+    "identifier" : "url",
+    "items" : [
+        {
+            "url" : "tictactoe#3x3",
+            "label" : {
+                "en-us" : "Tic-tac-toe"
+            },
+            "tags" : {
+                "en-us" : "2-player, speech, sound, keyboard, mouse"
+            },
+            "description" : {
+                "en-us" : "The classic game of tic-tac-toe on a 3x3 board."
+            },
+            "media" : {
+                "icon" : "tictactoe/info/icon.png",
+                "screenshots" : ['tictactoe/info/screenshot3x3.png']
+            },
+            "attribution" : "tictactoe/info/attribution.json"
+        },
+        {
+            "url" : "tictactoe#5x5",
+            "label" : {
+                "en-us" : "Tic-tac-toe"
+            },
+            "tags" : {
+                "en-us" : "2-player, speech, sound, keyboard, mouse"
+            },
+            "description" : {
+                "en-us" : "A harder game of tic-tac-toe on a 5x5 board."
+            },
+            "media" : {
+                "icon" : "tictactoe/info/icon.png",
+                "screenshots" : ['tictactoe/info/screenshot5x5.png']
+            },
+            "attribution" : "tictactoe/info/attribution.json"
+        }
+    ]
 }</pre>
 
   <h3>url</h3>
   <p>The <em>url</em> field is the unique, relative URL of the game under http://harkthesound.org/. The URL can contain a hash symbol indicating additional information the game can use to configure itself upon launch. Query parameters are not currently allowed.</p>
   
-  <p>In the example above, the metadata includes an app defined hash of <em>3x3</em>. The tic-tac-toe game might use <em>dojo.hash()</em> to retrieve this value when launched to configure the size of the board. Other similar entries with hashes of <em>4x4</em>, <em>10x10</em>, etc. might get registered in the database for more challenging instances of the game if desired.</p>
-  
+  <p>In the example above, the first game entry includes an app defined hash of <em>3x3</em>. The tic-tac-toe game might use <em>dojo.hash()</em> to retrieve this value when launched to configure the size of the board. Other similar entries with hashes of <em>4x4</em>, <em>10x10</em>, etc. might get registered in the database for more or less challenging instances of the game if desired.</p>
+
   <h3>label, description, tags</h3>
   <p>These three fields are for human consumption. The <em>label</em> is the human readable title of the game. The <em>description</em> is a longer explanation of the game. The <em>tags</em> are additional keywords describing the game that one might use when searching for it.</p>
-    
-    <p>All three are objects with strings stored under standard language identifiers. The home page uses <em>dojo.locale</em> to determine which to display and falls back on <em>en-us</em> if there is no appropriate translation.</p>
+
+  <p>All three are objects with strings stored under standard language identifiers. The home page uses <em>dojo.locale</em> to determine which to display and falls back on <em>en-us</em> if there is no appropriate translation.</p>
   
   <h3>media</h3>
   <p>The media object contains the URL of a 96x96 pixel <em>icon</em> representing the game on the home page. It also includes an array of 320x240 pixel screenshots of the game, at least one of which appears in the game details dialog.</p>
