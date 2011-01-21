@@ -8,17 +8,34 @@
   <p>Various reusable widgets and utilities are available for use in your projects.</p>
   
   <h2>API</h2>
-  <h3>Factory functions</h3>
   <p><code>uow.ui.checkBrowser() &rarr; dojo.Deferred</code></p>
   <div class="apidesc">
-    <p>This method checks if the user's browser supports the modern HTML5 features required by the UOW framework. If not, the method shows a dialog suggesting the user download Chrome or Firefox.</p>
+    <p>This function checks if the user's browser supports the modern HTML5 features required by the UOW framework. If not, the method shows a dialog suggesting the user download Chrome or Firefox.</p>
     <p>The return value is a <tt><a href="http://www.dojotoolkit.org/reference-guide/dojo/Deferred.html">dojo.Deferred</a></tt>. You should invoke <tt>then</tt> on the deferred to register a callback function that will receive a boolean response, true if the browser is acceptable and false if not.</p>
     <p><strong>Note:</strong> For the dialog to display properly, you should include the <tt>/libs/uow/ui/css/uow.css</tt> stylesheet in your <tt>index.html</tt> or, if only using this widget, the <tt>/libs/uow/ui/css/BrowserDialog.css</tt> stylesheet.</p>
+  </div>
+  
+  <p><code>uow.ui.connectKeys() &rarr; undefined</code></p>
+  <div class="apidesc">
+    <p>This function starts a global keyboard event listener on the current window. Subscribing to these events is preferred over using <em>dojo.connect</em> on DOM nodes to avoid the problem of losing keyboard input focus.</p>
+    <p>Subscriptions are made done using <em>dojo.subscribe</em> like so:</p>
+    
+    <p><tt>dojo.subscribe('/org/hark/key/down', keyCallback) &rarr; token</tt></p>
+    <p><tt>dojo.subscribe('/org/hark/key/up', keyCallback) &rarr; token</tt></p>
+    <p><tt>dojo.subscribe('/org/hark/key/press', keyCallback) &rarr; token</tt></p>
+    <p>These invocations register callback functions that fire on the standard <em>onkeydown</em>, <em>onkeyup</em>, and <em>onkeypress</em> DOM events.  Your callback function must have the following signature:</p>
+    <p><tt>function keyCallback(event) &rarr; undefined</tt></p>
+    <p>where the <tt>event</tt> parameter is a DOM key event.</p>
+  </div>
+  
+  <p><code>uow.ui.disconnectKeys() &rarr; undefined</code></p>
+  <div class="apidesc">
+    <p>This function stops the global monitoring of key events previously started by <em>uow.ui.connectKeys</em>.</p>
   </div>
 
   <p><code>uow.ui.hideBusy(args) &rarr; dojo.Deferred</code></p>
   <div class="apidesc">
-    <p>This method overlays a DOM node with a spinner and optional message indicating the underlying portion of the application is busy.</p>
+    <p>This function overlays a DOM node with a spinner and optional message indicating the underlying portion of the application is busy.</p>
     <p>The <tt>args</tt> parameter must have the following attributes configuring the overlay:</p>
         
     <dl>
@@ -31,7 +48,7 @@
 
   <p><code>uow.ui.showBusy(args) &rarr; dojo.Deferred</code></p>
   <div class="apidesc">
-    <p>This method overlays a DOM node with a spinner and optional message indicating the underlying portion of the application is busy.</p>
+    <p>This function overlays a DOM node with a spinner and optional message indicating the underlying portion of the application is busy.</p>
     <p>The <tt>args</tt> parameter must have the following attributes configuring the overlay:</p>
         
     <dl>

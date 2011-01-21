@@ -86,24 +86,15 @@
   <div dojoType="dijit.TitlePane" open="false" title="Subscribing to container events">
     <h2>Subscribing to container events</h2>
     <p>Hark games use <em>dojo.subscribe</em> to listen to events from the game container.</p>
-  
-    <p><code>dojo.subscribe('/org/hark/key/down', keyCallback) &rarr; undefined</code></p>
-    <p><code>dojo.subscribe('/org/hark/key/up', keyCallback) &rarr; undefined</code></p>
-    <p><code>dojo.subscribe('/org/hark/key/press', keyCallback) &rarr; undefined</code></p>
-    <div class="apidesc">
-      <p>These invocations register callback functions that fire on the standard <em>onkeydown</em>, <em>onkeyup</em>, and <em>onkeypress</em> DOM events. Subscribing to these events is preferred over using <em>dojo.connect</em> on DOM nodes in your game to avoid the problem of losing keyboard input focus. Your callback function must have the following signature:</p>
-      <p><tt>function keyCallback(event) &rarr; undefined</tt></p>
-      <p>where the <tt>event</tt> parameter is a DOM key event.</p>
-    </div>
 
-    <p><code>dojo.subscribe('/org/hark/pause', pauseCallback) &rarr; undefined</code></p>
+    <p><code>dojo.subscribe('/org/hark/pause', pauseCallback) &rarr; token</code></p>
     <div class="apidesc">
       <p>This invocation registers a callback function that will be notified whenever the user pauses the game to interact with the preferences or other game container controls. Your callback function must have the following signature:</p>
       <p><tt>function pauseCallback(paused) &rarr; undefined</tt></p>
       <p>where the <tt>paused</tt> parameter indicating if the game is now paused (true) or running (false).</p>
     </div>
   
-    <p><code>dojo.subscribe('/org/hark/prefs/response', prefsCallback) &rarr; undefined</code></p>
+    <p><code>dojo.subscribe('/org/hark/prefs/response', prefsCallback) &rarr; token</code></p>
     <div class="apidesc">
       <p>This invocation registers a callback function that will be notified whenever a user changes one of the preferences in the game container. Your callback function has the following signature:</p>
       <p><tt>function prefsCallback(prefs, which) &rarr; undefined</tt></p>
@@ -132,7 +123,7 @@
     <h2>Publishing container requests</h2>
     <p>Hark games can also <em>dojo.publish</em> to request information from the game container.</p>
   
-    <p><code>dojo.publish('/org/hark/prefs/request') &rarr; undefined</code></p>
+    <p><code>dojo.publish('/org/hark/prefs/request') &rarr; token</code></p>
     <div class="apidesc">
       <p>This invocation sends a request for the current user preferences to the game container. The container responds with a <tt>/org/hark/prefs/response</tt> callback (see above).</p>
       <p>Hark games should use this publish to get the initial preferences when the game first loads.</p>
