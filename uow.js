@@ -84,3 +84,34 @@ uow.ui.hideBusy = function(args) {
     });
     return def;
 };
+
+// Listen for global keys
+uow.ui._keyToks = null;
+uow.ui.connectKeys = function() {
+    if(uow.ui._keyToks !== null) {
+        throw new Error('keys connected');
+    }
+    uow.ui._keyToks = [];
+    var tok;
+    tok = dojo.connect(window, 'onkeyup', function(event) {
+        dojo.publish('/uow/key/up', [event]);
+    });
+    uow.ui._keyToks.push(tok);
+    tok = dojo.connect(window, 'onkeydown', function(event) {
+        dojo.publish('/uow/key/down', [event]);
+    });
+    uow.ui._keyToks.push(tok);
+    tok = dojo.connect(window, 'onkeypress', function(event) {
+        dojo.publish('/uow/key/press', [event]);
+    });
+    uow.ui._keyToks.push(tok);
+};
+
+// Stop listening for global keys
+uow.ui.disconnectKeys = function() {
+    if(uow.ui._keyToks === null) {
+        throw new Error('keys not connected');
+    }
+    dojo.forEach(uow.ui._keyToks, dojo.disconnect, dojo);
+    uow.ui._keyToks = null;
+};
