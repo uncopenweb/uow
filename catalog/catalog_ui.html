@@ -20,9 +20,9 @@
     <p>This function starts a global keyboard event listener on the current window. Subscribing to these events is preferred over using <em>dojo.connect</em> on DOM nodes to avoid the problem of losing keyboard input focus.</p>
     <p>Subscriptions are made done using <em>dojo.subscribe</em> like so:</p>
     
-    <p><tt>dojo.subscribe('/org/hark/key/down', keyCallback) &rarr; token</tt></p>
-    <p><tt>dojo.subscribe('/org/hark/key/up', keyCallback) &rarr; token</tt></p>
-    <p><tt>dojo.subscribe('/org/hark/key/press', keyCallback) &rarr; token</tt></p>
+    <p><tt>dojo.subscribe('/uow/key/down', keyCallback) &rarr; token</tt></p>
+    <p><tt>dojo.subscribe('/uow/key/up', keyCallback) &rarr; token</tt></p>
+    <p><tt>dojo.subscribe('/uow/key/press', keyCallback) &rarr; token</tt></p>
     <p>These invocations register callback functions that fire on the standard <em>onkeydown</em>, <em>onkeyup</em>, and <em>onkeypress</em> DOM events.  Your callback function must have the following signature:</p>
     <p><tt>function keyCallback(event) &rarr; undefined</tt></p>
     <p>where the <tt>event</tt> parameter is a DOM key event.</p>
