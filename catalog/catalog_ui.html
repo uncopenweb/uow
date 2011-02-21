@@ -23,7 +23,8 @@
     <p><tt>dojo.subscribe('/uow/key/down', keyCallback) &rarr; token</tt></p>
     <p><tt>dojo.subscribe('/uow/key/up', keyCallback) &rarr; token</tt></p>
     <p><tt>dojo.subscribe('/uow/key/press', keyCallback) &rarr; token</tt></p>
-    <p>These invocations register callback functions that fire on the standard <em>onkeydown</em>, <em>onkeyup</em>, and <em>onkeypress</em> DOM events.  Your callback function must have the following signature:</p>
+    <p><tt>dojo.subscribe('/uow/key/down/initial', keyCallback) &rarr; token</tt></p>
+    <p>These invocations register callback functions that fire on the standard <em>onkeydown</em>, <em>onkeyup</em>, and <em>onkeypress</em> DOM events.  The <tt>/uow/key/down/initial</tt> event fires only once per key depression instead of repeating as <tt>/uow/key/down</tt> does. Your callback function must have the following signature:</p>
     <p><tt>function keyCallback(event) &rarr; undefined</tt></p>
     <p>where the <tt>event</tt> parameter is a DOM key event.</p>
   </div>
