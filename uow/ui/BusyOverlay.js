@@ -31,15 +31,13 @@ dojo.declare('uow.ui.BusyOverlay', [dijit._Widget, dijit._Templated], {
     },
     
     startup: function() {
-        if(this.delayShow) {
-            this._delayToken = setTimeout(dojo.hitch(this, '_show'), 
-                this.delayShow);
-        } else {
-            this._show();
-        }
+        this._delayToken = setTimeout(dojo.hitch(this, '_show'), 
+            this.delayShow);
     },
 
     uninitialize: function() {
+        this.busyNode = null;
+        this.parentNode = null;
         clearTimeout(this._delayToken);
     },
 
@@ -70,6 +68,7 @@ dojo.declare('uow.ui.BusyOverlay', [dijit._Widget, dijit._Templated], {
     },
 
     _onResize: function() {
+        if(!this.busyNode) {return;}
         var c = dojo.marginBox(this.busyNode);
         var args = {
             position: 'absolute',
@@ -90,7 +89,9 @@ dojo.declare('uow.ui.BusyOverlay', [dijit._Widget, dijit._Templated], {
             z = this.zIndex;
         } else {
             var node = this.busyNode;
-            if(this.busyNode.currentStyle) {
+            if(!this.busyNode) {
+                return;
+            } else if(this.busyNode.currentStyle) {
                 do {
                     z = parseFloat(node.currentStyle['zIndex']);
                     z = (isNaN(z)) ? 'auto' : z;
