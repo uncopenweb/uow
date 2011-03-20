@@ -92,12 +92,18 @@ uow.ui.connectKeys = function() {
         throw new Error('keys connected');
     }
     uow.ui._keyToks = [];
+    uow.ui._keyState = {}; // keep track of key state to avoid down repeat
     var tok;
     tok = dojo.connect(window, 'onkeyup', function(event) {
+        delete uow.ui._keyState[event.keyCode];
         dojo.publish('/uow/key/up', [event]);
     });
     uow.ui._keyToks.push(tok);
     tok = dojo.connect(window, 'onkeydown', function(event) {
+        if (!uow.ui._keyState[event.keyCode]) {
+            uow.ui._keyState[event.keyCode] = 'd';
+            dojo.publish('/uow/key/down/initial', [event]);
+        }
         dojo.publish('/uow/key/down', [event]);
     });
     uow.ui._keyToks.push(tok);
