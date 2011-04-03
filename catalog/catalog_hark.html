@@ -1,12 +1,11 @@
 <div class="catHark catPage">
-  <h1>harkthesound.org integration</h1>
-  <p style="color:red">Note: This spec is still evolving. Be prepared.</p>
+  <h1>Writing Hark games</h1>
+
+  <p>This document describes how the Hark the Sound site discovers games to list, launches them, and communicates with them. For complete example of how to integrate your game into the hark site, see the <a href="http://github.com/uncopenweb/tictactoe">tic-tac-toe sample</a> on GitHub. It respects installs two difficulty levels (3x3 and 5x5) in the hark game catalog and respects user preferences set on the hark site at runtime.</p>
   
-  <p>This document describes how the harkthesound.org home page discovers games to list, launches them, and communicates with them. It is currently a draft and subject to change.</p>
-  
-  <div dojoType="dijit.TitlePane" open="false" title="Game metadata">
+  <div dojoType="dijit.TitlePane" open="false" title="Your game installer">
     <h2>Your game installer</h2>
-    <p>The home page lists entries in the <em>games</em> collection of the <em>harkhome</em> database. A game should create a <em>hark.json</em> file in one of its subfolders to act as an "installer" for the hark site. For example, the JSON below depicts a possible installer for a tic-tac-toe game that has two difficulty levels to list separately on the site:</p>
+    <p>The owner of the hark site (i.e., Gary) installs your game from a <em>hark.json</em> file you include with your game. For example, the JSON below shows the installer for the tic-tac-toe game:</p>
 
   <pre>{
       "identifier" : "url",
@@ -17,7 +16,7 @@
                   "en-us" : "Tic-tac-toe"
               },
               "tags" : {
-                  "en-us" : "2-player, speech, sound, keyboard, mouse"
+                  "en-us" : "grid, classic, multiplayer"
               },
               "description" : {
                   "en-us" : "The classic game of tic-tac-toe on a 3x3 board."
@@ -34,7 +33,7 @@
                   "en-us" : "Tic-tac-toe"
               },
               "tags" : {
-                  "en-us" : "2-player, speech, sound, keyboard, mouse"
+                  "en-us" : "grid, classic, expert, multiplayer"
               },
               "description" : {
                   "en-us" : "A harder game of tic-tac-toe on a 5x5 board."
@@ -49,20 +48,20 @@
   }</pre>
 
     <h3>url</h3>
-    <p>The <em>url</em> field is the unique, relative URL of the game under http://harkthesound.org/. The URL can contain a hash symbol indicating additional information the game can use to configure itself upon launch. Query parameters are not currently allowed.</p>
+    <p>The <em>url</em> field is the unique, relative URL of the game under http://harkthesound.org/. The URL can contain a hash symbol indicating additional information the game can use to configure itself upon launch.</p>
   
     <p>In the example above, the first game entry includes an app defined hash of <em>3x3</em>. The tic-tac-toe game might use <em>dojo.hash()</em> to retrieve this value when launched to configure the size of the board. Other similar entries with hashes of <em>4x4</em>, <em>10x10</em>, etc. might get registered in the database for more or less challenging instances of the game if desired.</p>
 
     <h3>label, description, tags</h3>
-    <p>These three fields are for human consumption. The <em>label</em> is the human readable title of the game. The <em>description</em> is a longer explanation of the game. The <em>tags</em> are additional keywords describing the game that one might use when searching for it.</p>
+    <p>These three fields are for human consumption. The <em>label</em> is the human readable title of the game. The <em>description</em> is a longer explanation of the game. The <em>tags</em> are categories in which the game is listed for keyboard+audio users of the hark site.</p>
 
     <p>All three are objects with strings stored under standard language identifiers. The home page uses <em>dojo.locale</em> to determine which to display and falls back on <em>en-us</em> if there is no appropriate translation.</p>
   
     <h3>media</h3>
-    <p>The media object contains the URL of a 96x96 pixel <em>icon</em> representing the game on the home page. It also includes an array of 320x240 pixel screenshots of the game, at least one of which appears in the game details dialog.</p>
+    <p>The media object contains the URL of a 96x96 pixel <em>icon</em> representing the game on the home page. It also includes an array of 320x240 pixel <em>screenshots</em> of the game which may be featured on the hark site.</p>
   
     <h3>attribution</h3>
-    <p>The optional attribution string can reference another JSON file containing attribution info for 3rd party resources (e.g., Creative Commons licensed images, sounds, and music). The top level object in this JSON file is an array. It contains further objects in the following form:</p>
+    <p>The optional attribution string can reference another JSON file containing attribution info for the game code and 3rd party resources (e.g., Creative Commons licensed images, sounds, and music). The top level object in this JSON file is an array. It contains further objects in the following form:</p>
 
   <pre>{
       "name" : "hvylas.wav",
@@ -73,14 +72,22 @@
       "type" : "sound"
   }</pre>
 
-  <p>All of these fields are optional. The <em>type</em> field should be one of <em>image</em>, <em>sound</em>, <em>music</em>, or <em>code</em>.</p>
+  <p>The name, creator, and type fields are required. The <em>type</em> field should be one of <em>image</em>, <em>sound</em>, <em>music</em>, or <em>code</em>. All other fields are optional, but should be filled in if the information is known.</p>
   </div>
   
   <div dojoType="dijit.TitlePane" open="false" title="About the game container">
     <h2>About the game container</h2>
-    <p>The harkthesound.org home page launches games in an iframe container. The home page sets the iframe <em>src</em> attribute to the exact <em>url</em> stored in the database for the game. The game is free to do whatever it needs within the iframe and interpret its URL in any way.</p>
+    <p>The game play page on the hark site loads your game in an iframe container. The play page sets the iframe <em>src</em> attribute to the exact <em>url</em> stored in the database for the game. Your game is free to do whatever it needs within the iframe and interpret its URL in any way.</p>
     
-    <p>While the game container is visible, the home page also displays a toolbar above the iframe with buttons for quitting the game, configuring common preferences (e.g., volume, speech rate), and getting help. The game in the iframe need not be aware of these controls per se, only the events they generate (see next section).</p>
+    <p>A toolbar appears above, but outside, your game's iframe on the play page. The toolbar has buttons for quitting the game, configuring common preferences (e.g., volume, speech rate), and getting help. The game in the iframe need not be aware of these controls per se, only the events they generate (see next section).</p>
+    
+    <p>The play page also registers some global hot keys that the game must not mask.
+      <ul>
+        <li>Shift-Up/Down: Master volume increase / decrease</li>
+        <li>Shift-Left/Right: Speech rate increase / descrease</li>
+        <li>Shift-Escape: Quit game</li>
+      </ul>
+    </p>
   </div>
   
   <div dojoType="dijit.TitlePane" open="false" title="Subscribing to container events">
@@ -103,8 +110,8 @@
       <dl>
         <dt>mouseEnabled (bool)</dt>
         <dd>User wants mouse control enabled or disabled for this application.</dd>
-        <dt>speechEnabled (bool)</dt>
-        <dd>User wants speech enabled or disabled for this application.</dd>
+        <dt>speechRate (int)</dt>
+        <dd>User wants to set the speech rate for all speech audio channels in words per minute [80, 400].</dd>
         <dt>volume (float)</dt>
         <dd>User wants to set the master volume for all audio [0.0, 1.0].</dd>
         <dt>speechVolume (float)</dt>
@@ -116,6 +123,7 @@
       </dl>
 
       <p>The <tt>which</tt> argument receives the string name of the preference that changed or null if the preference that changed is indeterminate.</p>
+      <p>For example, if the user changes the <em>speechRate</em> using the slider in the preferences or the rate hot keys, the <em>which</em> parameter is <em>speechRate</em> and the game should adjust its audio to respect the new <em>speechRate</em> value on the <em>prefs</em> parameter. When the game publishes a <em>/org/hark/prefs/request</em> event (see below), the <em>which</em> parameter is null and the game should apply all of the values in the <em>prefs</em> object to its audio.</p>
     </div>
   </div>
   
