@@ -86,38 +86,104 @@ uow.ui.hideBusy = function(args) {
 };
 
 // Listen for global keys
-uow.ui._keyToks = null;
-uow.ui.connectKeys = function() {
-    if(uow.ui._keyToks !== null) {
+uow.ui.connectKeys = function(context) {
+    if(!context || !context.window) {
+        // support listening on different windows
+        context = uow.ui;
+        context.window = window;
+    }
+    if(context._keyToks) {
         throw new Error('keys connected');
     }
-    uow.ui._keyToks = [];
-    uow.ui._keyState = {}; // keep track of key state to avoid down repeat
-    var tok;
-    tok = dojo.connect(window, 'onkeyup', function(event) {
-        delete uow.ui._keyState[event.keyCode];
-        dojo.publish('/uow/key/up', [event]);
-    });
-    uow.ui._keyToks.push(tok);
-    tok = dojo.connect(window, 'onkeydown', function(event) {
-        if (!uow.ui._keyState[event.keyCode]) {
-            uow.ui._keyState[event.keyCode] = 'd';
-            dojo.publish('/uow/key/down/initial', [event]);
+    context._keyToks = [];
+    // keep track of key state to avoid down repeat
+    context._keyState = {};
+    
+    var _isIgnoredKey = function(event) {
+        if(!context._keyIgnores) {return false;}
+        for(var i=0, l=context._keyIgnores.length; i<l; i++) {
+            var ignore = context._keyIgnores[i];
+            var match = true;
+            for(var key in ignore) {
+                if(ignore[key] !== event[key]) {
+                    // does not match this ignore pattern, skip to next
+                    match = false;
+                    break;
+                }
+            }
+            if(match) {
+                // pattern matches, ignore
+                return true;
+            }
         }
-        dojo.publish('/uow/key/down', [event]);
+        // no pattern matches, do not ignore
+        return false;
+    };
+    
+    var tok;
+    tok = dojo.connect(context.window, 'onkeyup', function(event) {
+        // cleanup any tracked key state 
+        delete context._keyState[event.keyCode];
+        if(!_isIgnoredKey(event)) {
+            // publish a key up event
+            dojo.publish('/uow/key/up', [event]);
+        }
     });
-    uow.ui._keyToks.push(tok);
-    tok = dojo.connect(window, 'onkeypress', function(event) {
-        dojo.publish('/uow/key/press', [event]);
+    context._keyToks.push(tok);
+    tok = dojo.connect(context.window, 'onkeydown', function(event) {
+        var ignore = _isIgnoredKey(event);
+        if (!context._keyState[event.keyCode]) {
+            // first down event for a key
+            context._keyState[event.keyCode] = 'd';
+            if(!ignore) {
+                // fire an initial event
+                dojo.publish('/uow/key/down/initial', [event]);
+                // set a flag on the event for down handlers to read too
+                event.initialDown = true;
+            }
+        }
+        if(!ignore) {
+            // publish a down event
+            dojo.publish('/uow/key/down', [event]);
+        }
     });
-    uow.ui._keyToks.push(tok);
+    context._keyToks.push(tok);
+    tok = dojo.connect(context.window, 'onkeypress', function(event) {
+        if(!_isIgnoredKey(event)) {
+            // publish a press event
+            dojo.publish('/uow/key/press', [event]);
+        }
+    });
+    context._keyToks.push(tok);
 };
 
 // Stop listening for global keys
-uow.ui.disconnectKeys = function() {
-    if(uow.ui._keyToks === null) {
+uow.ui.disconnectKeys = function(context) {
+    if(!context) {
+        context = uow.ui;
+    }
+    if(!context._keyToks) {
         throw new Error('keys not connected');
     }
-    dojo.forEach(uow.ui._keyToks, dojo.disconnect, dojo);
-    uow.ui._keyToks = null;
+    dojo.forEach(context._keyToks, dojo.disconnect, dojo);
+    context._keyToks = null;
+};
+
+// Add key events to ignore (i.e., not publish events for them).
+uow.ui.ignoreKeys = function(ignores, context) {
+    if(!context) {
+        context = uow.ui;
+    }
+    if(!context._keyIgnores) {
+        context._keyIgnores = [];
+    }
+    context._keyIgnores = context._keyIgnores.concat(ignores);
+};
+
+// Remove all key events from the ignore list.
+uow.ui.clearIgnoredKeys = function(context, keys) {
+    if(!context) {
+        context = uow.ui;
+    }
+    delete context._keyIgnores;
 };
