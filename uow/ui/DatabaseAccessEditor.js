@@ -64,8 +64,11 @@ dojo.declare('uow.ui.DatabaseAccessEditor', [dijit._Widget, dijit._Templated,
 		// hook nodes
 		var total = dojo.byId('total_'+args.id);
 		// show total number of records
-		uow.getDatabase({database: this.database.database, collection : col})
-			.then(dojo.hitch(this, function(db) {
+		uow.getDatabase({
+		    database: this.database.database, 
+		    collection : col,
+		    mode : 'crudO'
+		}).then(dojo.hitch(this, function(db) {
 				db.fetch({
 					query : {},
 					start : 0,

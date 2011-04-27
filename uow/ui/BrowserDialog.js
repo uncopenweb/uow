@@ -25,7 +25,7 @@ dojo.requireLocalization('uow.ui', 'BrowserDialog');
                 return;
             }
             onKey(event);
-        }
+        };
         var template = dojo.cache('uow.ui.templates', 'BrowserDialog.html');
         var args = {
             labels : labels,

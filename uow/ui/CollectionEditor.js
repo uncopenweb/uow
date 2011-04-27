@@ -61,7 +61,7 @@ dojo.declare('uow.ui.CollectionEditor', [dijit._Widget, dijit._Templated, dijit.
         var def = uow.getDatabase({
             database : this.target[0], 
             collection: this.target[1],
-            mode : 'crud'
+            mode : 'crudO'
         }).then(dojo.hitch(this, function(db) {
             // store the data db
             this._db = db;

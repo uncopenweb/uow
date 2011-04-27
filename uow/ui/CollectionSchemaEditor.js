@@ -38,7 +38,7 @@ dojo.declare('uow.ui.CollectionSchemaEditor', [dijit._Widget, dijit._Templated, 
             return uow.getDatabase({
                 database : 'Admin', 
                 collection: 'Schemas',
-                mode : 'crud'
+                mode : 'crudO'
             });
         } else {
             var def = new dojo.Deferred();
